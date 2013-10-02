@@ -1,6 +1,12 @@
 {
     "require": {
         "php": ">=5.4.0",
-        "zendframework/zendframework": "2.2.*"
+        "zendframework/zendframework": "2.2.*",
+        "doctrine/doctrine-module": "dev-master as 0.7.123",
+        "doctrine/doctrine-orm-module": "dev-master as 0.7.123",
+        "zendframework/zend-developer-tools": "dev-master"
+    },
+    "config": {
+        "bin-dir": "bin/"
     }
 }

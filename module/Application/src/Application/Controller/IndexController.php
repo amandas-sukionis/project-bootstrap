@@ -9,6 +9,7 @@
 
 namespace Application\Controller;
 
+use Application\Entity\User;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
@@ -16,6 +17,17 @@ class IndexController extends AbstractActionController
 {
     public function indexAction()
     {
+        $objectManager = $this
+            ->getServiceLocator()
+            ->get('Doctrine\ORM\EntityManager');
+
+        $user = new User();
+        $user->setEmail('asd');
+
+        $objectManager->persist($user);
+        $objectManager->flush();
+
+        var_dump($user->getId());
         return new ViewModel();
     }
 }
