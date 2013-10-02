@@ -9,25 +9,45 @@
 
 namespace Application\Controller;
 
-use Application\Entity\User;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
 class IndexController extends AbstractActionController
 {
+    protected $galleryModel;
+
     public function indexAction()
     {
-        $objectManager = $this
-            ->getServiceLocator()
-            ->get('Doctrine\ORM\EntityManager');
+        $uploadImageForm = $this->getServiceLocator()->get('Application\Form\UploadImageForm');
+        //die(var_dump($uploadImageForm->getMyInputFilter()));
 
-        $user = new User();
-        $user->setEmail('asd');
+        $viewModel = new ViewModel();
+        $request    = $this->getRequest();
+        if ($request->isPost()) {
+            $postData = array_merge_recursive(
+                $request->getPost()->toArray(),
+                $request->getFiles()->toArray()
+            );
+            $uploadImageForm->setData($postData);
+            if ($uploadImageForm->isValid()) {
+                $imageUrl = $this->getGalleryModel()->uploadImageFile($postData);
+                return $this->redirect()->toUrl($imageUrl);
+            }
+            else {
+                $uploadImageForm->setData($request->getPost()->toArray());
+                $viewModel->setVariable('error', 'file was not uploaded, available image extensions: jpg, png');
+            }
+        }
+        $viewModel->setVariable('uploadImageForm', $uploadImageForm);
 
-        $objectManager->persist($user);
-        $objectManager->flush();
+        return $viewModel;
+    }
 
-        var_dump($user->getId());
-        return new ViewModel();
+    protected function getGalleryModel()
+    {
+        if (!$this->galleryModel) {
+            $this->galleryModel = $this->getServiceLocator()->get('Application\Model\GalleryModel');
+        }
+        return $this->galleryModel;
     }
 }
