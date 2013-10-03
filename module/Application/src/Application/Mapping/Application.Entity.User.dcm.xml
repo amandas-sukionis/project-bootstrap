@@ -5,6 +5,8 @@
         <id name="id" type="integer">
             <generator strategy="IDENTITY"/>
         </id>
-        <field name="email" type="string"/>
+        <field name="userName" type="string"/>
+        <field name="password" type="string"/>
+        <field name="salt" type="string"/>
     </entity>
 </doctrine-mapping>

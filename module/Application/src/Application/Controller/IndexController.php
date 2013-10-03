@@ -15,9 +15,20 @@ use Zend\View\Model\ViewModel;
 class IndexController extends AbstractActionController
 {
     protected $galleryModel;
+    protected $authenticationService;
 
     public function indexAction()
     {
+        $adapter = $this->getAuthenticationService()->getAdapter();
+        $adapter->setIdentityValue('admin');
+        $adapter->setCredentialValue('admin123');
+        $authResult = $this->getAuthenticationService()->authenticate();
+
+        if ($authResult->isValid()) {
+
+        }
+
+
         $uploadImageForm = $this->getServiceLocator()->get('Application\Form\UploadImageForm');
         //die(var_dump($uploadImageForm->getMyInputFilter()));
 
@@ -49,5 +60,13 @@ class IndexController extends AbstractActionController
             $this->galleryModel = $this->getServiceLocator()->get('Application\Model\GalleryModel');
         }
         return $this->galleryModel;
+    }
+
+    protected function getAuthenticationService()
+    {
+        if (!$this->authenticationService) {
+            $this->authenticationService = $this->getServiceLocator()->get('Zend\Authentication\AuthenticationService');
+        }
+        return $this->authenticationService;
     }
 }
