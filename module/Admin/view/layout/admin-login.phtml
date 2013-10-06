@@ -1,0 +1,56 @@
+<?php echo $this->doctype(); ?>
+
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+
+    <?php echo $this->headTitle($this->translate('admin_login_title'))->setSeparator(' - ')->setAutoEscape(false) ?>
+
+    <?php echo $this->headMeta()->appendName('viewport', 'width=device-width, initial-scale=1.0') ?>
+
+    <?php echo $this->headLink()->appendStylesheet($this->basePath() . '/admin-assets/css/bootstrap.css')
+        ->appendStylesheet($this->basePath() . '/admin-assets/css/font-awesome.css')
+        ->appendStylesheet($this->basePath() . '/admin-assets/css/jquery-ui.css')
+        ->appendStylesheet($this->basePath() . '/admin-assets/css/fullcalendar.css')
+        ->appendStylesheet($this->basePath() . '/admin-assets/css/prettyPhoto.css')
+        ->appendStylesheet($this->basePath() . '/admin-assets/css/rateit.css')
+        ->appendStylesheet($this->basePath() . '/admin-assets/css/bootstrap-datetimepicker.min.css')
+        ->appendStylesheet($this->basePath() . '/admin-assets/css/jquery.gritter.css')
+        ->appendStylesheet($this->basePath() . '/admin-assets/css/jquery.cleditor.css')
+        ->appendStylesheet($this->basePath() . '/admin-assets/css/bootstrap-toggle-buttons.css')
+        ->appendStylesheet($this->basePath() . '/admin-assets/css/style.css')
+        ->appendStylesheet($this->basePath() . '/admin-assets/css/widgets.css')
+        ->appendStylesheet($this->basePath() . '/admin-assets/css/bootstrap-responsive.css')
+        ->headLink(array('rel' => 'shortcut icon', 'href' => 'data:image/x-icon;,', 'type' => 'image/x-icon')) ?>
+
+    <?php echo $this->headScript()->appendFile($this->basePath() . '/admin-assets/js/jquery.js')
+        ->appendFile($this->basePath() . '/admin-assets/js/bootstrap.js')
+        ->appendFile($this->basePath() . '/admin-assets/js/jquery-ui-1.10.2.custom.min.js')
+        ->appendFile($this->basePath() . '/admin-assets/js/fullcalendar.min.js')
+        ->appendFile($this->basePath() . '/admin-assets/js/jquery.rateit.min.js')
+        ->appendFile($this->basePath() . '/admin-assets/js/jquery.prettyPhoto.js')
+        ->appendFile($this->basePath() . '/admin-assets/js/excanvas.min.js')
+        ->appendFile($this->basePath() . '/admin-assets/js/jquery.flot.js')
+        ->appendFile($this->basePath() . '/admin-assets/js/jquery.flot.resize.js')
+        ->appendFile($this->basePath() . '/admin-assets/js/jquery.flot.pie.js')
+        ->appendFile($this->basePath() . '/admin-assets/js/jquery.flot.stack.js')
+        ->appendFile($this->basePath() . '/admin-assets/js/jquery.gritter.min.js')
+        ->appendFile($this->basePath() . '/admin-assets/js/sparklines.js')
+        ->appendFile($this->basePath() . '/admin-assets/js/jquery.cleditor.min.js')
+        ->appendFile($this->basePath() . '/admin-assets/js/bootstrap-datetimepicker.min.js')
+        ->appendFile($this->basePath() . '/admin-assets/js/jquery.toggle.buttons.js')
+        ->appendFile($this->basePath() . '/admin-assets/js/filter.js')
+        ->appendFile($this->basePath() . '/admin-assets/js/custom.js')
+        ->appendFile($this->basePath() . '/admin-assets/js/charts.js'); ?>
+
+    <!-- HTML5 Support for IE -->
+    <!--[if lt IE 9]>
+    <script src="/admin-assets/js/html5shim.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+<?php echo $this->content ?>
+</body>
+</html>

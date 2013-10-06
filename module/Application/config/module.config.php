@@ -8,26 +8,36 @@
  */
 
 return [
-    'router' => [
+    'router'          => [
         'routes' => [
             'home' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
-                'options' => [
-                    'route' => '/',
+                'type'          => 'Zend\Mvc\Router\Http\Literal',
+                'options'       => [
+                    'route'    => '/',
                     'defaults' => [
                         'controller' => 'Application\Controller\Index',
-                        'action' => 'index',
+                        'action'     => 'index',
                     ],
                 ],
                 'may_terminate' => true,
-                'child_routes' => [
-                    'logout' => [
-                        'type' => 'Literal',
+                'child_routes'  => [
+                    'createAdmin' => [
+                        'type'    => 'Literal',
                         'options' => [
-                            'route' => 'createAdmin',
+                            'route'    => 'createAdmin',
                             'defaults' => [
                                 'controller' => 'Application\Controller\Login',
-                                'action' => 'createAdminUserFromConfig',
+                                'action'     => 'createAdminUserFromConfig',
+                            ],
+                        ],
+                    ],
+                    'logout'      => [
+                        'type'    => 'Literal',
+                        'options' => [
+                            'route'    => 'logout',
+                            'defaults' => [
+                                'controller' => 'Application\Controller\Login',
+                                'action'     => 'logout',
                             ],
                         ],
                     ],
@@ -40,61 +50,63 @@ return [
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
             'Zend\Log\LoggerAbstractServiceFactory',
         ],
-        'invokables' => [
+        'invokables'         => [
             'Application\Form\UploadImageForm' => 'Application\Form\UploadImageForm',
-            'Application\Model\GalleryModel' => 'Application\Model\GalleryModel',
-            'Application\Model\UserModel' => 'Application\Model\UserModel',
+            'Application\Form\LoginForm'       => 'Application\Form\LoginForm',
+            'Application\Model\GalleryModel'   => 'Application\Model\GalleryModel',
+            'Application\Model\UserModel'      => 'Application\Model\UserModel',
         ],
-        'aliases' => [
+        'aliases'            => [
             'translator' => 'MvcTranslator',
         ],
     ],
-    'translator' => [
-        'locale' => 'en_US',
+    'translator'      => [
+        'locale'                    => 'en_US',
         'translation_file_patterns' => [
             [
-                'type' => 'gettext',
+                'type'     => 'gettext',
                 'base_dir' => __DIR__ . '/../language',
-                'pattern' => '%s.mo',
+                'pattern'  => '%s.mo',
             ],
         ],
     ],
-    'controllers' => [
+    'controllers'     => [
         'invokables' => [
             'Application\Controller\Index' => 'Application\Controller\IndexController',
-            'Application\Controller\Login' => 'Application\Controller\LoginController'
+            'Application\Controller\Login' => 'Application\Controller\LoginController',
+            'Application\Controller\Gallery' => 'Application\Controller\GalleryController'
         ],
     ],
-    'view_manager' => [
+    'view_manager'    => [
         'display_not_found_reason' => true,
-        'display_exceptions' => true,
-        'doctype' => 'HTML5',
-        'not_found_template' => 'error/404',
-        'exception_template' => 'error/index',
-        'template_map' => [
-            'layout/layout' => __DIR__ . '/../view/layout/layout.phtml',
+        'display_exceptions'       => true,
+        'doctype'                  => 'HTML5',
+        'not_found_template'       => 'error/404',
+        'exception_template'       => 'error/index',
+        'template_map'             => [
+            'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml',
             'application/index/index' => __DIR__ . '/../view/application/index/index.phtml',
-            'error/404' => __DIR__ . '/../view/error/404.phtml',
-            'error/index' => __DIR__ . '/../view/error/index.phtml',
+            'error/404'               => __DIR__ . '/../view/error/404.phtml',
+            'error/index'             => __DIR__ . '/../view/error/index.phtml',
         ],
-        'template_path_stack' => [
+        'template_path_stack'      => [
             __DIR__ . '/../view',
         ],
     ],
     // Placeholder for console routes
-    'console' => [
+    'console'         => [
         'router' => [
             'routes' => array(),
         ],
     ],
-    'doctrine' => [
+    'doctrine'        => [
         'authentication' => [
             'orm_default' => [
-                'object_manager' => 'Doctrine\ORM\EntityManager',
-                'identity_class' => 'Application\Entity\User',
-                'identity_property' => 'userName',
+                'object_manager'      => 'Doctrine\ORM\EntityManager',
+                'identity_class'      => 'Application\Entity\User',
+                'identity_property'   => 'userName',
                 'credential_property' => 'password',
-                'credentialCallable' => function ($identity, $credential) {
+                'credentialCallable'  => function ($identity, $credential) {
                     return \Application\Model\UserModel::getPasswordHash($credential, $identity->getSalt());
                 }
             ],

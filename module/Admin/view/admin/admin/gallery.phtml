@@ -1,0 +1,64 @@
+<div class="widget wred">
+    <div class="widget-head">
+        <div class="pull-left"> <?php echo $this->translate('gallery_categories') ?></div>
+        <div class="widget-icons pull-right">
+            <a href="#" class="wminimize"><i class="icon-chevron-up"></i></a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+
+    <div class="widget-content">
+        <table class="table  table-bordered ">
+            <?php if ($galleryCategories) { ?>
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th><?php echo $this->translate('category_name') ?></th>
+                    <th><?php echo $this->translate('category_action') ?></th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($galleryCategories as $category) { ?>
+                    <tr>
+                        <td>1</td>
+                        <td><?php echo $category->getName(); ?></td>
+                        <td>
+                            <a href="<?php echo $this->url(
+                                'admin/editBannerCategory', array('alias' => $category->getAlias())
+                            ); ?>">
+                                <button class="btn btn-mini btn-warning"><i class="icon-pencil"></i></button>
+                            </a>
+                            <a href="#" class="confirm-delete"
+                               data-id="<?php echo $this->url(
+                                   'admin/deleteBannerCategory', array('alias' => $category->getAlias())
+                               ); ?>">
+                                <button class="btn btn-mini btn-danger"><i class="icon-remove"></i></button>
+                            </a>
+                        </td>
+                    </tr>
+                <?php } ?>
+                </tbody>
+            <?php } else {
+                echo $this->translate('no_categories_found');
+            } ?>
+        </table>
+    </div>
+    <div class="widget-foot">
+        <div class="pagination pull-left">
+            <a href="<?php echo $this->url('admin/gallery/addCategory'); ?>">
+                <button class="btn"><?php echo $this->translate('add_category'); ?></button>
+            </a>
+        </div>
+        <div class="pagination pull-right">
+            <ul>
+                <li><a href="#">Prev</a></li>
+                <li><a href="#">1</a></li>
+                <li><a href="#">2</a></li>
+                <li><a href="#">3</a></li>
+                <li><a href="#">4</a></li>
+                <li><a href="#">Next</a></li>
+            </ul>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>

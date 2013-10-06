@@ -10,6 +10,7 @@ class LoginController extends AbstractActionController
 {
     protected $config;
     protected $userModel;
+    protected $authenticationService;
 
     public function createAdminUserFromConfigAction()
     {
@@ -17,6 +18,15 @@ class LoginController extends AbstractActionController
         $this->getUserModel()->createAdmin($config['user']);
 
         return new ViewModel();
+    }
+
+    public function logoutAction()
+    {
+        if ($this->getAuthenticationService()->hasIdentity()) {
+            $this->getAuthenticationService()->clearIdentity();
+        }
+
+        return $this->redirect()->toRoute('home');
     }
 
     protected function getConfig()
@@ -33,6 +43,14 @@ class LoginController extends AbstractActionController
             $this->userModel = $this->getServiceLocator()->get('Application\Model\UserModel');
         }
         return $this->userModel;
+    }
+
+    protected function getAuthenticationService()
+    {
+        if (!$this->authenticationService) {
+            $this->authenticationService = $this->getServiceLocator()->get('Zend\Authentication\AuthenticationService');
+        }
+        return $this->authenticationService;
     }
 
 }

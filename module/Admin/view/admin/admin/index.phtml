@@ -1,0 +1,50 @@
+<?php
+$form = $this->loginForm;
+$form->prepare();
+?>
+<?php echo $this->form()->openTag($form); ?>
+    <div class="admin-form">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <!-- Widget starts -->
+                    <div class="widget wred">
+                        <!-- Widget head -->
+                        <div class="widget-head">
+                            <i class="icon-lock"></i> <?php echo $this->translate('login') ?>
+                        </div>
+
+                        <div class="widget-content">
+                            <div class="padd">
+                                <?php if (!empty($this->error)): ?>
+                                    <div class="alert alert-error"><?php echo $error ?></div>
+                                <?php endif; ?>
+                                <div class="control-group">
+                                    <label class="control-label"
+                                           for="usernameInput"><?php echo $this->translate('username') ?></label>
+
+                                    <div class="controls">
+                                        <?php echo $this->formRow($form->get('loginFormUsername')); ?>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label"
+                                           for="passwordInput"><?php echo $this->translate('password') ?></label>
+
+                                    <div class="controls">
+                                        <?php echo $this->formRow($form->get('loginFormPassword')); ?>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <div class="controls">
+                                        <?php echo $this->formsubmit($form->get('loginFormSubmit')->setAttribute('class', 'btn btn-success')->setAttribute('value', $this->translate('login'))); ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php echo $this->form()->closeTag($form); ?>

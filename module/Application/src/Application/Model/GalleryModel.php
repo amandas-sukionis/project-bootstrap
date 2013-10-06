@@ -5,7 +5,7 @@ class GalleryModel
 {
     public function uploadImageFile($postData)
     {
-        if(!file_exists('public/img/gallery')) {
+        if (!file_exists('public/img/gallery')) {
             mkdir('public/img/gallery');
         }
 
