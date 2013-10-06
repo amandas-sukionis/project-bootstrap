@@ -3,7 +3,6 @@
 namespace Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
 
 
 class GalleryController extends AbstractActionController
@@ -11,7 +10,7 @@ class GalleryController extends AbstractActionController
     protected $userModel;
     protected $authenticationService;
 
-    public function addCategoryAction()
+    public function addAlbumAction()
     {
 
     }

@@ -49,10 +49,10 @@ class AdminController extends AbstractActionController
 
     protected function galleryAction()
     {
-        $galleryCategories = null;
+        $galleryAlbums = null;
 
         return [
-            'galleryCategories' => $galleryCategories,
+            'galleryAlbums' => $galleryAlbums,
         ];
     }
 

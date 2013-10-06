@@ -112,7 +112,7 @@ $routeMatch = $router->match($request);
                     echo ' current';
                 } ?>"><a href="<?php echo $this->url('admin/dashboard') ?>"><i
                             class="icon-desktop"></i> <?php echo $this->translate('dashboard') ?></a></li>
-                <li class="nred<?php if ($routeMatch->getMatchedRouteName() == 'admin/gallery' || $routeMatch->getMatchedRouteName() == 'admin/gallery/addCategory') {
+                <li class="nred<?php if ($routeMatch->getMatchedRouteName() == 'admin/gallery' || $routeMatch->getMatchedRouteName() == 'admin/gallery/addAlbum') {
                     echo ' current';
                 } ?>"><a href="<?php echo $this->url('admin/gallery') ?>"><i
                             class="icon-desktop"></i> <?php echo $this->translate('gallery') ?></a></li>

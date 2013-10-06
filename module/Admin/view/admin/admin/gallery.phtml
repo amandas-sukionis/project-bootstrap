@@ -1,6 +1,6 @@
 <div class="widget wred">
     <div class="widget-head">
-        <div class="pull-left"> <?php echo $this->translate('gallery_categories') ?></div>
+        <div class="pull-left"> <?php echo $this->translate('gallery_albums') ?></div>
         <div class="widget-icons pull-right">
             <a href="#" class="wminimize"><i class="icon-chevron-up"></i></a>
         </div>
@@ -9,7 +9,7 @@
 
     <div class="widget-content">
         <table class="table  table-bordered ">
-            <?php if ($galleryCategories) { ?>
+            <?php if ($this->galleryAlbums) { ?>
                 <thead>
                 <tr>
                     <th>#</th>
@@ -18,7 +18,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($galleryCategories as $category) { ?>
+                <?php foreach ($galleryAlbums as $category) { ?>
                     <tr>
                         <td>1</td>
                         <td><?php echo $category->getName(); ?></td>
@@ -39,14 +39,14 @@
                 <?php } ?>
                 </tbody>
             <?php } else {
-                echo $this->translate('no_categories_found');
+                echo $this->translate('no_albums_found');
             } ?>
         </table>
     </div>
     <div class="widget-foot">
         <div class="pagination pull-left">
-            <a href="<?php echo $this->url('admin/gallery/addCategory'); ?>">
-                <button class="btn"><?php echo $this->translate('add_category'); ?></button>
+            <a href="<?php echo $this->url('admin/gallery/addAlbum'); ?>">
+                <button class="btn"><?php echo $this->translate('add_album'); ?></button>
             </a>
         </div>
         <div class="pagination pull-right">

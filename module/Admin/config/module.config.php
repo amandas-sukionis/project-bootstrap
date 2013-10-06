@@ -34,13 +34,13 @@ return [
                         ],
                         'may_terminate' => true,
                         'child_routes'  => [
-                            'addCategory' => [
+                            'addAlbum' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'       => '/addCategory',
+                                    'route'       => '/addAlbum',
                                     'defaults'    => [
                                         'controller' => 'Admin\Controller\GalleryController',
-                                        'action'     => 'addCategory',
+                                        'action'     => 'addAlbum',
                                     ],
                                 ],
                             ],
