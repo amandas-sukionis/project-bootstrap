@@ -12,7 +12,11 @@ class GalleryController extends AbstractActionController
 
     public function addAlbumAction()
     {
+        $addAlbumForm = $this->getServiceLocator()->get('Application\Form\AddAlbumForm');
 
+        return [
+            'addAlbumForm' => $addAlbumForm,
+        ];
     }
 
     protected function getAuthenticationService()

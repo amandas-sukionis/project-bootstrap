@@ -26,7 +26,6 @@ $routeMatch = $router->match($request);
         ->appendStylesheet($this->basePath() . '/admin-assets/css/bootstrap-toggle-buttons.css')
         ->appendStylesheet($this->basePath() . '/admin-assets/css/style.css')
         ->appendStylesheet($this->basePath() . '/admin-assets/css/widgets.css')
-        ->appendStylesheet($this->basePath() . '/admin-assets/css/bootstrap-responsive.css')
         ->headLink(array('rel' => 'shortcut icon', 'href' => 'data:image/x-icon;,', 'type' => 'image/x-icon')) ?>
 
     <?php echo $this->headScript()->appendFile($this->basePath() . '/admin-assets/js/jquery.js')
@@ -58,39 +57,27 @@ $routeMatch = $router->match($request);
 <body>
 
 <div class="navbar navbar-fixed-top navbar-inverse">
-    <div class="navbar-inner">
-        <div class="container">
-            <!-- Menu button for smaller screens -->
-            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </a>
-            <a href="<?php echo $this->url('home') ?>"
-               class="brand"><?php echo $this->translate('admin_page_header_title') ?></span></a>
-
-            <!-- Navigation starts -->
-            <div class="nav-collapse collapse">
-
-                <!-- Links -->
-                <ul class="nav pull-right">
-                    <li class="dropdown pull-right">
-                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                            N/A <b class="caret"></b>
-                        </a>
-
-                        <!-- Dropdown menu -->
-                        <ul class="dropdown-menu">
-                            <li><a href="<?php echo $this->url('home/logout') ?>"><i
-                                        class="icon-off"></i> <?php echo $this->translate('logout'); ?></a></li>
-                        </ul>
-                    </li>
-
+    <div class="navbar-header">
+        <a href="<?php echo $this->url('home') ?>"
+           class="navbar-brand"><?php echo $this->translate('admin_page_header_title') ?></span></a>
+    </div>
+    <!-- Navigation starts -->
+    <div class="collapse navbar-collapse">
+        <!-- Links -->
+        <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+                <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                    N/A <b class="caret"></b>
+                </a>
+                <!-- Dropdown menu -->
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="<?php echo $this->url('home/logout') ?>"><i
+                                class="icon-off"></i> <?php echo $this->translate('logout'); ?></a></li>
                 </ul>
+            </li>
 
-            </div>
+        </ul>
 
-        </div>
     </div>
 </div>
 
@@ -112,7 +99,9 @@ $routeMatch = $router->match($request);
                     echo ' current';
                 } ?>"><a href="<?php echo $this->url('admin/dashboard') ?>"><i
                             class="icon-desktop"></i> <?php echo $this->translate('dashboard') ?></a></li>
-                <li class="nred<?php if ($routeMatch->getMatchedRouteName() == 'admin/gallery' || $routeMatch->getMatchedRouteName() == 'admin/gallery/addAlbum') {
+                <li class="nred<?php if ($routeMatch->getMatchedRouteName() == 'admin/gallery'
+                    || $routeMatch->getMatchedRouteName() == 'admin/gallery/addAlbum'
+                ) {
                     echo ' current';
                 } ?>"><a href="<?php echo $this->url('admin/gallery') ?>"><i
                             class="icon-desktop"></i> <?php echo $this->translate('gallery') ?></a></li>
@@ -140,7 +129,7 @@ $routeMatch = $router->match($request);
         </div>
 
         <div class="matter">
-            <div class="container-fluid">
+            <div class="container">
                 <?php echo $this->content ?>
             </div>
         </div>

@@ -1,12 +1,12 @@
-@import url('https://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600');
+.row {
+    padding-right: 20px;
+    padding-left: 20px;
+}
 
-* {
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false) !important;
-    text-shadow: none !important;
-    font-family: "Open Sans", Arial, Helvetica, sans-serif;
-    font-weight: 400;
+.empty-content {
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .navbar * {
@@ -39,7 +39,6 @@ input[type="radio"], input[type="checkbox"] {
 }
 
 .btn {
-    background-image: none !important;
     font-family: "Open Sans", Arial, Helvetica, sans-serif;
 }
 
@@ -186,13 +185,7 @@ a.btn {
     background: #459fc9 !important;
 }
 
-.btn.btn-success {
-    background: #43c83c !important;
-}
 
-.btn.btn-success:hover {
-    background: #36a530 !important;
-}
 
 .btn.btn-warning {
     background: #f88529 !important;
@@ -1410,7 +1403,6 @@ form label {
     .col-left {
         width: 100%;
         float: none;
-        margin-right: none;
     }
 
     .col-right {

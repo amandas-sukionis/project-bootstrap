@@ -1,64 +1,68 @@
-<div class="widget wred">
-    <div class="widget-head">
-        <div class="pull-left"> <?php echo $this->translate('gallery_albums') ?></div>
-        <div class="widget-icons pull-right">
-            <a href="#" class="wminimize"><i class="icon-chevron-up"></i></a>
-        </div>
-        <div class="clearfix"></div>
-    </div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="widget wred">
+            <div class="widget-head">
+                <div class="pull-left"> <?php echo $this->translate('gallery_albums') ?></div>
+                <div class="widget-icons pull-right">
+                    <a href="#" class="wminimize"><i class="icon-chevron-up"></i></a>
+                </div>
+                <div class="clearfix"></div>
+            </div>
 
-    <div class="widget-content">
-        <table class="table  table-bordered ">
-            <?php if ($this->galleryAlbums) { ?>
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th><?php echo $this->translate('category_name') ?></th>
-                    <th><?php echo $this->translate('category_action') ?></th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php foreach ($galleryAlbums as $category) { ?>
-                    <tr>
-                        <td>1</td>
-                        <td><?php echo $category->getName(); ?></td>
-                        <td>
-                            <a href="<?php echo $this->url(
-                                'admin/editBannerCategory', array('alias' => $category->getAlias())
-                            ); ?>">
-                                <button class="btn btn-mini btn-warning"><i class="icon-pencil"></i></button>
-                            </a>
-                            <a href="#" class="confirm-delete"
-                               data-id="<?php echo $this->url(
-                                   'admin/deleteBannerCategory', array('alias' => $category->getAlias())
-                               ); ?>">
-                                <button class="btn btn-mini btn-danger"><i class="icon-remove"></i></button>
-                            </a>
-                        </td>
-                    </tr>
-                <?php } ?>
-                </tbody>
-            <?php } else {
-                echo $this->translate('no_albums_found');
-            } ?>
-        </table>
-    </div>
-    <div class="widget-foot">
-        <div class="pagination pull-left">
-            <a href="<?php echo $this->url('admin/gallery/addAlbum'); ?>">
-                <button class="btn"><?php echo $this->translate('add_album'); ?></button>
-            </a>
+            <div class="widget-content">
+                <table class="table  table-bordered ">
+                    <?php if ($this->galleryAlbums) { ?>
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th><?php echo $this->translate('category_name') ?></th>
+                            <th><?php echo $this->translate('category_action') ?></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($galleryAlbums as $category) { ?>
+                            <tr>
+                                <td>1</td>
+                                <td><?php echo $category->getName(); ?></td>
+                                <td>
+                                    <a href="<?php echo $this->url(
+                                        'admin/editBannerCategory', array('alias' => $category->getAlias())
+                                    ); ?>">
+                                        <button class="btn btn-mini btn-warning"><i class="icon-pencil"></i></button>
+                                    </a>
+                                    <a href="#" class="confirm-delete"
+                                       data-id="<?php echo $this->url(
+                                           'admin/deleteBannerCategory', array('alias' => $category->getAlias())
+                                       ); ?>">
+                                        <button class="btn btn-mini btn-danger"><i class="icon-remove"></i></button>
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                        </tbody>
+                    <?php
+                    } else {
+                        ?>
+                        <div class="empty-content"><?php echo $this->translate('no_albums_found'); ?></div>
+                    <?php } ?>
+                </table>
+            </div>
+            <div class="widget-foot">
+                <div class="pagination pull-left">
+                    <a href="<?php echo $this->url('admin/gallery/addAlbum'); ?>">
+                        <button class="btn btn-default"><?php echo $this->translate('add_album'); ?></button>
+                    </a>
+                </div>
+                <ul class="pagination pull-right">
+                    <li><a href="#">Prev</a></li>
+                    <li><a href="#">1</a></li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li><a href="#">4</a></li>
+                    <li><a href="#">Next</a></li>
+                </ul>
+                <div class="clearfix"></div>
+            </div>
         </div>
-        <div class="pagination pull-right">
-            <ul>
-                <li><a href="#">Prev</a></li>
-                <li><a href="#">1</a></li>
-                <li><a href="#">2</a></li>
-                <li><a href="#">3</a></li>
-                <li><a href="#">4</a></li>
-                <li><a href="#">Next</a></li>
-            </ul>
-        </div>
-        <div class="clearfix"></div>
     </div>
 </div>

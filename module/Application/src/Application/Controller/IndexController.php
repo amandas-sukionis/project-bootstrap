@@ -12,18 +12,7 @@ class IndexController extends AbstractActionController
 
     public function indexAction()
     {
-        /*$adapter = $this->getAuthenticationService()->getAdapter();
-        $adapter->setIdentityValue('admin');
-        $adapter->setCredentialValue('admin123');
-        $authResult = $this->getAuthenticationService()->authenticate();
-
-        if ($authResult->isValid()) {
-
-        }*/
-
-
         $uploadImageForm = $this->getServiceLocator()->get('Application\Form\UploadImageForm');
-        //die(var_dump($uploadImageForm->getMyInputFilter()));
 
         $viewModel = new ViewModel();
         $request    = $this->getRequest();

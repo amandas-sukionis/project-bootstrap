@@ -1,0 +1,47 @@
+<?php
+$form = $this->addAlbumForm;
+$form->prepare();
+?>
+<div class="widget wred">
+    <div class="widget-head">
+        <div class="pull-left"><?php echo $this->translate('add_album'); ?></div>
+        <div class="widget-icons pull-right">
+            <a href="#" class="wminimize"><i class="icon-chevron-up"></i></a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="widget-content">
+        <div class="padd">
+            <hr/>
+            <?php echo $this->form()->openTag($form); ?>
+            <div class='select-radio'>
+                <label><?php echo $this->translate('album_name') ?></label>
+                <?php echo $this->formRow($form->get('name')); ?>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="inputLink"><?php echo $this->translate('album_location') ?></label>
+                <div class="controls">
+                    <?php echo $this->formRow($form->get('location')); ?>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="inputName"><?php echo $this->translate('album_short_description') ?></label>
+                <div class="controls">
+                    <?php echo $this->formRow($form->get('shortDescription')); ?>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="inputAlias"><?php echo $this->translate('album_full_description') ?></label>
+
+                <div class="controls">
+                    <?php echo $this->formRow($form->get('fullDescription')); ?>
+                </div>
+            </div>
+            <?php echo $this->formRow($form->get('addAlbumFormSubmit')->setAttribute('class', 'btn btn-success')->setAttribute('value', $this->translate('add'))); ?>
+            <?php echo $this->form()->closeTag($form); ?>
+        </div>
+    </div>
+    <div class="widget-foot">
+        <!-- Footer goes here -->
+    </div>
+</div>
