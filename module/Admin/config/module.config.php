@@ -44,6 +44,32 @@ return [
                                     ],
                                 ],
                             ],
+                            'editAlbum' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/editAlbum/:alias',
+                                    'defaults'    => [
+                                        'controller' => 'Admin\Controller\GalleryController',
+                                        'action'     => 'editAlbum',
+                                    ],
+                                    'constraints' => [
+                                        'alias' => '[a-zA-Z0-9][a-zA-Z0-9_-]*',
+                                    ],
+                                ],
+                            ],
+                            'deleteAlbum' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/deleteAlbum/:alias',
+                                    'defaults'    => [
+                                        'controller' => 'Admin\Controller\GalleryController',
+                                        'action'     => 'deleteAlbum',
+                                    ],
+                                    'constraints' => [
+                                        'alias' => '[a-zA-Z0-9][a-zA-Z0-9_-]*',
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
                 ],

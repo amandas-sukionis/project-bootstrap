@@ -1,0 +1,48 @@
+<?php
+$form = $this->albumForm;
+$form->prepare();
+?>
+<div class="row">
+    <div class="col-md-12">
+        <div class="widget wred">
+            <div class="widget-head">
+                <div class="pull-left"><?php echo $this->translate($this->action); ?></div>
+                <div class="widget-icons pull-right">
+                    <a href="#" class="wminimize"><i class="icon-chevron-up"></i></a>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="widget-content">
+                <div class="padd">
+                    <?php echo $this->form()->openTag($form); ?>
+                    <div class='form-group'>
+                        <label for="name"><?php echo $this->translate('album_name') ?></label>
+                        <?php echo $this->formRow($form->get('name')->setAttribute('class', 'form-control')); ?>
+                    </div>
+                    <div class="form-group">
+                        <label for="location"><?php echo $this->translate('album_location') ?></label>
+                        <?php echo $this->formRow($form->get('location')->setAttribute('class', 'form-control')); ?>
+                    </div>
+                    <div class="form-group">
+                        <label for="shortDescription"><?php echo $this->translate('album_short_description') ?></label>
+                        <?php echo $this->formRow(
+                            $form->get('shortDescription')->setAttribute('class', 'form-control')
+                        ); ?>
+                    </div>
+                    <div class="form-group">
+                        <label for="fullDescription"><?php echo $this->translate('album_full_description') ?></label>
+                        <?php echo $this->formRow(
+                            $form->get('fullDescription')->setAttribute('class', 'form-control')
+                        ); ?>
+                    </div>
+                    <?php echo $this->formRow(
+                        $form->get('addAlbumFormSubmit')->setAttribute('class', 'btn btn-success')->setAttribute(
+                            'value', $this->translate('add')
+                        )
+                    ); ?>
+                    <?php echo $this->form()->closeTag($form); ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

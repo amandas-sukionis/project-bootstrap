@@ -12,6 +12,7 @@ class AdminController extends AbstractActionController
 {
     protected $authenticationService;
     protected $translationService;
+    protected $galleryModel;
 
     public function indexAction()
     {
@@ -49,7 +50,7 @@ class AdminController extends AbstractActionController
 
     protected function galleryAction()
     {
-        $galleryAlbums = null;
+        $galleryAlbums = $this->getGalleryModel()->getAllGalleryAlbums();
 
         return [
             'galleryAlbums' => $galleryAlbums,
@@ -74,4 +75,11 @@ class AdminController extends AbstractActionController
         return $this->translationService;
     }
 
+    protected function getGalleryModel()
+    {
+        if (!$this->galleryModel) {
+            $this->galleryModel = $this->getServiceLocator()->get('Application\Model\GalleryModel');
+        }
+        return $this->galleryModel;
+    }
 }

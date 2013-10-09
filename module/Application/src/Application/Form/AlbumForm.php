@@ -6,7 +6,7 @@ use Zend\Form\Form;
 use Zend\InputFilter\Input;
 use Zend\InputFilter\InputFilter;
 
-class AddAlbumForm extends Form
+class AlbumForm extends Form
 {
     protected $inputFilter;
 

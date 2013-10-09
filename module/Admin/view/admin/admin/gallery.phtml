@@ -20,19 +20,19 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <?php foreach ($galleryAlbums as $category) { ?>
+                        <?php foreach ($this->galleryAlbums as $key=>$galleryAlbum) { ?>
                             <tr>
-                                <td>1</td>
-                                <td><?php echo $category->getName(); ?></td>
+                                <td><?php echo $key + 1; ?></td>
+                                <td><?php echo $galleryAlbum->getName(); ?></td>
                                 <td>
                                     <a href="<?php echo $this->url(
-                                        'admin/editBannerCategory', array('alias' => $category->getAlias())
+                                        'admin/gallery/editAlbum', array('alias' => $galleryAlbum->getAlias())
                                     ); ?>">
                                         <button class="btn btn-mini btn-warning"><i class="icon-pencil"></i></button>
                                     </a>
                                     <a href="#" class="confirm-delete"
                                        data-id="<?php echo $this->url(
-                                           'admin/deleteBannerCategory', array('alias' => $category->getAlias())
+                                           'admin/gallery/deleteAlbum', array('alias' => $galleryAlbum->getAlias())
                                        ); ?>">
                                         <button class="btn btn-mini btn-danger"><i class="icon-remove"></i></button>
                                     </a>

@@ -53,7 +53,7 @@ return [
         'invokables'         => [
             'Application\Form\UploadImageForm' => 'Application\Form\UploadImageForm',
             'Application\Form\LoginForm'       => 'Application\Form\LoginForm',
-            'Application\Form\AddAlbumForm'       => 'Application\Form\AddAlbumForm',
+            'Application\Form\AlbumForm'       => 'Application\Form\AlbumForm',
             'Application\Model\GalleryModel'   => 'Application\Model\GalleryModel',
             'Application\Model\UserModel'      => 'Application\Model\UserModel',
         ],
