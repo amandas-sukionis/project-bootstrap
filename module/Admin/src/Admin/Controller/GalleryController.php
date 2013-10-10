@@ -2,7 +2,6 @@
 
 namespace Admin\Controller;
 
-use Application\Entity\GalleryAlbum;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use Zend\Mvc\Controller\AbstractActionController;
 
@@ -46,7 +45,8 @@ class GalleryController extends AbstractActionController
             $postData = $request->getPost();
             $AlbumForm->setData($postData);
             if ($AlbumForm->isValid()) {
-                //$this->redirect()->toRoute('admin/gallery');
+                $entityManager->flush();
+                $this->redirect()->toRoute('admin/gallery');
             }
         }
 
@@ -56,7 +56,17 @@ class GalleryController extends AbstractActionController
         ];
     }
 
-    protected function getAuthenticationService()
+    public function deleteAlbumAction()
+    {
+        $alias = $this->params()->fromRoute('alias');
+        $album = $this->getGalleryModel()->getAlbumByAlias($alias);
+        $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
+        $entityManager->remove($album);
+        $entityManager->flush();
+        $this->redirect()->toRoute('admin/gallery');
+    }
+
+        protected function getAuthenticationService()
     {
         if (!$this->authenticationService) {
             $this->authenticationService = $this->getServiceLocator()->get('Zend\Authentication\AuthenticationService');
