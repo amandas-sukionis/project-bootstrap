@@ -21,12 +21,10 @@ class AlbumForm extends Form
     public function addFormInputs()
     {
         $nameInput = new Element\Text();
-        $nameInput
-            ->setName('name');
+        $nameInput->setName('name');
 
         $aliasInput = new Element\Text();
-        $aliasInput
-            ->setName('alias');
+        $aliasInput->setName('alias');
 
         $locationInput = new Element\Text();
         $locationInput
@@ -34,13 +32,18 @@ class AlbumForm extends Form
             ->setAttribute('id', 'location');
 
         $shortDescriptionInput = new Element\Textarea();
-        $shortDescriptionInput
-            ->setName('shortDescription');
+        $shortDescriptionInput->setName('shortDescription');
 
         $fullDescriptionInput = new Element\Textarea();
-        $fullDescriptionInput
-            ->setName('fullDescription');
+        $fullDescriptionInput->setName('fullDescription');
 
+        $locationLatInput = new Element\Hidden('locationLat');
+        $locationLatInput->setAttribute('id', 'locationLat');
+
+        $locationLngInput = new Element\Hidden('locationLng');
+        $locationLngInput->setAttribute('id', 'locationLng');
+
+        $csrf = new Element\Csrf('csrf');
 
         $submitButton = new Element\Submit();
         $submitButton
@@ -52,6 +55,9 @@ class AlbumForm extends Form
             ->add($locationInput)
             ->add($shortDescriptionInput)
             ->add($fullDescriptionInput)
+            ->add($locationLatInput)
+            ->add($locationLngInput)
+            ->add($csrf)
             ->add($submitButton);
     }
 
@@ -75,11 +81,19 @@ class AlbumForm extends Form
             $fullDescriptionInput = new Input('fullDescription');
             $fullDescriptionInput->setRequired(false);
 
+            $locationLngInput = new Input('locationLng');
+            $locationLngInput->setRequired(false);
+
+            $locationLatInput = new Input('locationLat');
+            $locationLatInput->setRequired(false);
+
             $inputFilter
                 ->add($nameInput)
                 ->add($aliasInput)
                 ->add($locationInput)
                 ->add($shortDescriptionInput)
+                ->add($locationLatInput)
+                ->add($locationLngInput)
                 ->add($fullDescriptionInput);
 
             $this->inputFilter = $inputFilter;

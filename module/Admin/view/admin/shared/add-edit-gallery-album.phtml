@@ -19,10 +19,16 @@ $form->prepare();
                         <label for="name"><?php echo $this->translate('album_name') ?></label>
                         <?php echo $this->formRow($form->get('name')->setAttribute('class', 'form-control')); ?>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group col-lg-10 padding-left-0 padding-right-0">
                         <label for="location"><?php echo $this->translate('album_location') ?></label>
-                        <span id="get-location" class="btn btn-xs btn-warning">Get location</span>
                         <?php echo $this->formRow($form->get('location')->setAttribute('class', 'form-control')); ?>
+                    </div>
+                    <div class="form-group col-lg-2 padding-right-0">
+                        <label></label>
+
+                        <div id="get-location" class="btn btn-warning form-control"><?php echo $this->translate(
+                                'set_location_on_map'
+                            ); ?></div>
                     </div>
                     <div id="map-canvas"></div>
                     <div class="form-group">
@@ -37,6 +43,9 @@ $form->prepare();
                             $form->get('fullDescription')->setAttribute('class', 'form-control')
                         ); ?>
                     </div>
+                    <?php echo $this->formRow($form->get('locationLat')); ?>
+                    <?php echo $this->formRow($form->get('locationLng')); ?>
+                    <?php echo $this->formRow($form->get('csrf')); ?>
                     <?php echo $this->formRow(
                         $form->get('addAlbumFormSubmit')->setAttribute('class', 'btn btn-success')->setAttribute(
                             'value', $this->translate('add')
@@ -50,13 +59,36 @@ $form->prepare();
 </div>
 <script type="text/javascript">
     function initialize() {
-        var mapOptions = {
-            center: new google.maps.LatLng(55.364283, 23.917816),
-            zoom: 7,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
+        if (($("#locationLat").val() != '') && ($("#locationLng").val() != '')) {
+            $("#map-canvas").show();
+
+            var locationLatlng = new google.maps.LatLng($("#locationLat").val(), $("#locationLng").val());
+
+            var mapOptions = {
+                center: locationLatlng,
+                zoom: 7,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+        } else {
+            var mapOptions = {
+                center: new google.maps.LatLng(55.364283, 23.917816),
+                zoom: 7,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+        }
+
         map = new google.maps.Map(document.getElementById("map-canvas"),
             mapOptions);
+
+
+        if (($("#locationLat").val() != '') && ($("#locationLng").val() != '')) {
+            marker = new google.maps.Marker({
+                position: locationLatlng,
+                map: map
+            });
+
+            map.panTo(locationLatlng);
+        }
     }
 
     google.maps.event.addDomListener(window, 'load', initialize);
@@ -64,24 +96,44 @@ $form->prepare();
     $("#get-location").click(function () {
         if ($("#location").val() != '') {
             var address = $("#location").val().replace(/ /g, '+');
-
             $.getJSON("http://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&sensor=false", function (data) {
-                console.log(data.results[0].geometry.location.lat + ' ' + data.results[0].geometry.location.lng);
-                var locationLatlng = new google.maps.LatLng(data.results[0].geometry.location.lat, data.results[0].geometry.location.lng);
-                if (typeof marker != 'undefined') {
-                    marker.setMap(null);
+                if (data.status != "ZERO_RESULTS") {
+                    $("#map-canvas").show();
+                    google.maps.event.trigger(map,'resize');
+                    var locationLatlng = new google.maps.LatLng(data.results[0].geometry.location.lat, data.results[0].geometry.location.lng);
+                    if (typeof marker != 'undefined') {
+                        marker.setMap(null);
+                    }
+                    marker = new google.maps.Marker({
+                        position: locationLatlng,
+                        map: map
+                    });
+                    map.panTo(locationLatlng);
+                    $("#locationLat").val(data.results[0].geometry.location.lat);
+                    $("#locationLng").val(data.results[0].geometry.location.lng);
+                } else {
+                    alert('<?php echo $this->translate('no_location_found'); ?>');
                 }
-                marker = new google.maps.Marker({
-                    position: locationLatlng,
-                    map: map
-                });
-                map.panTo(locationLatlng);
-                $("#location").val(data.results[0].geometry.location.lat + ", " + data.results[0].geometry.location.lng);
             });
-
-
         } else {
-            alert('please write address');
+            alert('<?php echo $this->translate('specify_location_first'); ?>');
         }
     });
+
+    $("#location").change(function () {
+        resetMap();
+    });
+
+    $("#location").bind('input', function () {
+        resetMap();
+    });
+
+    function resetMap() {
+        if (typeof marker != 'undefined') {
+            marker.setMap(null);
+        }
+        $("#locationLat").val('');
+        $("#locationLng").val('');
+        $("#map-canvas").hide();
+    }
 </script>

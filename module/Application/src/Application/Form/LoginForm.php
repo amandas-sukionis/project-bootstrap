@@ -21,13 +21,12 @@ class LoginForm extends Form
     public function addFormInputs()
     {
         $usernameInput = new Element\Text();
-        $usernameInput
-            ->setName('loginFormUsername');
+        $usernameInput->setName('loginFormUsername');
 
         $passwordInput = new Element\Password();
-        $passwordInput
-            ->setName('loginFormPassword');
+        $passwordInput->setName('loginFormPassword');
 
+        $csrf = new Element\Csrf('csrf');
 
         $submitButton = new Element\Submit();
         $submitButton
@@ -37,6 +36,7 @@ class LoginForm extends Form
         $this
             ->add($usernameInput)
             ->add($passwordInput)
+            ->add($csrf)
             ->add($submitButton);
     }
 

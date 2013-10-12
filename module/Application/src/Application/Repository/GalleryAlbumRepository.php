@@ -18,6 +18,8 @@ class GalleryAlbumRepository extends EntityRepository
         $galleryAlbum = new GalleryAlbum();
         $galleryAlbum->setName($postData['name']);
         $galleryAlbum->setLocation($postData['location']);
+        $galleryAlbum->setLocationLat($postData['locationLat']);
+        $galleryAlbum->setLocationLng($postData['locationLng']);
         $galleryAlbum->setShortDescription($postData['shortDescription']);
         $galleryAlbum->setFullDescription($postData['fullDescription']);
         $galleryAlbum->setCreateDate(new \DateTime('NOW'));
