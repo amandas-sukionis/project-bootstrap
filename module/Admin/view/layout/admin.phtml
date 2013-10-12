@@ -46,6 +46,7 @@ $routeMatch = $router->match($request);
         ->appendFile($this->basePath() . '/admin-assets/js/jquery.toggle.buttons.js')
         ->appendFile($this->basePath() . '/admin-assets/js/filter.js')
         ->appendFile($this->basePath() . '/admin-assets/js/custom.js')
+        ->appendFile("https://maps.googleapis.com/maps/api/js?key=AIzaSyCYVqiIopFC0zpXH6pOYcdPq0bjOJY6wV8&sensor=false")
         ->appendFile($this->basePath() . '/admin-assets/js/charts.js'); ?>
 
     <!-- HTML5 Support for IE -->

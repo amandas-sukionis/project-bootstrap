@@ -30,7 +30,8 @@ class AlbumForm extends Form
 
         $locationInput = new Element\Text();
         $locationInput
-            ->setName('location');
+            ->setName('location')
+            ->setAttribute('id', 'location');
 
         $shortDescriptionInput = new Element\Textarea();
         $shortDescriptionInput
