@@ -48,7 +48,7 @@ class AdminController extends AbstractActionController
 
     }
 
-    protected function galleryAction()
+    protected function adminGalleryAction()
     {
         $galleryAlbums = $this->getGalleryModel()->getAllGalleryAlbums();
 

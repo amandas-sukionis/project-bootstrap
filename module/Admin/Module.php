@@ -30,6 +30,8 @@ class Module
         $app = $e->getApplication();
         $em = $app->getEventManager();
         $this->serviceManager = $app->getServiceManager();
+        $this->getAuthenticationService();
+        //die(var_dump($this->getAuthenticationService()->hasIdentity()));
         $em->attach(MvcEvent::EVENT_DISPATCH, array($this, 'selectLayoutBasedOnRoute'));
     }
 
@@ -37,7 +39,7 @@ class Module
     {
         $match = $e->getRouteMatch();
         $controller = $e->getTarget();
-
+        //die(var_dump($match->getMatchedRouteName()));
         if ($match->getMatchedRouteName() == 'admin') {
             $controller->layout('layout/admin-login');
         } else {
@@ -60,4 +62,5 @@ class Module
 
         return $this->authenticationService;
     }
+
 }

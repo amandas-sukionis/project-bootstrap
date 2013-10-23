@@ -4,6 +4,16 @@
     display: none;
 }
 
+.save-image-container {
+    border: 1px solid #ddd;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.save-image-container .padd {
+    padding: 15px;
+}
+
 .padding-left-0 {
     padding-left: 0;
 }

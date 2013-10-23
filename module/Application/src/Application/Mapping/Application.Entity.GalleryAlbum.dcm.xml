@@ -13,5 +13,7 @@
         <field name="locationLat" type="string" nullable="true"/>
         <field name="locationLng" type="string" nullable="true"/>
         <field name="createDate" type="datetime"/>
+        <field name="imagesCount" type="integer" nullable="false"/>
+        <one-to-many field="images" target-entity="GalleryImage" mapped-by="album" />
     </entity>
 </doctrine-mapping>

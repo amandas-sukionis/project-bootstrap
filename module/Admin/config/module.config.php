@@ -23,13 +23,23 @@ return [
                             ],
                         ],
                     ],
-                    'gallery'  => [
+                    'upload-progress' => [
                         'type'    => 'Literal',
                         'options' => [
-                            'route'    => '/gallery',
+                            'route'       => '/upload-progress',
+                            'defaults'    => [
+                                'controller' => 'Admin\Controller\GalleryController',
+                                'action'     => 'uploadProgress',
+                            ],
+                        ],
+                    ],
+                    'adminGallery'  => [
+                        'type'    => 'Literal',
+                        'options' => [
+                            'route'    => '/admin-gallery',
                             'defaults' => [
                                 'controller' => 'Admin\Controller\AdminController',
-                                'action'     => 'gallery',
+                                'action'     => 'adminGallery',
                             ],
                         ],
                         'may_terminate' => true,
@@ -37,7 +47,7 @@ return [
                             'addAlbum' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'       => '/addAlbum',
+                                    'route'       => '/add-album',
                                     'defaults'    => [
                                         'controller' => 'Admin\Controller\GalleryController',
                                         'action'     => 'addAlbum',
@@ -47,10 +57,36 @@ return [
                             'editAlbum' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'       => '/editAlbum/:alias',
+                                    'route'       => '/edit-album/:alias',
                                     'defaults'    => [
                                         'controller' => 'Admin\Controller\GalleryController',
                                         'action'     => 'editAlbum',
+                                    ],
+                                    'constraints' => [
+                                        'alias' => '[a-zA-Z0-9][a-zA-Z0-9_-]*',
+                                    ],
+                                ],
+                            ],
+                            'uploadAlbumImages' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/upload-album-images/:alias',
+                                    'defaults'    => [
+                                        'controller' => 'Admin\Controller\GalleryController',
+                                        'action'     => 'uploadAlbumImages',
+                                    ],
+                                    'constraints' => [
+                                        'alias' => '[a-zA-Z0-9][a-zA-Z0-9_-]*',
+                                    ],
+                                ],
+                            ],
+                            'finishImagesUpload' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/finish-images-upload',
+                                    'defaults'    => [
+                                        'controller' => 'Admin\Controller\GalleryController',
+                                        'action'     => 'finishImagesUpload',
                                     ],
                                     'constraints' => [
                                         'alias' => '[a-zA-Z0-9][a-zA-Z0-9_-]*',

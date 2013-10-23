@@ -1,0 +1,176 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="widget wred">
+            <div class="widget-head">
+                <div class="pull-left"><?php echo $this->translate('upload_images'); ?></div>
+                <div class="widget-icons pull-right">
+                    <a href="#" class="wminimize"><i class="icon-chevron-up"></i></a>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="widget-content">
+                <div class="padd">
+                    <div id="progress" class="help-block">
+                        <div class="progress progress-striped active">
+                            <div class="progress-bar" role="progressbar">
+                            </div>
+                        </div>
+                    </div>
+                    <?php
+                    $form = $this->uploadImageForm;
+                    //$form->setAttribute('action', $this->url('admin/adminGallery/manageAlbumImages', ['alias' => 'asd']));
+                    $form->prepare();
+                    echo $this->form()->openTag($form);
+                    echo $this->formFileUploadProgress();
+                    $fileElement = $form->get('uploadImageFile');
+                    echo $this->formFile($fileElement);
+                    echo $this->formRow($form->get('csrf'));
+                    echo $this->formElementErrors($fileElement);
+                    ?>
+                    <div id="file-errors" class="help-block"></div> <?php
+                    echo $this->formSubmit(
+                        $form->get('uploadImageFormSubmit')->setAttribute('class', 'btn btn-primary')
+                            ->setAttribute('value', $this->translate('submit'))
+                    );
+                    echo $this->form()->closeTag($form);
+                    ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="loadedImages">
+</div>
+
+<script>
+    hideProgress();
+
+    function hideErrors() {
+        $('#file-errors').hide();
+    }
+
+    function showErrors(message) {
+        $('#file-errors').show().html(message);
+    }
+
+    function hideFormElements() {
+        $('#uploadImageFile').hide();
+        $('#uploadImageFormSubmit').hide();
+    }
+
+    function showFormElements() {
+        $('#uploadImageFile').show();
+        $('#uploadImageFormSubmit').show();
+    }
+
+    var progressInterval;
+
+    function hideProgress() {
+        $('#progress').hide();
+    }
+
+    function showProgress(amount, message) {
+        $('#progress').show();
+        $('#progress .progress-bar').width(amount + '%');
+        $('#progress > p').html(message);
+        if (amount < 100) {
+            $('#progress .progress')
+                .addClass('active')
+                .addClass('progress-info')
+                .removeClass('progress-success');
+        } else {
+            $('#progress .progress')
+                .removeClass('active')
+                .removeClass('progress-info')
+                .addClass('progress-success');
+        }
+    }
+
+    function getProgress() {
+        var url = '/admin/upload-progress?id=' + $('#progress_key').val();
+        $.getJSON(url, function (data) {
+            console.log(data);
+            if (data.status && !data.status.done) {
+                var value = Math.floor((data.status.current / data.status.total) * 100);
+                showProgress(value, 'Uploading...');
+            } else {
+                showProgress(100, 'Complete!');
+                clearInterval(progressInterval);
+            }
+        });
+    }
+
+    function startProgress() {
+        showProgress(0, 'Starting upload...');
+        progressInterval = setInterval(getProgress, 300);
+    }
+
+    function loadImageDiv(url, id) {
+        $('<div/>', {
+            'class': 'row', html: getImageHtml()
+        }).hide().appendTo('#loadedImages').slideDown('slow');
+    }
+
+    function getImageHtml() {
+        var $col = $('<div/>', {
+            class: 'col-md-12'
+        });
+
+        var $saveImageContainer = $('<div/>', {
+            class: 'save-image-container'
+        });
+
+        var $padd = $('<div/>', {
+            class: 'padd',
+            text: 'asd'
+        });
+
+
+        $saveImageContainer.append($padd);
+        $col.append($saveImageContainer);
+
+        return $col;
+//        var $div =
+//        jQuery('<div/>', {
+//            id: 'foo',
+//            name: 'mainDiv',
+//            class: 'wrapper',
+//            click: function() {
+//                $( this ).toggleClass( "test" );
+//            } }).appendTo('#selector');
+
+    }
+
+    $(function () {
+        $('#uploadImageForm').on('submit', function (e) {
+            e.preventDefault();
+
+            if ($('#uploadImageFile').val() == '') {
+                showErrors('No file(s) selected');
+                return;
+            }
+
+            hideFormElements();
+            hideErrors();
+            hideProgress();
+
+            //$.fn.ajaxSubmit.debug = true;
+            $(this).ajaxSubmit({
+                //target: '#output',
+                success: function (response, statusText, xhr, $form) {
+                    console.log(response);
+                    //alert(response.images);
+                    $.each(response.images, function (index, value) {
+                        loadImageDiv(value.url, value.id);
+                    });
+                    showFormElements();
+                },
+                error: function (a, b, c) {
+                    console.log(a, b, c);
+                    showFormElements();
+                }
+            });
+            startProgress();
+        });
+    });
+</script>

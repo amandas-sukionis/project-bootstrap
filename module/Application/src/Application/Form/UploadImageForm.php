@@ -3,10 +3,11 @@ namespace Application\Form;
 
 use Zend\Form\Element;
 use Zend\Form\Form;
+use Zend\InputFilter\FileInput;
 use Zend\InputFilter\Input;
-use Zend\InputFilter\InputFilter;
 use Zend\Validator;
 use Zend\Validator\File\MimeType;
+use Zend\InputFilter;
 
 class UploadImageForm extends Form
 {
@@ -21,39 +22,41 @@ class UploadImageForm extends Form
 
     public function addFormInputs()
     {
-        $this
-            ->setAttribute('method', 'post');
-
-        $imageFile = new Element\File();
+        $imageFile = new Element\File('uploadImageFile');
         $imageFile
-            ->setName('uploadImageFile')
-            ->setAttribute('id', 'uploadImageFile');
-
-        $submit = new Element\Submit();
-        $submit
-            ->setName('uploadImageFile')
             ->setAttribute('id', 'uploadImageFile')
-            ->setValue('upload');
+            ->setAttribute('multiple', true);
+
+        $csrf = new Element\Csrf('csrf');
+
+        $submitButton = new Element\Submit();
+        $submitButton
+            ->setName('uploadImageFormSubmit')
+            ->setAttribute('id', 'uploadImageFormSubmit');
 
         $this
             ->add($imageFile)
-            ->add($submit);
+            ->add($csrf)
+            ->add($submitButton);
     }
 
     public function getMyInputFilter()
     {
         if (!$this->inputFilter) {
-            $inputFilter = new InputFilter();
+            $inputFilter = new InputFilter\InputFilter();
 
-            $imageFile = new Input('uploadImageFile');
+            $imageFile = new InputFilter\FileInput('uploadImageFile');
             $imageFile->setRequired(true);
-            $imageFile->getValidatorChain()->addValidator(new \Zend\Validator\File\MimeType('image/png,image/jpg'));
+            $imageFile->getValidatorChain() //->addValidator(new \Zend\Validator\File\MimeType('image/png,image/jpg'));
+                ->attachByName('filemimetype', array('mimeType' => 'image/png,image/jpg,image/jpeg'))
+                ->attachByName('filesize', array('max' => 5242880));
 
             $inputFilter
                 ->add($imageFile);
 
             $this->inputFilter = $inputFilter;
         }
+
         return $this->inputFilter;
     }
 }

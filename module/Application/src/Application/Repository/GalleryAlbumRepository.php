@@ -3,6 +3,7 @@ namespace Application\Repository;
 
 use Application\Entity\GalleryAlbum;
 use Doctrine\ORM\EntityRepository;
+use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 
 class GalleryAlbumRepository extends EntityRepository
 {
@@ -15,15 +16,17 @@ class GalleryAlbumRepository extends EntityRepository
     }
 
     public function addNewAlbum ($postData) {
+        $hydrator = new DoctrineObject(
+            $this->getEntityManager(),
+            'Application\Entity\GalleryAlbum'
+        );
+
+        $postData = (Array) $postData;
         $galleryAlbum = new GalleryAlbum();
-        $galleryAlbum->setName($postData['name']);
-        $galleryAlbum->setLocation($postData['location']);
-        $galleryAlbum->setLocationLat($postData['locationLat']);
-        $galleryAlbum->setLocationLng($postData['locationLng']);
-        $galleryAlbum->setShortDescription($postData['shortDescription']);
-        $galleryAlbum->setFullDescription($postData['fullDescription']);
+        $galleryAlbum = $hydrator->hydrate($postData, $galleryAlbum);
         $galleryAlbum->setCreateDate(new \DateTime('NOW'));
         $galleryAlbum->setAlias($this->getUniqueAlias($this->slugify($postData['name'])));
+        $galleryAlbum->setImagesCount(0);
 
         $this->getEntityManager()->persist($galleryAlbum);
         $this->getEntityManager()->flush();

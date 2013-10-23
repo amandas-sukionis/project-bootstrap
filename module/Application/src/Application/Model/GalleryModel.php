@@ -1,6 +1,7 @@
 <?php
 namespace Application\Model;
 
+use Application\Entity\GalleryAlbum;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -19,25 +20,35 @@ class GalleryModel implements ServiceLocatorAwareInterface
         return $this->serviceLocator;
     }
 
-    public function uploadImageFile($postData)
+    public function moveImageFiles($postData, $alias)
     {
         if (!file_exists('public/img/gallery')) {
             mkdir('public/img/gallery');
         }
 
-        $oldName = $postData['uploadImageFile']['name'];
-        $tmpFile = $postData['uploadImageFile']['tmp_name'];
-
-        $newFileName = 'public/img/gallery/' . $oldName;
-        $url = '/img/gallery/' . $oldName;
-        if (file_exists($newFileName)) {
-            $newFileName = 'public/img/gallery/' . date('Y-m-d') . '-' . $oldName;
-            $url = '/img/gallery/' . date('Y-m-d') . '-' . $oldName;
+        if (!file_exists('public/img/gallery/' . $alias)) {
+            mkdir('public/img/gallery/' . $alias);
         }
 
-        move_uploaded_file($tmpFile, $newFileName);
+        $images = [];
+        foreach ($postData['uploadImageFile'] as $image) {
+            $tmpFile = $image['tmp_name'];
+            $newFileName = 'public/img/gallery/' . $alias . '/' . uniqid();
+            $url = '/img/gallery/' . $alias . '/' . uniqid();
+            move_uploaded_file($tmpFile, $newFileName);
 
-        return $url;
+            $album = $this->getAlbumByAlias($alias);
+            $id = $this->addNewImage($url, $album);
+
+            $images[] = ['id' => $id, 'url' => $url];
+        }
+
+        return $images;
+    }
+
+    public function addNewImage($url, GalleryAlbum $album)
+    {
+        return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->addNewImage($url, $album);
     }
 
     public function getAllGalleryAlbums()

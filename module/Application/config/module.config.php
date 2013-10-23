@@ -41,6 +41,16 @@ return [
                             ],
                         ],
                     ],
+                    'gallery'     => [
+                        'type'    => 'Literal',
+                        'options' => [
+                            'route'    => 'gallery',
+                            'defaults' => [
+                                'controller' => 'Application\Controller\Gallery',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -73,8 +83,8 @@ return [
     ],
     'controllers'     => [
         'invokables' => [
-            'Application\Controller\Index' => 'Application\Controller\IndexController',
-            'Application\Controller\Login' => 'Application\Controller\LoginController',
+            'Application\Controller\Index'   => 'Application\Controller\IndexController',
+            'Application\Controller\Login'   => 'Application\Controller\LoginController',
             'Application\Controller\Gallery' => 'Application\Controller\GalleryController'
         ],
     ],
@@ -93,6 +103,9 @@ return [
         'template_path_stack'      => [
             __DIR__ . '/../view',
         ],
+        'strategies'               => array(
+            'ViewJsonStrategy',
+        ),
     ],
     // Placeholder for console routes
     'console'         => [

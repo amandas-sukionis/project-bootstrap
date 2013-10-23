@@ -6,7 +6,7 @@ return array(
         'DoctrineModule',
         'DoctrineORMModule',
         'Application',
-        'Admin',
+        'Admin'
     ),
 
     // These are various options for the listeners attached to the ModuleManager

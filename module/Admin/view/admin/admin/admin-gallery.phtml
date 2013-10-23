@@ -10,7 +10,7 @@
                 ...
             </div>
             <div class="modal-footer">
-                <a href="<?php echo $this->url('admin/gallery', array('alias' => '')); ?>"
+                <a href="<?php echo $this->url('admin/adminGallery', array('alias' => '')); ?>"
                    class="btn btn-danger"><?php echo $this->translate('yes') ?></a>
                 <a href="javascript:$('#myModal').modal('hide')" class="btn btn-default"><?php echo $this->translate(
                         'no'
@@ -36,8 +36,9 @@
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th><?php echo $this->translate('category_name') ?></th>
-                            <th><?php echo $this->translate('category_action') ?></th>
+                            <th><?php echo $this->translate('album_name') ?></th>
+                            <th><?php echo $this->translate('album_manage_images') ?></th>
+                            <th><?php echo $this->translate('album_actions') ?></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -45,15 +46,23 @@
                             <tr>
                                 <td><?php echo $key + 1; ?></td>
                                 <td><?php echo $galleryAlbum->getName(); ?></td>
+                                <td><a href="<?php echo $this->url(
+                                        'admin/adminGallery/uploadAlbumImages', array('alias' => $galleryAlbum->getAlias())
+                                    ); ?>"><?php echo
+                                            $this->translate('album_manage_images') . ' ('
+                                            . $galleryAlbum->getImagesCount()
+                                            . ')'; ?>
+                                </td>
                                 <td>
                                     <a href="<?php echo $this->url(
-                                        'admin/gallery/editAlbum', array('alias' => $galleryAlbum->getAlias())
+                                        'admin/adminGallery/editAlbum', array('alias' => $galleryAlbum->getAlias())
                                     ); ?>">
-                                        <button class="btn btn-mini btn-warning"><i class="icon-pencil"></i></button>
+                                        <button class="btn btn-xs btn-warning"><i class="icon-pencil"></i></button>
                                     </a>
-                                    <a data-toggle="modal" href="#myModal" class="remove-item btn btn-danger btn-sm" data-delete-url="<?php echo $this->url(
-                                        'admin/gallery/deleteAlbum', array('alias' => $galleryAlbum->getAlias())
-                                    ); ?>"><i class="icon-remove"></i></a>
+                                    <a data-toggle="modal" href="#myModal" class="remove-item btn btn-danger btn-xs"
+                                       data-delete-url="<?php echo $this->url(
+                                           'admin/adminGallery/deleteAlbum', array('alias' => $galleryAlbum->getAlias())
+                                       ); ?>"><i class="icon-remove"></i></a>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -67,7 +76,7 @@
             </div>
             <div class="widget-foot">
                 <div class="pagination pull-left">
-                    <a href="<?php echo $this->url('admin/gallery/addAlbum'); ?>">
+                    <a href="<?php echo $this->url('admin/adminGallery/addAlbum'); ?>">
                         <button class="btn btn-default"><?php echo $this->translate('add_album'); ?></button>
                     </a>
                 </div>
