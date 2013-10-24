@@ -5,6 +5,9 @@ use Application\Entity\GalleryAlbum;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
+/**
+ * @property \Doctrine\ORM\EntityManager $objectManager
+ */
 class GalleryModel implements ServiceLocatorAwareInterface
 {
     protected $objectManager;
@@ -54,6 +57,12 @@ class GalleryModel implements ServiceLocatorAwareInterface
     public function getAllGalleryAlbums()
     {
         return $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->getAllGalleryAlbums();
+    }
+
+    public function getImagesByAlbumAlias($alias)
+    {
+        $album = $this->getAlbumByAlias($alias);
+        return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->findBy(['album' => $album]);
     }
 
     public function getAlbumByAlias($alias)

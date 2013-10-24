@@ -35,9 +35,11 @@ class GalleryController extends AbstractActionController
     {
         $alias = $this->params()->fromRoute('alias');
         $album = $this->getGalleryModel()->getAlbumByAlias($alias);
+        $albumImages = $this->getGalleryModel()->getImagesByAlbumAlias($alias);
 
         return [
-            'albumImages' => $album->getImages(),
+            'albumImages' => $albumImages,
+            'album'       => $album,
         ];
     }
 

@@ -1,1 +1,15 @@
-lbum
+<div class="row">
+    <h3><?php echo $this->album->getName(); ?></h3>
+    <small><?php echo $this->album->getLocation(); ?></small>
+    <?php if ($this->album->getLocationLat() && $this->album->getLocationLng()) { ?>
+        <a href="#" class="btn btn-info btn-xs">
+            <span class="glyphicon glyphicon-map-marker"></span>
+        </a>
+    <?php } ?>
+    <p class="text-muted"><?php echo $this->album->getFullDescription(); ?></p>
+    <?php foreach ($this->albumImages as $image) { ?>
+        <div class="col-md-1 margin-bottom-25">
+            <img src="..." alt="..." class="img-thumbnail">
+        </div>
+    <?php } ?>
+</div>
