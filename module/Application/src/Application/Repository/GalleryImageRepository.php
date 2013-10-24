@@ -11,6 +11,7 @@ class GalleryImageRepository extends EntityRepository
         $image = new GalleryImage();
         $image->setAlbum($album);
         $image->setUrl($url);
+        $image->setIsAlbumImage(false);
 
         $album->setImagesCount($album->getImagesCount() + 1);
 

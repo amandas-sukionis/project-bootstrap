@@ -18,6 +18,26 @@ body {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#70d900', endColorstr='#57a900', GradientType=0);
 }
 
+.admin-add-album {
+    margin-bottom: 5px;
+}
+
+.margin-bottom-25 {
+    margin-bottom: 25px;
+}
+
+.col-md-3 .admin-remove {
+    position: absolute;
+    top: 35px;
+    right: 6px;
+}
+
+.col-md-3 .admin-edit {
+    position: absolute;
+    top: 10px;
+    right: 6px;
+}
+
 .btn-success:hover,
 .btn-success:active,
 .btn-success.active,

@@ -9,6 +9,7 @@ class GalleryController extends AbstractActionController
 {
     protected $userModel;
     protected $authenticationService;
+    protected $galleryModel;
 
     public function addCategory()
     {
@@ -17,24 +18,27 @@ class GalleryController extends AbstractActionController
 
     public function indexAction()
     {
-        $uploadImageForm = $this->getServiceLocator()->get('Application\Form\UploadImageForm');
-        $viewModel = new ViewModel();
+        $galleryAlbums = $this->getGalleryModel()->getAllGalleryAlbums();
 
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $postData = array_merge_recursive(
-                $request->getPost()->toArray(),
-                $request->getFiles()->toArray()
-            );
-
-            $uploadImageForm->setData($postData);
-            if ($uploadImageForm->isValid()) {
-
-            }
+        $isAdmin = false;
+        if ($this->getAuthenticationService()->hasIdentity()) {
+            $isAdmin = true;
         }
-        $viewModel->setVariable('uploadImageForm', $uploadImageForm);
 
-        return $viewModel;
+        return [
+            'galleryAlbums' => $galleryAlbums,
+            'isAdmin'       => $isAdmin,
+        ];
+    }
+
+    public function albumAction()
+    {
+        $alias = $this->params()->fromRoute('alias');
+        $album = $this->getGalleryModel()->getAlbumByAlias($alias);
+
+        return [
+            'albumImages' => $album->getImages(),
+        ];
     }
 
     protected function getAuthenticationService()
@@ -44,6 +48,15 @@ class GalleryController extends AbstractActionController
         }
 
         return $this->authenticationService;
+    }
+
+    protected function getGalleryModel()
+    {
+        if (!$this->galleryModel) {
+            $this->galleryModel = $this->getServiceLocator()->get('Application\Model\GalleryModel');
+        }
+
+        return $this->galleryModel;
     }
 
 }

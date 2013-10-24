@@ -26,6 +26,7 @@ class GalleryController extends AbstractActionController
                                    'id'     => $id,
                                    'status' => $progress->getProgress($id),
                               ));
+
         return $view;
     }
 
@@ -44,7 +45,7 @@ class GalleryController extends AbstractActionController
 
         return [
             'albumForm' => $AlbumForm,
-            'action' => 'add_gallery_album',
+            'action'    => 'add_gallery_album',
         ];
     }
 
@@ -64,6 +65,7 @@ class GalleryController extends AbstractActionController
             if ($uploadImageForm->isValid()) {
                 $uploadImageForm->getData();
                 $images = $this->getGalleryModel()->moveImageFiles($postData, $alias);
+
                 return new JsonModel(['images' => $images]);
             }
         }
@@ -95,7 +97,7 @@ class GalleryController extends AbstractActionController
 
         return [
             'albumForm' => $AlbumForm,
-            'action' => 'edit_gallery_album',
+            'action'    => 'edit_gallery_album',
         ];
     }
 
@@ -109,7 +111,7 @@ class GalleryController extends AbstractActionController
         $this->redirect()->toRoute('admin/adminGallery');
     }
 
-   protected function getAuthenticationService()
+    protected function getAuthenticationService()
     {
         if (!$this->authenticationService) {
             $this->authenticationService = $this->getServiceLocator()->get('Zend\Authentication\AuthenticationService');

@@ -1,10 +1,10 @@
+<?php echo $this->doctype(); ?>
 <?php
 $sm = $this->getHelperPluginManager()->getServiceLocator();
 $router = $sm->get('router');
 $request = $sm->get('request');
 $routeMatch = $router->match($request);
 ?>
-<?php echo $this->doctype(); ?>
 
 <html lang="en">
 <head>

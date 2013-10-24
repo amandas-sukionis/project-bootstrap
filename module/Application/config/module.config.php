@@ -42,12 +42,28 @@ return [
                         ],
                     ],
                     'gallery'     => [
-                        'type'    => 'Literal',
-                        'options' => [
+                        'type'          => 'Literal',
+                        'options'       => [
                             'route'    => 'gallery',
                             'defaults' => [
                                 'controller' => 'Application\Controller\Gallery',
                                 'action'     => 'index',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes'  => [
+                            'album' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/album/:alias',
+                                    'defaults' => [
+                                        'controller' => 'Application\Controller\Gallery',
+                                        'action'     => 'album',
+                                    ],
+                                    'constraints' => [
+                                        'alias' => '[a-zA-Z0-9][a-zA-Z0-9_-]*',
+                                    ],
+                                ],
                             ],
                         ],
                     ],
