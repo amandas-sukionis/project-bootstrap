@@ -18,7 +18,6 @@
                     </div>
                     <?php
                     $form = $this->uploadImageForm;
-                    //$form->setAttribute('action', $this->url('admin/adminGallery/manageAlbumImages', ['alias' => 'asd']));
                     $form->prepare();
                     echo $this->form()->openTag($form);
                     echo $this->formFileUploadProgress();
@@ -107,11 +106,11 @@
 
     function loadImageDiv(url, id) {
         $('<div/>', {
-            'class': 'row', html: getImageHtml()
+            'class': 'row', html: getImageContainerHtml()
         }).hide().appendTo('#loadedImages').slideDown('slow');
     }
 
-    function getImageHtml() {
+    function getImageContainerHtml() {
         var $col = $('<div/>', {
             class: 'col-md-12'
         });
@@ -130,15 +129,6 @@
         $col.append($saveImageContainer);
 
         return $col;
-//        var $div =
-//        jQuery('<div/>', {
-//            id: 'foo',
-//            name: 'mainDiv',
-//            class: 'wrapper',
-//            click: function() {
-//                $( this ).toggleClass( "test" );
-//            } }).appendTo('#selector');
-
     }
 
     $(function () {
@@ -154,12 +144,9 @@
             hideErrors();
             hideProgress();
 
-            //$.fn.ajaxSubmit.debug = true;
             $(this).ajaxSubmit({
-                //target: '#output',
                 success: function (response, statusText, xhr, $form) {
                     console.log(response);
-                    //alert(response.images);
                     $.each(response.images, function (index, value) {
                         loadImageDiv(value.url, value.id);
                     });

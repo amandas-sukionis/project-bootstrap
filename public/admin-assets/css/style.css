@@ -4,13 +4,15 @@
     display: none;
 }
 
-.save-image-container {
+.save-image-container,
+.manage-image-container {
     border: 1px solid #ddd;
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
-.save-image-container .padd {
+.save-image-container .padd,
+.manage-image-container .padd {
     padding: 15px;
 }
 

@@ -34,6 +34,7 @@ class LoginController extends AbstractActionController
         if (!$this->config) {
             $this->config = $this->getServiceLocator()->get('Config');
         }
+
         return $this->config;
     }
 
@@ -42,6 +43,7 @@ class LoginController extends AbstractActionController
         if (!$this->userModel) {
             $this->userModel = $this->getServiceLocator()->get('Application\Model\UserModel');
         }
+
         return $this->userModel;
     }
 
@@ -50,6 +52,7 @@ class LoginController extends AbstractActionController
         if (!$this->authenticationService) {
             $this->authenticationService = $this->getServiceLocator()->get('Zend\Authentication\AuthenticationService');
         }
+
         return $this->authenticationService;
     }
 

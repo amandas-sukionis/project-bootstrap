@@ -7,21 +7,24 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 
 class GalleryAlbumRepository extends EntityRepository
 {
-    public function getAlbumByAlias ($alias) {
+    public function getAlbumByAlias($alias)
+    {
         return $this->findOneBy(['alias' => $alias]);
     }
 
-    public function getAllGalleryAlbums () {
+    public function getAllGalleryAlbums()
+    {
         return $this->findAll();
     }
 
-    public function addNewAlbum ($postData) {
+    public function addNewAlbum($postData)
+    {
         $hydrator = new DoctrineObject(
             $this->getEntityManager(),
             'Application\Entity\GalleryAlbum'
         );
 
-        $postData = (Array) $postData;
+        $postData = (Array)$postData;
         $galleryAlbum = new GalleryAlbum();
         $galleryAlbum = $hydrator->hydrate($postData, $galleryAlbum);
         $galleryAlbum->setCreateDate(new \DateTime('NOW'));

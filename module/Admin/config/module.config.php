@@ -80,6 +80,32 @@ return [
                                     ],
                                 ],
                             ],
+                            'manageAlbumImages' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/manage-album-images/:alias',
+                                    'defaults'    => [
+                                        'controller' => 'Admin\Controller\GalleryController',
+                                        'action'     => 'manageAlbumImages',
+                                    ],
+                                    'constraints' => [
+                                        'alias' => '[a-zA-Z0-9][a-zA-Z0-9_-]*',
+                                    ],
+                                ],
+                            ],
+                            'manageAlbumImage' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/manage-album-image/:alias',
+                                    'defaults'    => [
+                                        'controller' => 'Admin\Controller\GalleryController',
+                                        'action'     => 'manageAlbumImage',
+                                    ],
+                                    'constraints' => [
+                                        'alias' => '[a-zA-Z0-9][a-zA-Z0-9_-]*',
+                                    ],
+                                ],
+                            ],
                             'finishImagesUpload' => [
                                 'type'    => 'Segment',
                                 'options' => [
@@ -96,7 +122,7 @@ return [
                             'deleteAlbum' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'       => '/deleteAlbum/:alias',
+                                    'route'       => '/delete-album/:alias',
                                     'defaults'    => [
                                         'controller' => 'Admin\Controller\GalleryController',
                                         'action'     => 'deleteAlbum',

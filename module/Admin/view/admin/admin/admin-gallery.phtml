@@ -1,4 +1,3 @@
-<!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -47,7 +46,8 @@
                                 <td><?php echo $key + 1; ?></td>
                                 <td><?php echo $galleryAlbum->getName(); ?></td>
                                 <td><a href="<?php echo $this->url(
-                                        'admin/adminGallery/uploadAlbumImages', array('alias' => $galleryAlbum->getAlias())
+                                        'admin/adminGallery/manageAlbumImages',
+                                        array('alias' => $galleryAlbum->getAlias())
                                     ); ?>"><?php echo
                                             $this->translate('album_manage_images') . ' ('
                                             . $galleryAlbum->getImagesCount()

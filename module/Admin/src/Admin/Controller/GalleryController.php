@@ -5,13 +5,12 @@ namespace Admin\Controller;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Session\Container;
-use Zend\View\Model\ViewModel;
 use Zend\ProgressBar;
 use Zend\View\Model\JsonModel;
 
 /**
  * @property \Zend\Authentication\AuthenticationService    $authenticationService
- *
+ * @property \Application\Model\GalleryModel               $galleryModel
  */
 class GalleryController extends AbstractActionController
 {
@@ -46,6 +45,26 @@ class GalleryController extends AbstractActionController
         return [
             'albumForm' => $AlbumForm,
             'action'    => 'add_gallery_album',
+        ];
+    }
+
+    public function manageAlbumImagesAction()
+    {
+        $alias = $this->params()->fromRoute('alias');
+        $albumImages = $this->getGalleryModel()->getImagesByAlbumAlias($alias);
+
+        return [
+            'albumImages' => $albumImages,
+        ];
+    }
+
+    public function manageAlbumImageAction()
+    {
+        //TODO
+        //$alias = $this->params()->fromRoute('alias');
+        //$image = $this->getGalleryModel()->getAlbumImageByAlias($alias);
+        return [
+            'image' => 'image',
         ];
     }
 

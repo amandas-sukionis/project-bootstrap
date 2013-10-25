@@ -7,10 +7,12 @@ use Doctrine\ORM\EntityRepository;
 
 class GalleryImageRepository extends EntityRepository
 {
-    public function addNewImage ($url, GalleryAlbum $album) {
+    public function addNewImage($alias, $url, GalleryAlbum $album)
+    {
         $image = new GalleryImage();
         $image->setAlbum($album);
         $image->setUrl($url);
+        $image->setAlias($alias);
         $image->setIsAlbumImage(false);
 
         $album->setImagesCount($album->getImagesCount() + 1);

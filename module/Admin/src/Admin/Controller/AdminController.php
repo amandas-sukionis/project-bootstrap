@@ -80,6 +80,7 @@ class AdminController extends AbstractActionController
         if (!$this->galleryModel) {
             $this->galleryModel = $this->getServiceLocator()->get('Application\Model\GalleryModel');
         }
+
         return $this->galleryModel;
     }
 }

@@ -36,12 +36,13 @@ class GalleryModel implements ServiceLocatorAwareInterface
         $images = [];
         foreach ($postData['uploadImageFile'] as $image) {
             $tmpFile = $image['tmp_name'];
-            $newFileName = 'public/img/gallery/' . $alias . '/' . uniqid();
+            $imageAlias = uniqid();
+            $newFileName = 'public/img/gallery/' . $alias . '/' . $imageAlias;
             $url = '/img/gallery/' . $alias . '/' . uniqid();
             move_uploaded_file($tmpFile, $newFileName);
 
             $album = $this->getAlbumByAlias($alias);
-            $id = $this->addNewImage($url, $album);
+            $id = $this->addNewImage($imageAlias, $url, $album);
 
             $images[] = ['id' => $id, 'url' => $url];
         }
@@ -62,6 +63,7 @@ class GalleryModel implements ServiceLocatorAwareInterface
     public function getImagesByAlbumAlias($alias)
     {
         $album = $this->getAlbumByAlias($alias);
+
         return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->findBy(['album' => $album]);
     }
 

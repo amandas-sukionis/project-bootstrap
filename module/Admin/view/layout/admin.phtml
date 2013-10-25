@@ -5,50 +5,24 @@ $router = $sm->get('router');
 $request = $sm->get('request');
 $routeMatch = $router->match($request);
 ?>
-
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
-
     <?php echo $this->headTitle($this->translate('admin_page_title'))->setSeparator(' - ')->setAutoEscape(false) ?>
-
     <?php echo $this->headMeta()->appendName('viewport', 'width=device-width, initial-scale=1.0') ?>
     <?php echo $this->headLink()->appendStylesheet($this->basePath() . '/admin-assets/css/bootstrap.css')
         ->appendStylesheet($this->basePath() . '/admin-assets/css/font-awesome.css')
         ->appendStylesheet($this->basePath() . '/admin-assets/css/jquery-ui.css')
-        ->appendStylesheet($this->basePath() . '/admin-assets/css/fullcalendar.css')
-        ->appendStylesheet($this->basePath() . '/admin-assets/css/prettyPhoto.css')
-        ->appendStylesheet($this->basePath() . '/admin-assets/css/rateit.css')
-        ->appendStylesheet($this->basePath() . '/admin-assets/css/bootstrap-datetimepicker.min.css')
-        ->appendStylesheet($this->basePath() . '/admin-assets/css/jquery.gritter.css')
-        ->appendStylesheet($this->basePath() . '/admin-assets/css/jquery.cleditor.css')
-        ->appendStylesheet($this->basePath() . '/admin-assets/css/bootstrap-toggle-buttons.css')
         ->appendStylesheet($this->basePath() . '/admin-assets/css/style.css')
-        ->appendStylesheet($this->basePath() . '/admin-assets/css/widgets.css')
         ->headLink(array('rel' => 'shortcut icon', 'href' => 'data:image/x-icon;,', 'type' => 'image/x-icon')) ?>
 
     <?php echo $this->headScript()->appendFile($this->basePath() . '/admin-assets/js/jquery.js')
         ->appendFile($this->basePath() . '/admin-assets/js/bootstrap.js')
         ->appendFile($this->basePath() . '/admin-assets/js/jquery-ui-1.10.2.custom.min.js')
-        ->appendFile($this->basePath() . '/admin-assets/js/fullcalendar.min.js')
-        ->appendFile($this->basePath() . '/admin-assets/js/jquery.rateit.min.js')
-        ->appendFile($this->basePath() . '/admin-assets/js/jquery.prettyPhoto.js')
-        ->appendFile($this->basePath() . '/admin-assets/js/excanvas.min.js')
-        ->appendFile($this->basePath() . '/admin-assets/js/jquery.flot.js')
-        ->appendFile($this->basePath() . '/admin-assets/js/jquery.flot.resize.js')
-        ->appendFile($this->basePath() . '/admin-assets/js/jquery.flot.pie.js')
-        ->appendFile($this->basePath() . '/admin-assets/js/jquery.flot.stack.js')
-        ->appendFile($this->basePath() . '/admin-assets/js/jquery.gritter.min.js')
-        ->appendFile($this->basePath() . '/admin-assets/js/sparklines.js')
-        ->appendFile($this->basePath() . '/admin-assets/js/jquery.cleditor.min.js')
-        ->appendFile($this->basePath() . '/admin-assets/js/bootstrap-datetimepicker.min.js')
-        ->appendFile($this->basePath() . '/admin-assets/js/jquery.toggle.buttons.js')
-        ->appendFile($this->basePath() . '/admin-assets/js/filter.js')
-        ->appendFile($this->basePath() . '/admin-assets/js/custom.js')
         ->appendFile($this->basePath() . '/admin-assets/js/jquery.form.js')
         ->appendFile("https://maps.googleapis.com/maps/api/js?key=AIzaSyCYVqiIopFC0zpXH6pOYcdPq0bjOJY6wV8&sensor=false")
-        ->appendFile($this->basePath() . '/admin-assets/js/charts.js'); ?>
+    ?>
 
     <!-- HTML5 Support for IE -->
     <!--[if lt IE 9]>
@@ -57,15 +31,12 @@ $routeMatch = $router->match($request);
 
 </head>
 <body>
-
 <div class="navbar navbar-fixed-top navbar-inverse">
     <div class="navbar-header">
         <a href="<?php echo $this->url('home') ?>"
            class="navbar-brand"><?php echo $this->translate('admin_page_header_title') ?></span></a>
     </div>
-    <!-- Navigation starts -->
     <div class="collapse navbar-collapse">
-        <!-- Links -->
         <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
                 <a data-toggle="dropdown" class="dropdown-toggle" href="#">
@@ -77,26 +48,15 @@ $routeMatch = $router->match($request);
                                 class="icon-off"></i> <?php echo $this->translate('logout'); ?></a></li>
                 </ul>
             </li>
-
         </ul>
-
     </div>
 </div>
 
-
-<!-- Main content starts -->
 <div class="content">
-
-    <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-dropdown"><a href="#"><?php echo $this->translate('navigation'); ?></a></div>
-
         <div class="sidebar-inner">
-
-            <!--- Sidebar navigation -->
-            <!-- If the main navigation has sub navigation, then add the class "has_submenu" to "li" of main navigation. -->
             <ul class="navi">
-                <!-- Use the class nred, ngreen, nblue, nlightblue, nviolet or norange to add background color. You need to use this in <li> tag. -->
                 <li class="nred<?php if ($routeMatch->getMatchedRouteName() == 'admin/dashboard') {
                     echo ' current';
                 } ?>"><a href="<?php echo $this->url('admin/dashboard') ?>"><i
@@ -108,45 +68,25 @@ $routeMatch = $router->match($request);
                 } ?>"><a href="<?php echo $this->url('admin/adminGallery') ?>"><i
                             class="icon-desktop"></i> <?php echo $this->translate('gallery') ?></a></li>
             </ul>
-
         </div>
-
     </div>
 
-    <!-- Sidebar ends -->
-
-    <!-- Main bar -->
     <div class="mainbar">
-
-        <!-- Page heading -->
         <div class="page-head">
-            <!-- Page heading -->
             <h2 class="pull-left">heading
-                <!-- page meta -->
                 <span class="page-meta">subheading</span>
             </h2>
 
             <div class="clearfix"></div>
-
         </div>
-
         <div class="matter">
             <div class="container">
                 <?php echo $this->content ?>
             </div>
         </div>
-
-        <!-- Matter ends -->
-
     </div>
-
-    <!-- Mainbar ends -->
     <div class="clearfix"></div>
-
 </div>
-<!-- Content ends -->
-
-<!-- Scroll to top -->
 <span class="totop"><a href="#"><i class="icon-chevron-up"></i></a></span>
 <?php echo $this->inlineScript() ?>
 </body>
