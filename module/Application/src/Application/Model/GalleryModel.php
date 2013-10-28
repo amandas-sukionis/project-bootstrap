@@ -40,7 +40,6 @@ class GalleryModel implements ServiceLocatorAwareInterface
             $newFileName = 'public/img/gallery/' . $alias . '/' . $imageAlias;
             $url = '/img/gallery/' . $alias . '/' . uniqid();
             move_uploaded_file($tmpFile, $newFileName);
-
             $album = $this->getAlbumByAlias($alias);
             $id = $this->addNewImage($imageAlias, $url, $album);
 
@@ -50,9 +49,9 @@ class GalleryModel implements ServiceLocatorAwareInterface
         return $images;
     }
 
-    public function addNewImage($url, GalleryAlbum $album)
+    public function addNewImage($imageAlias, $url, GalleryAlbum $album)
     {
-        return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->addNewImage($url, $album);
+        return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->addNewImage($imageAlias, $url, $album);
     }
 
     public function getAllGalleryAlbums()

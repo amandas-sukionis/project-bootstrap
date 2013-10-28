@@ -121,10 +121,24 @@
 
         var $padd = $('<div/>', {
             class: 'padd',
-            text: 'asd'
+            text: 'image text'
         });
 
+        var $checkButton = $('<button/>', {
+            type: 'button',
+            class: 'btn btn-default btn-xs pull-right save-image'
+        });
 
+        $checkButton.click(function() {
+            $col.hide('slow');
+        });
+
+        var $iconSpan = $('<span/>', {
+            class: 'glyphicon glyphicon-ok'
+        });
+
+        $checkButton.append($iconSpan);
+        $padd.append($checkButton);
         $saveImageContainer.append($padd);
         $col.append($saveImageContainer);
 

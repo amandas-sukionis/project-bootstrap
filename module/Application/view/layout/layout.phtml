@@ -48,11 +48,11 @@ $routeMatch = $router->match($request);
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li class="<?php if ($routeMatch->getMatchedRouteName() == 'home') {
+                <li class="<?php if (isset($routeMatch) && $routeMatch->getMatchedRouteName() == 'home') {
                     echo 'active';
                 } ?>"><a
                         href="<?php echo $this->url('home') ?>"><?php echo $this->translate('home') ?></a></li>
-                <li class="<?php if ($routeMatch->getMatchedRouteName() == 'home/gallery') {
+                <li class="<?php if (isset($routeMatch) && $routeMatch->getMatchedRouteName() == 'home/gallery') {
                     echo 'active';
                 } ?>"><a
                         href="<?php echo $this->url('home/gallery') ?>"><?php echo $this->translate('gallery') ?></a>

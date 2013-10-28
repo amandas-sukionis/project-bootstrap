@@ -12,6 +12,7 @@ $routeMatch = $router->match($request);
     <?php echo $this->headTitle($this->translate('admin_page_title'))->setSeparator(' - ')->setAutoEscape(false) ?>
     <?php echo $this->headMeta()->appendName('viewport', 'width=device-width, initial-scale=1.0') ?>
     <?php echo $this->headLink()->appendStylesheet($this->basePath() . '/admin-assets/css/bootstrap.css')
+        ->appendStylesheet($this->basePath() . '/css/bootstrap-theme.min.css')
         ->appendStylesheet($this->basePath() . '/admin-assets/css/font-awesome.css')
         ->appendStylesheet($this->basePath() . '/admin-assets/css/jquery-ui.css')
         ->appendStylesheet($this->basePath() . '/admin-assets/css/style.css')
@@ -57,11 +58,11 @@ $routeMatch = $router->match($request);
         <div class="sidebar-dropdown"><a href="#"><?php echo $this->translate('navigation'); ?></a></div>
         <div class="sidebar-inner">
             <ul class="navi">
-                <li class="nred<?php if ($routeMatch->getMatchedRouteName() == 'admin/dashboard') {
+                <li class="nred<?php if (isset($routeMatch) && $routeMatch->getMatchedRouteName() == 'admin/dashboard') {
                     echo ' current';
                 } ?>"><a href="<?php echo $this->url('admin/dashboard') ?>"><i
                             class="icon-desktop"></i> <?php echo $this->translate('dashboard') ?></a></li>
-                <li class="nred<?php if ($routeMatch->getMatchedRouteName() == 'admin/adminGallery'
+                <li class="nred<?php if (isset($routeMatch) && $routeMatch->getMatchedRouteName() == 'admin/adminGallery'
                     || $routeMatch->getMatchedRouteName() == 'admin/adminGallery/addAlbum'
                 ) {
                     echo ' current';

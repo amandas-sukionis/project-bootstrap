@@ -55,6 +55,7 @@ class GalleryController extends AbstractActionController
 
         return [
             'albumImages' => $albumImages,
+            'alias'       => $alias,
         ];
     }
 
