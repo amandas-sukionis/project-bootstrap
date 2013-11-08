@@ -55,8 +55,8 @@ return [
                             'album' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'    => '/album/:alias',
-                                    'defaults' => [
+                                    'route'       => '/album/:alias',
+                                    'defaults'    => [
                                         'controller' => 'Application\Controller\Gallery',
                                         'action'     => 'album',
                                     ],
@@ -77,11 +77,11 @@ return [
             'Zend\Log\LoggerAbstractServiceFactory',
         ],
         'invokables'         => [
-            'Application\Form\UploadImageForm' => 'Application\Form\UploadImageForm',
-            'Application\Form\LoginForm'       => 'Application\Form\LoginForm',
-            'Application\Form\AlbumForm'       => 'Application\Form\AlbumForm',
-            'Application\Model\GalleryModel'   => 'Application\Model\GalleryModel',
-            'Application\Model\UserModel'      => 'Application\Model\UserModel',
+            'Application\Form\UploadImageForm'   => 'Application\Form\UploadImageForm',
+            'Application\Form\LoginForm'         => 'Application\Form\LoginForm',
+            'Application\Form\AlbumForm'         => 'Application\Form\AlbumForm',
+            'Application\Model\GalleryModel'     => 'Application\Model\GalleryModel',
+            'Application\Model\UserModel'        => 'Application\Model\UserModel',
         ],
         'aliases'            => [
             'translator' => 'MvcTranslator',
