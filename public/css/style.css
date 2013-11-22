@@ -3,6 +3,11 @@ body {
     padding-bottom: 40px;
 }
 
+.row {
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
 .zf-green {
     color: #68b604;
 }

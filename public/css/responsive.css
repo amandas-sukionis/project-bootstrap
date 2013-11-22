@@ -1,0 +1,14 @@
+@media only screen
+and (max-width: 991px) {
+    .col-md-1 {
+        width: 16.6666666666666664%;
+    }
+}
+
+@media only screen
+and (max-width: 479px) {
+    .col-md-1 {
+        width: 33.333333333333%;
+        float: left;
+    }
+}

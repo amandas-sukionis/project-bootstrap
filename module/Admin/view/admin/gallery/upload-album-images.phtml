@@ -10,11 +10,7 @@
             </div>
             <div class="widget-content">
                 <div class="padd">
-                    <div id="progress" class="help-block">
-                        <div class="progress progress-striped active">
-                            <div class="progress-bar" role="progressbar">
-                            </div>
-                        </div>
+                    <div id="progress">
                     </div>
                     <?php
                     $form = $this->uploadImageForm;
@@ -42,7 +38,7 @@
 </div>
 
 <script>
-    hideProgress();
+    var bar = $('#progress').uploadProgressBar();
 
     function hideErrors() {
         $('#file-errors').hide();
@@ -64,10 +60,6 @@
 
     var progressInterval;
 
-    function hideProgress() {
-        $('#progress').hide();
-    }
-
     function showProgress(amount, message) {
         $('#progress').show();
         $('#progress .progress-bar').width(amount + '%');
@@ -85,23 +77,9 @@
         }
     }
 
-    function getProgress() {
-        var url = '/admin/upload-progress?id=' + $('#progress_key').val();
-        $.getJSON(url, function (data) {
-            console.log(data);
-            if (data.status && !data.status.done) {
-                var value = Math.floor((data.status.current / data.status.total) * 100);
-                showProgress(value, 'Uploading...');
-            } else {
-                showProgress(100, 'Complete!');
-                clearInterval(progressInterval);
-            }
-        });
-    }
-
     function startProgress() {
-        showProgress(0, 'Starting upload...');
-        progressInterval = setInterval(getProgress, 300);
+        bar.uploadProgressBar( "option", "value", 0);
+        bar.uploadProgressBar( "startProgress");
     }
 
     function loadImageDiv(url, id) {
@@ -156,7 +134,6 @@
 
             hideFormElements();
             hideErrors();
-            hideProgress();
 
             $(this).ajaxSubmit({
                 success: function (response, statusText, xhr, $form) {
