@@ -20,27 +20,23 @@ class UserModel implements ServiceLocatorAwareInterface
         return $this->serviceLocator;
     }
 
-    public function createAdmin($config)
+    public function createDefaultAdmin($config)
     {
-        if (!$this->findUserByUserName($config['userName'])) {
-            $salt = self::getRandomSalt();
-            $user = new User();
-            $user->setUserName($config['userName']);
-            $user->setPassword(self::getPasswordHash($config['password'], $salt));
-            $user->setSalt($salt);
-
-            $this->getObjectManager()->persist($user);
-            $this->getObjectManager()->flush();
-        }
+        $salt = self::getRandomSalt();
+        $password = self::getPasswordHash($config['password'], $salt);
+        $this->getObjectManager()->getRepository('Application\Entity\User')->createDefaultAdmin($config, $salt, $password);
     }
 
-    public function findUserByUserName($userName)
+    public function registerUser($postData)
     {
-        return $user = $this->getObjectManager()->getRepository('Application\Entity\User')->findOneBy(
-            [
-            'userName' => $userName,
-            ]
-        );
+        $salt = self::getRandomSalt();
+        $password = self::getPasswordHash($postData['password'], $salt);
+        $this->getObjectManager()->getRepository('Application\Entity\User')->registerUser($postData, $salt, $password);
+    }
+
+    public function findUserByEmail($email)
+    {
+        return $this->getObjectManager()->getRepository('Application\Entity\User')->findUserByEmail($email);
     }
 
     public static function getPasswordHash($password, $salt)

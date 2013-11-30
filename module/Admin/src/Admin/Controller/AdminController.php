@@ -16,7 +16,7 @@ class AdminController extends AbstractActionController
 
     public function indexAction()
     {
-        if ($this->getAuthenticationService()->hasIdentity()) {
+        if ($this->getAuthenticationService()->hasIdentity() && $this->getAuthenticationService()->getIdentity()->getAccessLevel() >= 10) {
             $this->redirect()->toRoute('admin/dashboard');
         }
         $viewParams = [];
@@ -28,7 +28,7 @@ class AdminController extends AbstractActionController
             if ($loginForm->isValid()) {
                 $loginFormData = $loginForm->getData();
                 $authenticationAdapter = $this->getAuthenticationService()->getAdapter();
-                $authenticationAdapter->setIdentity($loginFormData['loginFormUsername']);
+                $authenticationAdapter->setIdentity($loginFormData['loginFormEmail']);
                 $authenticationAdapter->setCredential($loginFormData['loginFormPassword']);
                 $loginResult = $this->getAuthenticationService()->authenticate();
                 if ($loginResult->getCode() == Result::SUCCESS) {

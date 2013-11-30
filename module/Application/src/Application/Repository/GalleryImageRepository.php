@@ -7,11 +7,12 @@ use Doctrine\ORM\EntityRepository;
 
 class GalleryImageRepository extends EntityRepository
 {
-    public function addNewImage($alias, $url, GalleryAlbum $album)
+    public function addNewImage($alias, $url, $thumbUrl, GalleryAlbum $album)
     {
         $image = new GalleryImage();
         $image->setAlbum($album);
         $image->setUrl($url);
+        $image->setThumbUrl($thumbUrl);
         $image->setAlias($alias);
         $image->setIsAlbumImage(false);
 
@@ -20,6 +21,18 @@ class GalleryImageRepository extends EntityRepository
         $this->getEntityManager()->persist($image);
         $this->getEntityManager()->flush();
 
-        return $image->getId();
+        return $image->getAlias();
+    }
+
+    public function getImageByAlias($alias)
+    {
+        return $this->findOneBy(['alias' => $alias]);
+    }
+
+    public function saveImageInfo($postData, GalleryImage $image) {
+        $image->setName($postData['name']);
+        $image->setShortDescription($postData['shortDescription']);
+
+        $this->getEntityManager()->flush();
     }
 }

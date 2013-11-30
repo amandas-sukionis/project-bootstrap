@@ -82,13 +82,13 @@
         bar.uploadProgressBar( "startProgress");
     }
 
-    function loadImageDiv(url, id) {
+    function loadImageDiv(thumbUrl, alias) {
         $('<div/>', {
-            'class': 'row', html: getImageContainerHtml()
+            'class': 'row', html: getImageContainerHtml(thumbUrl, alias)
         }).hide().appendTo('#loadedImages').slideDown('slow');
     }
 
-    function getImageContainerHtml() {
+    function getImageContainerHtml(thumbUrl, alias) {
         var $col = $('<div/>', {
             class: 'col-md-12'
         });
@@ -98,14 +98,52 @@
         });
 
         var $padd = $('<div/>', {
-            class: 'padd',
-            text: 'image text'
+            class: 'padd'
         });
 
+        var $imageThumb = $('<img/>', {
+            src: thumbUrl,
+            class: 'img-thumbnail'
+        });
+
+
         var $checkButton = $('<button/>', {
-            type: 'button',
+            type: 'submit',
             class: 'btn btn-default btn-xs pull-right save-image'
         });
+
+        var $nameInput = $('<input/>', {
+            type: 'text',
+            name: 'name'
+        });
+
+        var $shortDescriptionInput = $('<input/>', {
+            type: 'text',
+            name: 'shortDescription'
+        });
+
+        var $form = $('<form/>' , {
+            action: '<?php echo $this->url('admin/adminGallery/finishImagesUpload'); ?>' + '/' + alias,
+            class: 'saveImageInfo',
+            method: 'POST'
+        });
+
+        $form.on('submit', function (e) {
+            e.preventDefault();
+
+            $(this).ajaxSubmit({
+                success: function (response, statusText, xhr, $form) {
+
+                },
+                error: function (a, b, c) {
+                    console.log(a, b, c);
+                }
+            });
+        });
+
+        $form.append($nameInput);
+        $form.append($shortDescriptionInput);
+        $form.append($checkButton);
 
         $checkButton.click(function() {
             $col.hide('slow');
@@ -116,7 +154,8 @@
         });
 
         $checkButton.append($iconSpan);
-        $padd.append($checkButton);
+        $padd.append($imageThumb);
+        $padd.append($form);
         $saveImageContainer.append($padd);
         $col.append($saveImageContainer);
 
@@ -137,9 +176,9 @@
 
             $(this).ajaxSubmit({
                 success: function (response, statusText, xhr, $form) {
-                    console.log(response);
+                    //console.log(response);
                     $.each(response.images, function (index, value) {
-                        loadImageDiv(value.url, value.id);
+                        loadImageDiv(value.thumbUrl, value.alias);
                     });
                     showFormElements();
                 },

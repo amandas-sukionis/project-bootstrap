@@ -4,6 +4,7 @@ $sm = $this->getHelperPluginManager()->getServiceLocator();
 $router = $sm->get('router');
 $request = $sm->get('request');
 $routeMatch = $router->match($request);
+$authenticationService = $sm->get('Zend\Authentication\AuthenticationService');
 ?>
 <html lang="en">
 <head>
@@ -17,7 +18,7 @@ $routeMatch = $router->match($request);
 
     <!-- Le styles -->
     <?php echo $this->headLink(
-        array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon',
+        array('rel'  => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon',
               'href' => $this->basePath() . '/img/favicon.ico')
     )
         ->prependStylesheet($this->basePath() . '/css/style.css')
@@ -48,9 +49,44 @@ $routeMatch = $router->match($request);
                 <li class="<?php if (isset($routeMatch) && $routeMatch->getMatchedRouteName() == 'home/gallery') {
                     echo 'active';
                 } ?>"><a
-                        href="<?php echo $this->url('home/gallery') ?>"><?php echo $this->translate('gallery') ?></a>
+                        href="<?php echo $this->url('home/gallery') ?>"><?php echo $this->translate('my_gallery') ?></a>
                 </li>
             </ul>
+            <?php
+            if (!$authenticationService->hasIdentity()) {
+                $form = $this->loginForm;
+                $form->setAttribute('class', 'navbar-form navbar-right')
+                     ->setAttribute('action', $this->url('home/login'));
+                $form->prepare();
+                echo $this->form()->openTag($form); ?>
+                <div class='form-group'>
+                    <?php echo $this->formRow($form->get('loginFormEmail')->setAttribute('class', 'form-control')); ?>
+                </div>
+                <div class="form-group">
+                    <?php echo $this->formRow($form->get('loginFormPassword')->setAttribute('class', 'form-control')); ?>
+                </div>
+                <?php echo $this->formRow($form->get('csrf')); ?>
+                <?php echo $this->formRow(
+                    $form->get('loginFormSubmit')->setAttribute('class', 'btn btn-default')->setAttribute(
+                        'value', $this->translate('login')
+                    )
+                ); ?>
+                <a href="<?php echo $this->url('home/register'); ?>" class="btn btn-default"><?php echo $this->translate('register'); ?></a>
+                <?php echo $this->form()->closeTag($form);
+            } else { ?>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $this->translate('signed_in_as') . ' ' . $authenticationService->getIdentity()->getEmail(); ?> <b class="caret"></b></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#">Manage</a></li>
+                            <li class="divider"></li>
+                            <li><a href="<?php echo $this->url('home/logout'); ?>"><?php echo $this->translate('logout'); ?></a></li>
+                        </ul>
+                    </li>
+                </ul>
+            <?php
+            }
+            ?>
         </div>
         <!--/.nav-collapse -->
     </div>
@@ -67,6 +103,8 @@ $routeMatch = $router->match($request);
 <!-- Scripts -->
 <?php echo $this->headScript()
     ->prependFile($this->basePath() . '/js/bootstrap.min.js')
+    ->prependFile($this->basePath() . '/js/getAlbumLocation.js')
+    ->prependFile("https://maps.googleapis.com/maps/api/js?key=AIzaSyCYVqiIopFC0zpXH6pOYcdPq0bjOJY6wV8&sensor=false")
     ->prependFile($this->basePath() . '/js/jquery.min.js')
     ->appendFile($this->basePath() . '/js/jquery.form.js')
     ->prependFile($this->basePath() . '/js/respond.min.js', 'text/javascript', array('conditional' => 'lt IE 9',))

@@ -17,10 +17,22 @@ class Module
 {
     public function onBootstrap(MvcEvent $e)
     {
-        $eventManager        = $e->getApplication()->getEventManager();
-        $serviceManager        = $e->getApplication()->getServiceManager();
+        $eventManager = $e->getApplication()->getEventManager();
+        $serviceManager = $e->getApplication()->getServiceManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
+        $eventManager->attach(MvcEvent::EVENT_RENDER, array($this, 'setLoginFormToView'), 100);
+    }
+
+    public function setLoginFormToView($event)
+    {
+        $loginForm = $event->getApplication()->getServiceManager()->get('Application\Form\LoginForm');
+        $viewModel = $event->getViewModel();
+        $viewModel->setVariables(
+            array(
+                 'loginForm' => $loginForm,
+            )
+        );
     }
 
     public function getConfig()
@@ -43,7 +55,7 @@ class Module
     {
         return array(
             'factories' => array(
-                'Zend\Authentication\AuthenticationService' => function($serviceManager) {
+                'Zend\Authentication\AuthenticationService' => function ($serviceManager) {
                     // If you are using DoctrineORMModule:
                     return $serviceManager->get('doctrine.authenticationservice.orm_default');
                 }

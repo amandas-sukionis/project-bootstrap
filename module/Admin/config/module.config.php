@@ -96,7 +96,7 @@ return [
                             'manageAlbumImage' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'       => '/manage-album-image/:alias',
+                                    'route'       => '/manage-album-image/:albumAlias/:imageAlias',
                                     'defaults'    => [
                                         'controller' => 'Admin\Controller\GalleryController',
                                         'action'     => 'manageAlbumImage',
@@ -109,7 +109,7 @@ return [
                             'finishImagesUpload' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'       => '/finish-images-upload',
+                                    'route'       => '/finish-images-upload[/:alias]',
                                     'defaults'    => [
                                         'controller' => 'Admin\Controller\GalleryController',
                                         'action'     => 'finishImagesUpload',

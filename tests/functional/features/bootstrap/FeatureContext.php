@@ -39,8 +39,8 @@ class FeatureContext extends MinkContext
     {
         return array(
             new Step\Given("I am on \"/admin\""),
-            new Step\When("I fill in \"loginFormUsername\" with \"admin\""),
-            new Step\When("I fill in \"loginFormPassword\" with \"admin123\""),
+            new Step\When("I fill in \"loginFormEmail\" with \"admin@admin.lt\""),
+            new Step\When("I fill in \"loginFormPassword\" with \"Admin123\""),
             new Step\When("I press \"loginFormSubmit\""),
             new Step\Then("the response status code should be 200"),
             new Step\Then("I should be on \"/admin/dashboard\"")

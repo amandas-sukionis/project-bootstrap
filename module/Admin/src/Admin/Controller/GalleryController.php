@@ -31,19 +31,19 @@ class GalleryController extends AbstractActionController
 
     public function addAlbumAction()
     {
-        $AlbumForm = $this->getServiceLocator()->get('Application\Form\AlbumForm');
+        $albumForm = $this->getServiceLocator()->get('Application\Form\AlbumForm');
         $request = $this->getRequest();
         if ($request->isPost()) {
             $postData = $request->getPost();
-            $AlbumForm->setData($postData);
-            if ($AlbumForm->isValid()) {
-                $this->getGalleryModel()->addNewAlbum($postData);
+            $albumForm->setData($postData);
+            if ($albumForm->isValid()) {
+                $this->getGalleryModel()->addNewAlbum($postData, null);
                 $this->redirect()->toRoute('admin/adminGallery');
             }
         }
 
         return [
-            'albumForm' => $AlbumForm,
+            'albumForm' => $albumForm,
             'action'    => 'add_gallery_album',
         ];
     }
@@ -61,12 +61,45 @@ class GalleryController extends AbstractActionController
 
     public function manageAlbumImageAction()
     {
-        //TODO
-        //$alias = $this->params()->fromRoute('alias');
-        //$image = $this->getGalleryModel()->getAlbumImageByAlias($alias);
+        $imageAlias = $this->params()->fromRoute('imageAlias');
+        $albumAlias = $this->params()->fromRoute('albumAlias');
+        $image = $this->getGalleryModel()->getImageByAlias($imageAlias);
+        $saveImageForm = $this->getServiceLocator()->get('Application\Form\SaveImageForm');
+
+        $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
+        $saveImageForm->setHydrator(new DoctrineObject($entityManager));
+        $saveImageForm->bind($image);
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $postData = $request->getPost();
+            $saveImageForm->setData($postData);
+            if ($saveImageForm->isValid()) {
+                $entityManager->flush();
+                $this->redirect()->toRoute('admin/adminGallery/manageAlbumImages', ['alias' => $albumAlias]);
+            }
+        }
+
         return [
-            'image' => 'image',
+            'saveImageForm' => $saveImageForm,
         ];
+    }
+
+    public function finishImagesUploadAction() {
+        $saveImageForm = $this->getServiceLocator()->get('Application\Form\SaveImageForm');
+        $alias = $this->params()->fromRoute('alias');
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $postData = $request->getPost();
+            $saveImageForm->setData($postData);
+            if ($saveImageForm->isValid()) {
+                if ($this->getGalleryModel()->saveImageInfo($postData, $alias)) {
+                    return new JsonModel(['status' => 'saved']);
+                }
+            }
+        }
+        return new JsonModel(['status' => 'fail']);
     }
 
     public function uploadAlbumImagesAction()
@@ -97,26 +130,26 @@ class GalleryController extends AbstractActionController
 
     public function editAlbumAction()
     {
-        $AlbumForm = $this->getServiceLocator()->get('Application\Form\AlbumForm');
+        $albumForm = $this->getServiceLocator()->get('Application\Form\AlbumForm');
         $alias = $this->params()->fromRoute('alias');
         $album = $this->getGalleryModel()->getAlbumByAlias($alias);
 
         $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-        $AlbumForm->setHydrator(new DoctrineObject($entityManager));
-        $AlbumForm->bind($album);
+        $albumForm->setHydrator(new DoctrineObject($entityManager));
+        $albumForm->bind($album);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
             $postData = $request->getPost();
-            $AlbumForm->setData($postData);
-            if ($AlbumForm->isValid()) {
+            $albumForm->setData($postData);
+            if ($albumForm->isValid()) {
                 $entityManager->flush();
                 $this->redirect()->toRoute('admin/adminGallery');
             }
         }
 
         return [
-            'albumForm' => $AlbumForm,
+            'albumForm' => $albumForm,
             'action'    => 'edit_gallery_album',
         ];
     }

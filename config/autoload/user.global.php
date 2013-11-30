@@ -1,7 +1,7 @@
 <?php
 return [
     'user' => [
-        'userName' => 'admin',
-        'password' => 'admin123'
+        'email' => 'admin@admin.lt',
+        'password' => 'Admin123'
     ],
 ];

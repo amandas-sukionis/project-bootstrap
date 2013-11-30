@@ -2,6 +2,7 @@
 
 namespace Application\Controller;
 
+use Zend\Authentication\Result;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
@@ -11,13 +12,68 @@ class LoginController extends AbstractActionController
     protected $config;
     protected $userModel;
     protected $authenticationService;
+    protected $translationService;
 
     public function createAdminUserFromConfigAction()
     {
         $config = $this->getConfig();
-        $this->getUserModel()->createAdmin($config['user']);
+        if (!$this->getUserModel()->findUserByEmail($config['user']['email'])) {
+            $this->getUserModel()->createDefaultAdmin($config['user']);
+        }
 
         return new ViewModel();
+    }
+
+    public function registerAction() {
+        if ($this->getAuthenticationService()->hasIdentity()) {
+            $this->redirect()->toRoute('home');
+        }
+
+        $registerForm = $this->getServiceLocator()->get('Application\Form\RegisterForm');
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $postData = $request->getPost();
+            $registerForm->setData($postData);
+            if ($registerForm->isValid()) {
+                if (!$this->getUserModel()->findUserByEmail($postData['email'])) {
+                    $this->getUserModel()->registerUser($postData);
+                    $viewParams['success'] = $this->getTranslator()->translate('registration_successful');
+                } else {
+                    $viewParams['error'] = $this->getTranslator()->translate('email_already_in_use');
+                }
+            }
+        }
+        $viewParams['registerForm'] = $registerForm;
+        return $viewParams;
+    }
+
+    public function loginAction() {
+        if ($this->getAuthenticationService()->hasIdentity()) {
+            $this->redirect()->toRoute('home');
+        }
+
+        $loginForm = $this->getServiceLocator()->get('Application\Form\LoginForm');
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $postData = $request->getPost();
+            $loginForm->setData($postData);
+            if ($loginForm->isValid()) {
+                $loginFormData = $loginForm->getData();
+                $authenticationAdapter = $this->getAuthenticationService()->getAdapter();
+                $authenticationAdapter->setIdentity($loginFormData['loginFormEmail']);
+                $authenticationAdapter->setCredential($loginFormData['loginFormPassword']);
+                $loginResult = $this->getAuthenticationService()->authenticate();
+                if ($loginResult->getCode() == Result::SUCCESS) {
+                    $this->redirect()->toRoute('home');
+                } else {
+                    $viewParams['error'] = $this->getTranslator()->translate('wrong_username_or_pass');
+                }
+            }
+        }
+        $viewParams['loginForm'] = $loginForm;
+        return $viewParams;
     }
 
     public function logoutAction()
@@ -36,6 +92,15 @@ class LoginController extends AbstractActionController
         }
 
         return $this->config;
+    }
+
+    protected function getTranslator()
+    {
+        if (!$this->translationService) {
+            $this->translationService = $this->getServiceLocator()->get('translator');
+        }
+
+        return $this->translationService;
     }
 
     protected function getUserModel()

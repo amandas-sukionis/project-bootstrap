@@ -20,8 +20,8 @@ class LoginForm extends Form
 
     public function addFormInputs()
     {
-        $usernameInput = new Element\Text();
-        $usernameInput->setName('loginFormUsername');
+        $emailInput = new Element\Text();
+        $emailInput->setName('loginFormEmail');
 
         $passwordInput = new Element\Password();
         $passwordInput->setName('loginFormPassword');
@@ -34,7 +34,7 @@ class LoginForm extends Form
             ->setAttribute('id', 'loginFormSubmit');
 
         $this
-            ->add($usernameInput)
+            ->add($emailInput)
             ->add($passwordInput)
             ->add($csrf)
             ->add($submitButton);
@@ -44,14 +44,14 @@ class LoginForm extends Form
     {
         if (!$this->inputFilter) {
             $inputFilter = new InputFilter();
-            $usernameInput = new Input('loginFormUsername');
-            $usernameInput->setRequired(true);
+            $emailInput = new Input('loginFormEmail');
+            $emailInput->setRequired(true);
 
             $passwordInput = new Input('loginFormPassword');
             $passwordInput->setRequired(true);
 
             $inputFilter
-                ->add($usernameInput)
+                ->add($emailInput)
                 ->add($passwordInput);
 
             $this->inputFilter = $inputFilter;

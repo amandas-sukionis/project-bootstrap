@@ -2,12 +2,16 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="Application\Entity\User">
+    <entity name="Application\Entity\User" repository-class="Application\Repository\UserRepository">
         <id name="id" type="integer">
             <generator strategy="IDENTITY"/>
         </id>
-        <field name="userName" type="string"/>
+        <field name="email" type="string"/>
+        <field name="firstName" type="string" nullable="true"/>
+        <field name="lastName" type="string" nullable="true"/>
         <field name="password" type="string"/>
         <field name="salt" type="string"/>
+        <field name="accessLevel" type="integer"/>
+        <one-to-many field="albums" target-entity="Application\Entity\GalleryAlbum" mapped-by="user" />
     </entity>
 </doctrine-mapping>

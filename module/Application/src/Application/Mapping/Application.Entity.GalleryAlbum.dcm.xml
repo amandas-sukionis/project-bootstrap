@@ -21,5 +21,8 @@
                 <cascade-remove/>
             </cascade>
         </one-to-many>
+        <many-to-one field="user" target-entity="Application\Entity\User" inversed-by="albums">
+            <join-column name="user_id" referenced-column-name="id" />
+        </many-to-one>
     </entity>
 </doctrine-mapping>

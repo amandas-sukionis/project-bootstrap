@@ -41,6 +41,26 @@ return [
                             ],
                         ],
                     ],
+                    'login'       => [
+                        'type'    => 'Literal',
+                        'options' => [
+                            'route'    => 'login',
+                            'defaults' => [
+                                'controller' => 'Application\Controller\Login',
+                                'action'     => 'login',
+                            ],
+                        ],
+                    ],
+                    'register'    => [
+                        'type'    => 'Literal',
+                        'options' => [
+                            'route'    => 'register',
+                            'defaults' => [
+                                'controller' => 'Application\Controller\Login',
+                                'action'     => 'register',
+                            ],
+                        ],
+                    ],
                     'gallery'     => [
                         'type'          => 'Literal',
                         'options'       => [
@@ -55,10 +75,33 @@ return [
                             'album' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'    => '/album/:alias',
-                                    'defaults' => [
+                                    'route'       => '/album/:alias',
+                                    'defaults'    => [
                                         'controller' => 'Application\Controller\Gallery',
                                         'action'     => 'album',
+                                    ],
+                                    'constraints' => [
+                                        'alias' => '[a-zA-Z0-9][a-zA-Z0-9_-]*',
+                                    ],
+                                ],
+                            ],
+                            'addAlbum' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/add-album',
+                                    'defaults'    => [
+                                        'controller' => 'Application\Controller\Gallery',
+                                        'action'     => 'addAlbum',
+                                    ],
+                                ],
+                            ],
+                            'editAlbum' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/edit-album/:alias',
+                                    'defaults'    => [
+                                        'controller' => 'Application\Controller\Gallery',
+                                        'action'     => 'editAlbum',
                                     ],
                                     'constraints' => [
                                         'alias' => '[a-zA-Z0-9][a-zA-Z0-9_-]*',
@@ -78,7 +121,9 @@ return [
         ],
         'invokables'         => [
             'Application\Form\UploadImageForm' => 'Application\Form\UploadImageForm',
+            'Application\Form\SaveImageForm'   => 'Application\Form\SaveImageForm',
             'Application\Form\LoginForm'       => 'Application\Form\LoginForm',
+            'Application\Form\RegisterForm'    => 'Application\Form\RegisterForm',
             'Application\Form\AlbumForm'       => 'Application\Form\AlbumForm',
             'Application\Model\GalleryModel'   => 'Application\Model\GalleryModel',
             'Application\Model\UserModel'      => 'Application\Model\UserModel',
@@ -134,7 +179,7 @@ return [
             'orm_default' => [
                 'object_manager'      => 'Doctrine\ORM\EntityManager',
                 'identity_class'      => 'Application\Entity\User',
-                'identity_property'   => 'userName',
+                'identity_property'   => 'email',
                 'credential_property' => 'password',
                 'credentialCallable'  => function ($identity, $credential) {
                     return \Application\Model\UserModel::getPasswordHash($credential, $identity->getSalt());

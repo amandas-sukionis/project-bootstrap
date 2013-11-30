@@ -2,6 +2,7 @@
 namespace Application\Repository;
 
 use Application\Entity\GalleryAlbum;
+use Application\Entity\User;
 use Doctrine\ORM\EntityRepository;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 
@@ -17,7 +18,23 @@ class GalleryAlbumRepository extends EntityRepository
         return $this->findAll();
     }
 
-    public function addNewAlbum($postData)
+    public function getAllUserGalleryAlbums(User $user)
+    {
+        $resultQuery = $this->getEntityManager()->createQuery(
+            'SELECT u FROM Application\Entity\GalleryAlbum u WHERE :user = u.user'
+        );
+        $resultQuery->setParameters(
+            array(
+                 'user' => $user,
+            )
+        );
+
+        $albums = $resultQuery->getResult();
+
+        return $albums;
+    }
+
+    public function addNewAlbum($postData, User $user)
     {
         $hydrator = new DoctrineObject(
             $this->getEntityManager(),
@@ -30,6 +47,7 @@ class GalleryAlbumRepository extends EntityRepository
         $galleryAlbum->setCreateDate(new \DateTime('NOW'));
         $galleryAlbum->setAlias($this->getUniqueAlias($this->slugify($postData['name'])));
         $galleryAlbum->setImagesCount(0);
+        $galleryAlbum->setUser($user);
 
         $this->getEntityManager()->persist($galleryAlbum);
         $this->getEntityManager()->flush();

@@ -42,8 +42,15 @@ class Module
             $controller->layout('layout/admin-login');
         } else {
             if (strpos($match->getParam('controller'), 'Admin\Controller') !== false) {
-                if (!$this->getAuthenticationService()->hasIdentity()) {
-                    header('location: /admin');
+                if (!$this->getAuthenticationService()->getIdentity()) {
+                    $response = $this->serviceManager->get('response');
+                    $response->getHeaders()->addHeaderLine('Location', '/admin');
+                    $response->sendHeaders();
+                    exit;
+                } else if ($this->getAuthenticationService()->getIdentity()->getAccessLevel() < 10) {
+                    $response = $this->serviceManager->get('response');
+                    $response->getHeaders()->addHeaderLine('Location', '/');
+                    $response->sendHeaders();
                     exit;
                 }
                 $controller->layout('layout/admin');

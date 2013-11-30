@@ -1,0 +1,23 @@
+<?php if ($this->error) { ?>
+    <div class="alert alert-danger"><?php echo $this->error; ?></div>
+<?php } ?>
+<?php
+$form = $this->loginForm;
+$form->setAttribute('action', $this->url('home/login'));
+$form->prepare();
+echo $this->form()->openTag($form); ?>
+    <div class='form-group'>
+        <label for="loginFormEmail"><?php echo $this->translate('username'); ?></label>
+        <?php echo $this->formRow($form->get('loginFormEmail')->setAttribute('class', 'form-control')); ?>
+    </div>
+    <div class="form-group">
+        <label for="loginFormPassword"><?php echo $this->translate('password'); ?></label>
+        <?php echo $this->formRow($form->get('loginFormPassword')->setAttribute('class', 'form-control')); ?>
+    </div>
+<?php echo $this->formRow($form->get('csrf')); ?>
+<?php echo $this->formRow(
+    $form->get('loginFormSubmit')->setAttribute('class', 'btn btn-default')->setAttribute(
+        'value', $this->translate('login')
+    )
+); ?>
+<?php echo $this->form()->closeTag($form);

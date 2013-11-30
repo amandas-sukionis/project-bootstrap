@@ -19,11 +19,11 @@
                     <?php foreach ($this->albumImages as $image) { ?>
                         <div class="manage-image-container">
                             <div class="padd">
-                                <img src="..." alt="..." class="img-thumbnail">
+                                <img src="<?php echo $image->getThumbUrl(); ?>" class="img-thumbnail">
                                 <?php echo $image->getName(); ?>
                                 <?php echo $image->getShortDescription(); ?>
                                 <a href="<?php echo $this->url(
-                                    'admin/adminGallery/manageAlbumImage', ['alias' => $image->getAlias()]
+                                    'admin/adminGallery/manageAlbumImage', ['imageAlias' => $image->getAlias(), 'albumAlias' => $this->alias]
                                 ) ?>" type="button" class="btn btn-default btn-sm">
                                     <span class="glyphicon glyphicon-pencil"></span>
                                     <?php echo $this->translate('edit_image'); ?>

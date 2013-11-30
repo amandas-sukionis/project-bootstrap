@@ -1,13 +1,19 @@
-<?php //TODO:commented out for now, couse php logic not done yet?>
-<?php //$form = $this->editImageForm(); ?>
+<?php
+$form = $this->saveImageForm;
+$form->prepare();
+?>
 <div class="row">
     <div class="col-md-12">
-        <?php
-        /*echo $this->form()->openTag($form);
-        echo $this->formRow($form->get('title'));
-        echo $this->formRow($form->get('artist'));
-        echo $this->formSubmit($form->get('submit'));
-        echo $this->form()->closeTag();*/
-        ?>
+        <?php echo $this->form()->openTag($form); ?>
+        <div class='form-group'>
+            <label for="name"><?php echo $this->translate('image_name') ?></label>
+            <?php echo $this->formRow($form->get('name')->setAttribute('class', 'form-control')); ?>
+        </div>
+        <div class="form-group">
+            <label for="shortDescription"><?php echo $this->translate('short_description') ?></label>
+            <?php echo $this->formRow($form->get('shortDescription')->setAttribute('class', 'form-control')); ?>
+        </div>
+        <input type="submit" name="saveImageFormSubmit" class="btn btn-success" value="<?php echo $this->translate('save') ?>">
+        <?php echo $this->form()->closeTag($form); ?>
     </div>
 </div>
