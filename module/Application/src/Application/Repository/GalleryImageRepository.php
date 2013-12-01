@@ -29,7 +29,32 @@ class GalleryImageRepository extends EntityRepository
         return $this->findOneBy(['alias' => $alias]);
     }
 
-    public function saveImageInfo($postData, GalleryImage $image) {
+    public function getImagesByAlbum(GalleryAlbum $album)
+    {
+        return $this->findBy(['album' => $album], ['id' => 'DESC']);
+    }
+
+    public function getImagesByAlbumAndNumber(GalleryAlbum $album, $number)
+    {
+        $resultQuery = $this->getEntityManager()->createQuery(
+            'SELECT u FROM Application\Entity\GalleryImage u WHERE :album = u.album ORDER BY u.id DESC'
+        );
+
+        $resultQuery->setParameters(
+            array(
+                 'album' => $album,
+            )
+        );
+
+        $resultQuery
+            ->setFirstResult($number)
+            ->setMaxResults(1);
+
+        return $resultQuery->getResult();
+    }
+
+    public function saveImageInfo($postData, GalleryImage $image)
+    {
         $image->setName($postData['name']);
         $image->setShortDescription($postData['shortDescription']);
 

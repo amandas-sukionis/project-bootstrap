@@ -1,0 +1,12 @@
+<a href="<?php echo $this->image->getUrl(); ?>" data-lightbox="<?php echo $this->image->getAlias(); ?>"
+   title="<?php echo $this->image->getName(); ?>">
+    <img class="img-thumbnail" src="<?php echo $this->image->getThumbUrl() . '_big'; ?>">
+</a>
+<div>
+    <?php if ($this->previousUrl) { ?>
+        <a href="<?php echo $this->previousUrl; ?>">Previous</a>
+    <?php } ?>
+    <?php if ($this->nextUrl) { ?>
+        <a href="<?php echo $this->nextUrl; ?>">Next</a>
+    <?php } ?>
+</div>

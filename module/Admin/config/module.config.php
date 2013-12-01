@@ -44,33 +44,50 @@ return [
                         ],
                         'may_terminate' => true,
                         'child_routes'  => [
+                            'userAlbums' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/:userId',
+                                    'defaults'    => [
+                                        'controller' => 'Admin\Controller\GalleryController',
+                                        'action'     => 'userAlbums',
+                                    ],
+                                    'constraints' => [
+                                        'userId' => '[0-9]+',
+                                    ],
+                                ],
+                            ],
                             'addAlbum' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'       => '/add-album',
+                                    'route'       => '/:userId/add-album',
                                     'defaults'    => [
                                         'controller' => 'Admin\Controller\GalleryController',
                                         'action'     => 'addAlbum',
+                                    ],
+                                    'constraints' => [
+                                        'userId' => '[0-9]+',
                                     ],
                                 ],
                             ],
                             'editAlbum' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'       => '/edit-album/:alias',
+                                    'route'       => '/:userId/edit-album/:alias',
                                     'defaults'    => [
                                         'controller' => 'Admin\Controller\GalleryController',
                                         'action'     => 'editAlbum',
                                     ],
                                     'constraints' => [
                                         'alias' => '[a-zA-Z0-9][a-zA-Z0-9_-]*',
+                                        'userId' => '[0-9]+',
                                     ],
                                 ],
                             ],
                             'uploadAlbumImages' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'       => '/upload-album-images/:alias',
+                                    'route'       => '/:userId/upload-album-images/:alias',
                                     'defaults'    => [
                                         'controller' => 'Admin\Controller\GalleryController',
                                         'action'     => 'uploadAlbumImages',
@@ -83,13 +100,14 @@ return [
                             'manageAlbumImages' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'       => '/manage-album-images/:alias',
+                                    'route'       => '/:userId/manage-album-images/:alias',
                                     'defaults'    => [
                                         'controller' => 'Admin\Controller\GalleryController',
                                         'action'     => 'manageAlbumImages',
                                     ],
                                     'constraints' => [
                                         'alias' => '[a-zA-Z0-9][a-zA-Z0-9_-]*',
+                                        'userId' => '[0-9]+',
                                     ],
                                 ],
                             ],
@@ -106,13 +124,13 @@ return [
                                     ],
                                 ],
                             ],
-                            'finishImagesUpload' => [
+                            'finishImageUpload' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'       => '/finish-images-upload[/:alias]',
+                                    'route'       => '/finish-image-upload[/:alias]',
                                     'defaults'    => [
                                         'controller' => 'Admin\Controller\GalleryController',
-                                        'action'     => 'finishImagesUpload',
+                                        'action'     => 'finishImageUpload',
                                     ],
                                     'constraints' => [
                                         'alias' => '[a-zA-Z0-9][a-zA-Z0-9_-]*',
@@ -122,13 +140,14 @@ return [
                             'deleteAlbum' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'       => '/delete-album/:alias',
+                                    'route'       => '/:userId/delete-album/:alias',
                                     'defaults'    => [
                                         'controller' => 'Admin\Controller\GalleryController',
                                         'action'     => 'deleteAlbum',
                                     ],
                                     'constraints' => [
                                         'alias' => '[a-zA-Z0-9][a-zA-Z0-9_-]*',
+                                        'userId' => '[0-9]+',
                                     ],
                                 ],
                             ],

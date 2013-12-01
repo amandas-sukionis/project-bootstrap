@@ -1,0 +1,28 @@
+<div class="row">
+    <h3><?php echo $this->translate('upload_images'); ?></h3>
+    <div id="progress">
+    </div>
+    <?php
+    $form = $this->uploadImageForm;
+    $form->prepare();
+    echo $this->form()->openTag($form);
+    echo $this->formFileUploadProgress();
+    $fileElement = $form->get('uploadImageFile');
+    echo $this->formFile($fileElement);
+    echo $this->formRow($form->get('csrf'));
+    echo $this->formElementErrors($fileElement);
+    ?>
+    <div id="file-errors" class="help-block"></div> <?php
+    echo $this->formSubmit(
+        $form->get('uploadImageFormSubmit')->setAttribute('class', 'btn btn-primary')
+            ->setAttribute('value', $this->translate('submit'))
+    );
+    echo $this->form()->closeTag($form);
+    ?>
+</div>
+<div id="loadedImages">
+</div>
+
+<script>
+    var finishUploadUrl = '<?php echo $this->url('home/gallery/finishImageUpload'); ?>';
+</script>

@@ -17,15 +17,6 @@ $routeMatch = $router->match($request);
         ->appendStylesheet($this->basePath() . '/admin-assets/css/jquery-ui.css')
         ->appendStylesheet($this->basePath() . '/admin-assets/css/style.css')
         ->headLink(array('rel' => 'shortcut icon', 'href' => 'data:image/x-icon;,', 'type' => 'image/x-icon')) ?>
-
-    <?php echo $this->headScript()->appendFile($this->basePath() . '/admin-assets/js/jquery.js')
-        ->appendFile($this->basePath() . '/admin-assets/js/bootstrap.js')
-        ->appendFile($this->basePath() . '/admin-assets/js/jquery-ui-1.10.2.custom.min.js')
-        ->appendFile($this->basePath() . '/admin-assets/js/jquery.form.js')
-        ->appendFile($this->basePath() . '/js/uploadProgressBar.js')
-        ->appendFile("https://maps.googleapis.com/maps/api/js?key=AIzaSyCYVqiIopFC0zpXH6pOYcdPq0bjOJY6wV8&sensor=false")
-    ?>
-
     <!-- HTML5 Support for IE -->
     <!--[if lt IE 9]>
     <script src="/admin-assets/js/html5shim.js"></script>
@@ -90,6 +81,13 @@ $routeMatch = $router->match($request);
     <div class="clearfix"></div>
 </div>
 <span class="totop"><a href="#"><i class="icon-chevron-up"></i></a></span>
-<?php echo $this->inlineScript() ?>
+<?php echo $this->headScript()->appendFile($this->basePath() . '/admin-assets/js/jquery.js')
+    ->appendFile($this->basePath() . '/admin-assets/js/bootstrap.js')
+    ->appendFile($this->basePath() . '/admin-assets/js/jquery-ui-1.10.2.custom.min.js')
+    ->appendFile($this->basePath() . '/admin-assets/js/jquery.form.js')
+    ->appendFile($this->basePath() . '/js/uploadProgressBar.js')
+    ->appendFile($this->basePath() . '/js/uploadImages.js')
+    ->appendFile("https://maps.googleapis.com/maps/api/js?key=AIzaSyCYVqiIopFC0zpXH6pOYcdPq0bjOJY6wV8&sensor=false")
+?>
 </body>
 </html>

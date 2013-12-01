@@ -1,4 +1,7 @@
-<div class="row">
+<a href="<?php echo $this->url('home/gallery/uploadImages', ['alias' => $this->album->getAlias()]); ?>" class="btn btn-success btn-xs admin-add-album">
+    <span class="glyphicon glyphicon-plus"><?php echo $this->translate('upload_images'); ?></span>
+</a>
+<div class="row album">
     <h3><?php echo $this->album->getName(); ?></h3>
     <small><?php echo $this->album->getLocation(); ?></small>
     <?php if ($this->album->getLocationLat() && $this->album->getLocationLng()) { ?>
@@ -7,9 +10,11 @@
         </a>
     <?php } ?>
     <p class="text-muted"><?php echo $this->album->getFullDescription(); ?></p>
-    <?php foreach ($this->albumImages as $image) { ?>
-        <div class="col-md-1 margin-bottom-25 text-center">
-            <img src="<?php echo $image->getThumbUrl(); ?>" class="img-thumbnail">
+    <?php foreach ($this->albumImages as $key=>$image) { ?>
+        <div class="col-md-2 margin-bottom-25 text-center">
+            <a href="<?php echo $this->url('home/gallery/album/image', ['alias' => $this->album->getAlias(), 'imageNumber' => $key]); ?>">
+                <img src="<?php echo $image->getThumbUrl(); ?>" class="img-thumbnail">
+            </a>
         </div>
     <?php } ?>
 </div>

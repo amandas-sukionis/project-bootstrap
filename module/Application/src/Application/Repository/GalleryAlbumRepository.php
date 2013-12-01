@@ -8,14 +8,21 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 
 class GalleryAlbumRepository extends EntityRepository
 {
-    public function getAlbumByAlias($alias)
+    public function getAlbumByAliasAndUser($alias, User $user)
     {
-        return $this->findOneBy(['alias' => $alias]);
+        return $this->findOneBy(['alias' => $alias, 'user' => $user]);
     }
 
     public function getAllGalleryAlbums()
     {
         return $this->findAll();
+    }
+
+    public function deleteAlbum (GalleryAlbum $album, User $user) {
+        $user->setAlbumsCount($user->getAlbumsCount() - 1);
+
+        $this->getEntityManager()->remove($album);
+        $this->getEntityManager()->flush();
     }
 
     public function getAllUserGalleryAlbums(User $user)
@@ -48,6 +55,8 @@ class GalleryAlbumRepository extends EntityRepository
         $galleryAlbum->setAlias($this->getUniqueAlias($this->slugify($postData['name'])));
         $galleryAlbum->setImagesCount(0);
         $galleryAlbum->setUser($user);
+
+        $user->setAlbumsCount($user->getAlbumsCount() + 1);
 
         $this->getEntityManager()->persist($galleryAlbum);
         $this->getEntityManager()->flush();

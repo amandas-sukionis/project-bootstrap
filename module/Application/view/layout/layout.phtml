@@ -23,6 +23,7 @@ $authenticationService = $sm->get('Zend\Authentication\AuthenticationService');
     )
         ->prependStylesheet($this->basePath() . '/css/style.css')
         ->prependStylesheet($this->basePath() . '/css/bootstrap-theme.min.css')
+        ->prependStylesheet($this->basePath() . '/css/lightbox.css')
         ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css')
         ->prependStylesheet($this->basePath() . '/css/responsive.css')?>
 
@@ -104,9 +105,14 @@ $authenticationService = $sm->get('Zend\Authentication\AuthenticationService');
 <?php echo $this->headScript()
     ->prependFile($this->basePath() . '/js/bootstrap.min.js')
     ->prependFile($this->basePath() . '/js/getAlbumLocation.js')
+    ->prependFile($this->basePath() . '/js/deleteUrl.js')
+    ->prependFile($this->basePath() . '/js/uploadImages.js')
+    ->prependFile($this->basePath() . '/js/uploadProgressBar.js')
+    ->prependFile($this->basePath() . '/js/lightbox-2.6.min.js')
+    ->prependFile($this->basePath() . '/js/jquery.form.js')
     ->prependFile("https://maps.googleapis.com/maps/api/js?key=AIzaSyCYVqiIopFC0zpXH6pOYcdPq0bjOJY6wV8&sensor=false")
+    ->prependFile($this->basePath() . '/admin-assets/js/jquery-ui-1.10.2.custom.min.js')
     ->prependFile($this->basePath() . '/js/jquery.min.js')
-    ->appendFile($this->basePath() . '/js/jquery.form.js')
     ->prependFile($this->basePath() . '/js/respond.min.js', 'text/javascript', array('conditional' => 'lt IE 9',))
     ->prependFile($this->basePath() . '/js/html5shiv.js', 'text/javascript', array('conditional' => 'lt IE 9',)); ?>
 </body>

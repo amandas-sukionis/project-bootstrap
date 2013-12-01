@@ -1,28 +1,8 @@
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title"><?php echo $this->translate('modal_title'); ?></h4>
-            </div>
-            <div class="modal-body">
-                ...
-            </div>
-            <div class="modal-footer">
-                <a href="<?php echo $this->url('admin/adminGallery', array('alias' => '')); ?>"
-                   class="btn btn-danger"><?php echo $this->translate('yes') ?></a>
-                <a href="javascript:$('#myModal').modal('hide')" class="btn btn-default"><?php echo $this->translate(
-                        'no'
-                    ) ?></a>
-            </div>
-        </div>
-    </div>
-</div>
 <div class="row">
     <div class="col-md-12">
         <div class="widget wred">
             <div class="widget-head">
-                <div class="pull-left"> <?php echo $this->translate('gallery_albums') ?></div>
+                <div class="pull-left"> <?php echo $this->translate('gallery_users') ?></div>
                 <div class="widget-icons pull-right">
                     <a href="#" class="wminimize"><i class="icon-chevron-up"></i></a>
                 </div>
@@ -31,38 +11,27 @@
 
             <div class="widget-content">
                 <table class="table  table-bordered ">
-                    <?php if ($this->galleryAlbums) { ?>
+                    <?php if ($this->users) { ?>
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th><?php echo $this->translate('album_name') ?></th>
-                            <th><?php echo $this->translate('album_manage_images') ?></th>
-                            <th><?php echo $this->translate('album_actions') ?></th>
+                            <th><?php echo $this->translate('user_email') ?></th>
+                            <th><?php echo $this->translate('user_name') ?></th>
+                            <th><?php echo $this->translate('user_albums_count') ?></th>
                         </tr>
                         </thead>
                         <tbody>
-                        <?php foreach ($this->galleryAlbums as $key => $galleryAlbum) { ?>
+                        <?php foreach ($this->users as $key => $user) { ?>
                             <tr>
                                 <td><?php echo $key + 1; ?></td>
-                                <td><?php echo $galleryAlbum->getName(); ?></td>
+                                <td><?php echo $user->getEmail(); ?></td>
+                                <td><?php echo $user->getFirstName() . ' ' . $user->getLastName(); ?></td>
                                 <td><a href="<?php echo $this->url(
-                                        'admin/adminGallery/manageAlbumImages',
-                                        array('alias' => $galleryAlbum->getAlias())
+                                        'admin/adminGallery/userAlbums',
+                                        array('userId' => $user->getId())
                                     ); ?>"><?php echo
-                                            $this->translate('album_manage_images') . ' ('
-                                            . $galleryAlbum->getImagesCount()
+                                            $this->translate('manage_user_albums') . ' (' . $user->getAlbumsCount()
                                             . ')'; ?>
-                                </td>
-                                <td>
-                                    <a href="<?php echo $this->url(
-                                        'admin/adminGallery/editAlbum', array('alias' => $galleryAlbum->getAlias())
-                                    ); ?>">
-                                        <button class="btn btn-xs btn-warning"><i class="icon-pencil"></i></button>
-                                    </a>
-                                    <a data-toggle="modal" href="#myModal" class="remove-item btn btn-danger btn-xs"
-                                       data-delete-url="<?php echo $this->url(
-                                           'admin/adminGallery/deleteAlbum', array('alias' => $galleryAlbum->getAlias())
-                                       ); ?>"><i class="icon-remove"></i></a>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -70,16 +39,11 @@
                     <?php
                     } else {
                         ?>
-                        <div class="empty-content"><?php echo $this->translate('no_albums_found'); ?></div>
+                        <div class="empty-content"><?php echo $this->translate('no_users_found'); ?></div>
                     <?php } ?>
                 </table>
             </div>
             <div class="widget-foot">
-                <div class="pagination pull-left">
-                    <a href="<?php echo $this->url('admin/adminGallery/addAlbum'); ?>">
-                        <button class="btn btn-default"><?php echo $this->translate('add_album'); ?></button>
-                    </a>
-                </div>
                 <ul class="pagination pull-right">
                     <li><a href="#">Prev</a></li>
                     <li><a href="#">1</a></li>
@@ -93,13 +57,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    $(document).ready(function () {
-        $('.remove-item').click(function () {
-            var url = $(this).data("deleteUrl");
-            var removeBtn = $('#myModal').find('.btn-danger');
-            removeBtn.attr('href', url);
-        });
-    });
-</script>

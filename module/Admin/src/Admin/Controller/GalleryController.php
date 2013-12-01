@@ -11,10 +11,12 @@ use Zend\View\Model\JsonModel;
 /**
  * @property \Zend\Authentication\AuthenticationService    $authenticationService
  * @property \Application\Model\GalleryModel               $galleryModel
+ * @property \Application\Model\UserModel                  $userModel
  */
 class GalleryController extends AbstractActionController
 {
     protected $galleryModel;
+    protected $userModel;
     protected $authenticationService;
 
     public function uploadProgressAction()
@@ -29,16 +31,29 @@ class GalleryController extends AbstractActionController
         return $view;
     }
 
+    public function userAlbumsAction()
+    {
+        $userId = $this->params()->fromRoute('userId');
+        $galleryAlbums = $this->getGalleryModel()->getAllGalleryAlbums();
+
+        return [
+            'userId'        => $userId,
+            'galleryAlbums' => $galleryAlbums,
+        ];
+    }
+
     public function addAlbumAction()
     {
+        $userId = $this->params()->fromRoute('userId');
         $albumForm = $this->getServiceLocator()->get('Application\Form\AlbumForm');
         $request = $this->getRequest();
         if ($request->isPost()) {
             $postData = $request->getPost();
             $albumForm->setData($postData);
             if ($albumForm->isValid()) {
-                $this->getGalleryModel()->addNewAlbum($postData, null);
-                $this->redirect()->toRoute('admin/adminGallery');
+                $user = $this->getUserModel()->findUserById($userId);
+                $this->getGalleryModel()->addNewAlbum($postData, $user);
+                $this->redirect()->toRoute('admin/adminGallery/userAlbums', ['userId' => $userId]);
             }
         }
 
@@ -51,11 +66,15 @@ class GalleryController extends AbstractActionController
     public function manageAlbumImagesAction()
     {
         $alias = $this->params()->fromRoute('alias');
-        $albumImages = $this->getGalleryModel()->getImagesByAlbumAlias($alias);
+        $userId = $this->params()->fromRoute('userId');
+        $user = $this->getUserModel()->findUserById($userId);
+
+        $albumImages = $this->getGalleryModel()->getImagesByAlbumAliasAndUser($alias, $user);
 
         return [
             'albumImages' => $albumImages,
             'alias'       => $alias,
+            'userId'      => $userId,
         ];
     }
 
@@ -85,7 +104,8 @@ class GalleryController extends AbstractActionController
         ];
     }
 
-    public function finishImagesUploadAction() {
+    public function finishImageUploadAction()
+    {
         $saveImageForm = $this->getServiceLocator()->get('Application\Form\SaveImageForm');
         $alias = $this->params()->fromRoute('alias');
 
@@ -99,6 +119,7 @@ class GalleryController extends AbstractActionController
                 }
             }
         }
+
         return new JsonModel(['status' => 'fail']);
     }
 
@@ -106,6 +127,7 @@ class GalleryController extends AbstractActionController
     {
         $uploadImageForm = $this->getServiceLocator()->get('Application\Form\UploadImageForm');
         $alias = $this->params()->fromRoute('alias');
+        $userId = $this->params()->fromRoute('userId');
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -117,7 +139,8 @@ class GalleryController extends AbstractActionController
 
             if ($uploadImageForm->isValid()) {
                 $uploadImageForm->getData();
-                $images = $this->getGalleryModel()->moveImageFiles($postData, $alias);
+                $user = $this->getUserModel()->findUserById($userId);
+                $images = $this->getGalleryModel()->moveImageFiles($postData, $alias, $user);
 
                 return new JsonModel(['images' => $images]);
             }
@@ -130,22 +153,28 @@ class GalleryController extends AbstractActionController
 
     public function editAlbumAction()
     {
+        $userId = $this->params()->fromRoute('userId');
+        $user = $this->getUserModel()->findUserById($userId);
         $albumForm = $this->getServiceLocator()->get('Application\Form\AlbumForm');
         $alias = $this->params()->fromRoute('alias');
-        $album = $this->getGalleryModel()->getAlbumByAlias($alias);
+        $album = $this->getGalleryModel()->getAlbumByAliasAndUser($alias, $user);
 
-        $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-        $albumForm->setHydrator(new DoctrineObject($entityManager));
-        $albumForm->bind($album);
+        if ($album) {
+            $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
+            $albumForm->setHydrator(new DoctrineObject($entityManager));
+            $albumForm->bind($album);
 
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $postData = $request->getPost();
-            $albumForm->setData($postData);
-            if ($albumForm->isValid()) {
-                $entityManager->flush();
-                $this->redirect()->toRoute('admin/adminGallery');
+            $request = $this->getRequest();
+            if ($request->isPost()) {
+                $postData = $request->getPost();
+                $albumForm->setData($postData);
+                if ($albumForm->isValid()) {
+                    $entityManager->flush();
+                    $this->redirect()->toRoute('admin/adminGallery/userAlbums', ['userId' => $userId]);
+                }
             }
+        } else {
+            $this->redirect()->toRoute('admin/adminGallery/addAlbum', ['userId' => $userId]);
         }
 
         return [
@@ -157,11 +186,15 @@ class GalleryController extends AbstractActionController
     public function deleteAlbumAction()
     {
         $alias = $this->params()->fromRoute('alias');
-        $album = $this->getGalleryModel()->getAlbumByAlias($alias);
-        $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-        $entityManager->remove($album);
-        $entityManager->flush();
-        $this->redirect()->toRoute('admin/adminGallery');
+        $userId = $this->params()->fromRoute('userId');
+        $user = $this->getUserModel()->findUserById($userId);
+        $album = $this->getGalleryModel()->getAlbumByAliasAndUser($alias, $user);
+
+        if ($album) {
+            $this->getGalleryModel()->deleteAlbum($album, $user);
+        }
+
+        $this->redirect()->toRoute('admin/adminGallery/userAlbums', ['userId' => $userId]);
     }
 
     protected function getAuthenticationService()
@@ -180,6 +213,15 @@ class GalleryController extends AbstractActionController
         }
 
         return $this->galleryModel;
+    }
+
+    protected function getUserModel()
+    {
+        if (!$this->userModel) {
+            $this->userModel = $this->getServiceLocator()->get('Application\Model\UserModel');
+        }
+
+        return $this->userModel;
     }
 
 }

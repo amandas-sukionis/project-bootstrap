@@ -32,7 +32,11 @@
         }
     }
 
-    google.maps.event.addDomListener(window, 'load', initialize);
+    if(document.getElementById("map-canvas") !== null)
+    {
+        google.maps.event.addDomListener(window, 'load', initialize);
+    }
+
 
     $("#get-location").click(function () {
         if ($("#location").val() != '') {

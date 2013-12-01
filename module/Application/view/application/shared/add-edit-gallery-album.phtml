@@ -41,7 +41,7 @@ $form->prepare();
         <?php echo $this->formRow($form->get('csrf')); ?>
         <?php echo $this->formRow(
             $form->get('addAlbumFormSubmit')->setAttribute('class', 'btn btn-success')->setAttribute(
-                'value', $this->translate('add')
+                'value', $this->translate('save')
             )
         ); ?>
         <?php echo $this->form()->closeTag($form); ?>

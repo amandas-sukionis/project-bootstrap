@@ -11,6 +11,7 @@
         <field name="lastName" type="string" nullable="true"/>
         <field name="password" type="string"/>
         <field name="salt" type="string"/>
+        <field name="albumsCount" type="integer"/>
         <field name="accessLevel" type="integer"/>
         <one-to-many field="albums" target-entity="Application\Entity\GalleryAlbum" mapped-by="user" />
     </entity>

@@ -33,36 +33,42 @@ class GalleryModel implements ServiceLocatorAwareInterface
         return false;
     }
 
-    public function moveImageFiles($postData, $alias)
+    public function moveImageFiles($postData, $alias, User $user)
     {
         if (!file_exists('public/img/gallery')) {
             mkdir('public/img/gallery');
         }
 
-        if (!file_exists('public/img/gallery/' . $alias)) {
-            mkdir('public/img/gallery/' . $alias);
+        if (!file_exists('public/img/gallery/' . $user->getEmail())) {
+            mkdir('public/img/gallery/' . $user->getEmail());
+        }
+
+        $destinationDir = 'public/img/gallery/' . $user->getEmail() . '/' . $alias;
+        $destinationUrl = '/img/gallery/' . $user->getEmail() . '/' . $alias;
+        if (!file_exists($destinationDir)) {
+            mkdir($destinationDir);
         }
 
         $images = [];
         foreach ($postData['uploadImageFile'] as $image) {
             $tmpFile = $image['tmp_name'];
             $imageAlias = uniqid();
-            $newFileName = 'public/img/gallery/' . $alias . '/' . $imageAlias;
-            $url = '/img/gallery/' . $alias . '/' . $imageAlias;
+            $newFileName = $destinationDir . '/' . $imageAlias;
+            $url = $destinationUrl . '/' . $imageAlias;
             move_uploaded_file($tmpFile, $newFileName);
-            $thumbUrl = $this->createThumbnail($newFileName, $alias, $imageAlias);
-            $album = $this->getAlbumByAlias($alias);
-            $alias = $this->addNewImage($imageAlias, $url, $thumbUrl, $album);
-            $images[] = ['alias' => $alias, 'url' => $url, 'thumbUrl' => $thumbUrl];
+            $finalWidthOfImage = 150;
+            $thumbUrl = $this->createThumbnail($newFileName, $alias, $imageAlias, $user, $finalWidthOfImage);
+            $finalWidthOfImage = 500;
+            $this->createThumbnail($newFileName, $alias, $imageAlias . '_big', $user, $finalWidthOfImage);
+            $album = $this->getAlbumByAliasAndUser($alias, $user);
+            $imageAlias = $this->addNewImage($imageAlias, $url, $thumbUrl, $album);
+            $images[] = ['alias' => $imageAlias, 'url' => $url, 'thumbUrl' => $thumbUrl];
         }
 
         return $images;
     }
 
-    public function createThumbnail($filename, $alias, $imageAlias) {
-
-        $final_width_of_image = 100;
-
+    public function createThumbnail($filename, $alias, $imageAlias, User $user, $finalWidthOfImage) {
         if(exif_imagetype($filename) == IMAGETYPE_JPEG) {
             $im = imagecreatefromjpeg($filename);
         } else if (exif_imagetype($filename) == IMAGETYPE_GIF) {
@@ -76,15 +82,15 @@ class GalleryModel implements ServiceLocatorAwareInterface
         $ox = imagesx($im);
         $oy = imagesy($im);
 
-        $nx = $final_width_of_image;
-        $ny = floor($oy * ($final_width_of_image / $ox));
+        $nx = $finalWidthOfImage;
+        $ny = floor($oy * ($finalWidthOfImage / $ox));
 
         $nm = imagecreatetruecolor($nx, $ny);
 
         imagecopyresized($nm, $im, 0,0,0,0,$nx,$ny,$ox,$oy);
 
-        $pathToThumbsDirectory = 'public/img/gallery/' . $alias . '/thumbs';
-        $thumbUrl = '/img/gallery/' . $alias . '/thumbs';
+        $pathToThumbsDirectory = 'public/img/gallery/' . $user->getEmail() . '/' . $alias . '/thumbs';
+        $thumbUrl = '/img/gallery/' . $user->getEmail() . '/' . $alias . '/thumbs';
         if(!file_exists($pathToThumbsDirectory)) {
             if(!mkdir($pathToThumbsDirectory)) {
                 die("There was a problem. Please try again!");
@@ -109,16 +115,21 @@ class GalleryModel implements ServiceLocatorAwareInterface
         return $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->getAllUserGalleryAlbums($user);
     }
 
-    public function getImagesByAlbumAlias($alias)
+    public function getImagesByAlbumAliasAndUser($alias, User $user)
     {
-        $album = $this->getAlbumByAlias($alias);
+        $album = $this->getAlbumByAliasAndUser($alias, $user);
 
-        return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->findBy(['album' => $album]);
+        return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->getImagesByAlbum($album);
     }
 
-    public function getAlbumByAlias($alias)
+    public function getImageByAlbumAndNumber(GalleryAlbum $album, $number)
     {
-        return $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->getAlbumByAlias($alias);
+        return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->getImagesByAlbumAndNumber($album, $number);
+    }
+
+    public function getAlbumByAliasAndUser($alias, User $user)
+    {
+        return $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->getAlbumByAliasAndUser($alias, $user);
     }
 
     public function getImageByAlias($alias)
@@ -129,6 +140,11 @@ class GalleryModel implements ServiceLocatorAwareInterface
     public function addNewAlbum($postData, User $user)
     {
         $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->addNewAlbum($postData, $user);
+    }
+
+    public function deleteAlbum(GalleryAlbum $album, User $user)
+    {
+        $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->deleteAlbum($album, $user);
     }
 
     protected function getObjectManager()

@@ -75,13 +75,29 @@ return [
                             'album' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'       => '/album/:alias',
+                                    'route'       => '/:alias',
                                     'defaults'    => [
                                         'controller' => 'Application\Controller\Gallery',
                                         'action'     => 'album',
                                     ],
                                     'constraints' => [
                                         'alias' => '[a-zA-Z0-9][a-zA-Z0-9_-]*',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                                'child_routes'  => [
+                                    'image' => [
+                                        'type'    => 'Segment',
+                                        'options' => [
+                                            'route'       => '/:imageNumber',
+                                            'defaults'    => [
+                                                'controller' => 'Application\Controller\Gallery',
+                                                'action'     => 'albumImage',
+                                            ],
+                                            'constraints' => [
+                                                'imageNumber' => '[0-9]+',
+                                            ],
+                                        ],
                                     ],
                                 ],
                             ],
@@ -102,6 +118,45 @@ return [
                                     'defaults'    => [
                                         'controller' => 'Application\Controller\Gallery',
                                         'action'     => 'editAlbum',
+                                    ],
+                                    'constraints' => [
+                                        'alias' => '[a-zA-Z0-9][a-zA-Z0-9_-]*',
+                                    ],
+                                ],
+                            ],
+                            'uploadImages' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/upload-images/:alias',
+                                    'defaults'    => [
+                                        'controller' => 'Application\Controller\Gallery',
+                                        'action'     => 'uploadImages',
+                                    ],
+                                    'constraints' => [
+                                        'alias' => '[a-zA-Z0-9][a-zA-Z0-9_-]*',
+                                    ],
+                                ],
+                            ],
+                            'finishImageUpload' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/finish-image-upload[/:alias]',
+                                    'defaults'    => [
+                                        'controller' => 'Application\Controller\Gallery',
+                                        'action'     => 'finishImageUpload',
+                                    ],
+                                    'constraints' => [
+                                        'alias' => '[a-zA-Z0-9][a-zA-Z0-9_-]*',
+                                    ],
+                                ],
+                            ],
+                            'deleteAlbum' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/delete-album/:alias',
+                                    'defaults'    => [
+                                        'controller' => 'Application\Controller\Gallery',
+                                        'action'     => 'deleteAlbum',
                                     ],
                                     'constraints' => [
                                         'alias' => '[a-zA-Z0-9][a-zA-Z0-9_-]*',

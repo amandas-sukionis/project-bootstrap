@@ -27,6 +27,10 @@ class UserModel implements ServiceLocatorAwareInterface
         $this->getObjectManager()->getRepository('Application\Entity\User')->createDefaultAdmin($config, $salt, $password);
     }
 
+    public function getAllUsers() {
+        return $this->getObjectManager()->getRepository('Application\Entity\User')->getAllUsers();
+    }
+
     public function registerUser($postData)
     {
         $salt = self::getRandomSalt();
@@ -37,6 +41,11 @@ class UserModel implements ServiceLocatorAwareInterface
     public function findUserByEmail($email)
     {
         return $this->getObjectManager()->getRepository('Application\Entity\User')->findUserByEmail($email);
+    }
+
+    public function findUserById($id)
+    {
+        return $this->getObjectManager()->getRepository('Application\Entity\User')->findUserById($id);
     }
 
     public static function getPasswordHash($password, $salt)

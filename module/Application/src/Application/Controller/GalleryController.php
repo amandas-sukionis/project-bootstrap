@@ -4,6 +4,7 @@ namespace Application\Controller;
 
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 class GalleryController extends AbstractActionController
@@ -29,7 +30,7 @@ class GalleryController extends AbstractActionController
 
         return [
             'galleryAlbums' => $galleryAlbums,
-            'logged'       => $logged,
+            'logged'        => $logged,
         ];
     }
 
@@ -57,24 +58,92 @@ class GalleryController extends AbstractActionController
         ];
     }
 
-    public function editAlbumAction()
+    public function uploadImagesAction()
     {
-        $albumForm = $this->getServiceLocator()->get('Application\Form\AlbumForm');
-        $alias = $this->params()->fromRoute('alias');
-        $album = $this->getGalleryModel()->getAlbumByAlias($alias);
+        if (!$this->getAuthenticationService()->hasIdentity()) {
+            $this->redirect()->toRoute('home');
+        }
 
-        $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-        $albumForm->setHydrator(new DoctrineObject($entityManager));
-        $albumForm->bind($album);
+        $uploadImageForm = $this->getServiceLocator()->get('Application\Form\UploadImageForm');
+        $alias = $this->params()->fromRoute('alias');
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $postData = array_merge_recursive(
+                $request->getPost()->toArray(),
+                $request->getFiles()->toArray()
+            );
+            $uploadImageForm->setData($postData);
+
+            if ($uploadImageForm->isValid()) {
+                $uploadImageForm->getData();
+                $user = $this->getAuthenticationService()->getIdentity();
+                $images = $this->getGalleryModel()->moveImageFiles($postData, $alias, $user);
+
+                return new JsonModel(['images' => $images]);
+            }
+        }
+
+        return [
+            'uploadImageForm' => $uploadImageForm,
+        ];
+    }
+
+    public function finishImageUploadAction()
+    {
+        if (!$this->getAuthenticationService()->hasIdentity()) {
+            $this->redirect()->toRoute('home');
+        }
+
+        $saveImageForm = $this->getServiceLocator()->get('Application\Form\SaveImageForm');
+        $alias = $this->params()->fromRoute('alias');
 
         $request = $this->getRequest();
         if ($request->isPost()) {
             $postData = $request->getPost();
-            $albumForm->setData($postData);
-            if ($albumForm->isValid()) {
-                $entityManager->flush();
-                $this->redirect()->toRoute('home/gallery');
+            $saveImageForm->setData($postData);
+            if ($saveImageForm->isValid()) {
+                $image = $this->getGalleryModel()->getImageByAlias($alias);
+                if ($image) {
+                    if ($image->getAlbum()->getUser() === $this->getAuthenticationService()->getIdentity()) {
+                        if ($this->getGalleryModel()->saveImageInfo($postData, $alias)) {
+                            return new JsonModel(['status' => 'saved']);
+                        }
+                    }
+                }
             }
+        }
+
+        return new JsonModel(['status' => 'fail']);
+    }
+
+    public function editAlbumAction()
+    {
+        if (!$this->getAuthenticationService()->hasIdentity()) {
+            $this->redirect()->toRoute('home');
+        }
+
+        $albumForm = $this->getServiceLocator()->get('Application\Form\AlbumForm');
+        $user = $this->getAuthenticationService()->getIdentity();
+        $alias = $this->params()->fromRoute('alias');
+        $album = $this->getGalleryModel()->getAlbumByAliasAndUser($alias, $user);
+
+        if ($album) {
+            $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
+            $albumForm->setHydrator(new DoctrineObject($entityManager));
+            $albumForm->bind($album);
+
+            $request = $this->getRequest();
+            if ($request->isPost()) {
+                $postData = $request->getPost();
+                $albumForm->setData($postData);
+                if ($albumForm->isValid()) {
+                    $entityManager->flush();
+                    $this->redirect()->toRoute('home/gallery');
+                }
+            }
+        } else {
+            $this->redirect()->toRoute('home/gallery/addAlbum');
         }
 
         return [
@@ -83,15 +152,75 @@ class GalleryController extends AbstractActionController
         ];
     }
 
+    public function deleteAlbumAction()
+    {
+        if (!$this->getAuthenticationService()->hasIdentity()) {
+            $this->redirect()->toRoute('home');
+        }
+
+        $alias = $this->params()->fromRoute('alias');
+        $user = $this->getAuthenticationService()->getIdentity();
+        $album = $this->getGalleryModel()->getAlbumByAliasAndUser($alias, $user);
+
+        if ($album) {
+            $this->getGalleryModel()->deleteAlbum($album, $user);
+        }
+        $this->redirect()->toRoute('home/gallery');
+    }
+
     public function albumAction()
     {
+        if (!$this->getAuthenticationService()->hasIdentity()) {
+            $this->redirect()->toRoute('home/gallery');
+        }
+
         $alias = $this->params()->fromRoute('alias');
-        $album = $this->getGalleryModel()->getAlbumByAlias($alias);
-        $albumImages = $this->getGalleryModel()->getImagesByAlbumAlias($alias);
+        $user = $this->getAuthenticationService()->getIdentity();
+        $album = $this->getGalleryModel()->getAlbumByAliasAndUser($alias, $user);
+
+        if ($album) {
+            $albumImages = $this->getGalleryModel()->getImagesByAlbumAliasAndUser($alias, $user);
+        } else {
+            return $this->redirect()->toRoute('home/gallery');
+        }
 
         return [
             'albumImages' => $albumImages,
             'album'       => $album,
+        ];
+    }
+
+    public function albumImageAction()
+    {
+        if (!$this->getAuthenticationService()->hasIdentity()) {
+            return $this->redirect()->toRoute('home/gallery');
+        }
+
+        $alias = $this->params()->fromRoute('alias');
+        $imageNumber = $this->params()->fromRoute('imageNumber');
+        $user = $this->getAuthenticationService()->getIdentity();
+        $album = $this->getGalleryModel()->getAlbumByAliasAndUser($alias, $user);
+        $images = $this->getGalleryModel()->getImageByAlbumAndNumber($album, $imageNumber);
+        if (!$images) {
+            return $this->redirect()->toRoute('home/gallery');
+        }
+
+        if ($imageNumber == 0) {
+            $previousUrl = null;
+        } else {
+            $previousUrl = $this->url()->fromRoute('home/gallery/album/image', ['alias' => $alias, 'imageNumber' => $imageNumber - 1]);
+        }
+
+        if ($imageNumber == $album->getImagesCount() - 1) {
+            $nextUrl = null;
+        } else {
+            $nextUrl = $this->url()->fromRoute('home/gallery/album/image', ['alias' => $alias, 'imageNumber' => $imageNumber + 1]);
+        }
+
+        return [
+            'image'       => $images[0],
+            'nextUrl'     => $nextUrl,
+            'previousUrl' => $previousUrl,
         ];
     }
 

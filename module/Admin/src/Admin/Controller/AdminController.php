@@ -13,10 +13,13 @@ class AdminController extends AbstractActionController
     protected $authenticationService;
     protected $translationService;
     protected $galleryModel;
+    protected $userModel;
 
     public function indexAction()
     {
-        if ($this->getAuthenticationService()->hasIdentity() && $this->getAuthenticationService()->getIdentity()->getAccessLevel() >= 10) {
+        if ($this->getAuthenticationService()->hasIdentity()
+            && $this->getAuthenticationService()->getIdentity()->getAccessLevel() >= 10
+        ) {
             $this->redirect()->toRoute('admin/dashboard');
         }
         $viewParams = [];
@@ -50,10 +53,10 @@ class AdminController extends AbstractActionController
 
     protected function adminGalleryAction()
     {
-        $galleryAlbums = $this->getGalleryModel()->getAllGalleryAlbums();
+        $users = $this->getUserModel()->getAllUsers();
 
         return [
-            'galleryAlbums' => $galleryAlbums,
+            'users'         => $users,
         ];
     }
 
@@ -82,5 +85,14 @@ class AdminController extends AbstractActionController
         }
 
         return $this->galleryModel;
+    }
+
+    protected function getUserModel()
+    {
+        if (!$this->userModel) {
+            $this->userModel = $this->getServiceLocator()->get('Application\Model\UserModel');
+        }
+
+        return $this->userModel;
     }
 }
