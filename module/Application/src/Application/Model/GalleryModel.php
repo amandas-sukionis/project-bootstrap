@@ -110,6 +110,11 @@ class GalleryModel implements ServiceLocatorAwareInterface
         return $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->getAllGalleryAlbums();
     }
 
+    public function getAllPublicUserGalleryAlbums(User $user)
+    {
+        return $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->getAllPublicUserGalleryAlbums($user);
+    }
+
     public function getAllUserGalleryAlbums(User $user)
     {
         return $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->getAllUserGalleryAlbums($user);

@@ -11,6 +11,8 @@ class UserRepository extends EntityRepository
         if (!$this->findUserByEmail($config['email'])) {
             $user = new User();
             $user->setEmail($config['email']);
+            $user->setUserName($config['userName']);
+            $user->setAlbumsCount(0);
             $user->setPassword($password);
             $user->setSalt($salt);
             $user->setAccessLevel(10);
@@ -27,6 +29,8 @@ class UserRepository extends EntityRepository
         $user->setPassword($password);
         $user->setSalt($salt);
         $user->setAccessLevel(0);
+        $user->setAlbumsCount(0);
+        $user->setUserName($postData['userName']);
         $user->setFirstName($postData['firstName']);
         $user->setLastName($postData['lastName']);
 
@@ -37,6 +41,11 @@ class UserRepository extends EntityRepository
     public function findUserByEmail($email)
     {
         return $this->findOneBy(['email' => $email]);
+    }
+
+    public function findUserByUserName($userName)
+    {
+        return $this->findOneBy(['userName' => $userName]);
     }
 
     public function findUserById($id)

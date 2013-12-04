@@ -18,7 +18,8 @@ class GalleryAlbumRepository extends EntityRepository
         return $this->findAll();
     }
 
-    public function deleteAlbum (GalleryAlbum $album, User $user) {
+    public function deleteAlbum(GalleryAlbum $album, User $user)
+    {
         $user->setAlbumsCount($user->getAlbumsCount() - 1);
 
         $this->getEntityManager()->remove($album);
@@ -33,6 +34,23 @@ class GalleryAlbumRepository extends EntityRepository
         $resultQuery->setParameters(
             array(
                  'user' => $user,
+            )
+        );
+
+        $albums = $resultQuery->getResult();
+
+        return $albums;
+    }
+
+    public function getAllPublicUserGalleryAlbums(User $user)
+    {
+        $resultQuery = $this->getEntityManager()->createQuery(
+            'SELECT u FROM Application\Entity\GalleryAlbum u WHERE :user = u.user AND :isPublic = u.isPublic'
+        );
+        $resultQuery->setParameters(
+            array(
+                 'user' => $user,
+                 'isPublic' => 1,
             )
         );
 

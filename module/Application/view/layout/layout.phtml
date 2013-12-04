@@ -18,7 +18,7 @@ $authenticationService = $sm->get('Zend\Authentication\AuthenticationService');
 
     <!-- Le styles -->
     <?php echo $this->headLink(
-        array('rel'  => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon',
+        array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon',
               'href' => $this->basePath() . '/img/favicon.ico')
     )
         ->prependStylesheet($this->basePath() . '/css/style.css')
@@ -45,26 +45,34 @@ $authenticationService = $sm->get('Zend\Authentication\AuthenticationService');
             <ul class="nav navbar-nav">
                 <li class="<?php if (isset($routeMatch) && $routeMatch->getMatchedRouteName() == 'home') {
                     echo 'active';
-                } ?>"><a
-                        href="<?php echo $this->url('home') ?>"><?php echo $this->translate('home') ?></a></li>
-                <li class="<?php if (isset($routeMatch) && $routeMatch->getMatchedRouteName() == 'home/gallery') {
-                    echo 'active';
-                } ?>"><a
-                        href="<?php echo $this->url('home/gallery') ?>"><?php echo $this->translate('my_gallery') ?></a>
+                } ?>">
+                    <a href="<?php echo $this->url('home') ?>"><?php echo $this->translate('home') ?></a>
                 </li>
+                <?php if ($authenticationService->hasIdentity()) { ?>
+                    <li class="<?php if (isset($routeMatch) && $routeMatch->getMatchedRouteName() == 'home/gallery') {
+                        echo 'active';
+                    } ?>"><a href="<?php echo $this->url(
+                            'home/gallery', ['userName' => $authenticationService->getIdentity()->getUserName()]
+                        ) ?>"><?php echo $this->translate(
+                                'my_gallery'
+                            ) ?></a>
+                    </li>
+                <?php } ?>
             </ul>
             <?php
             if (!$authenticationService->hasIdentity()) {
                 $form = $this->loginForm;
                 $form->setAttribute('class', 'navbar-form navbar-right')
-                     ->setAttribute('action', $this->url('home/login'));
+                    ->setAttribute('action', $this->url('home/login'));
                 $form->prepare();
                 echo $this->form()->openTag($form); ?>
                 <div class='form-group'>
                     <?php echo $this->formRow($form->get('loginFormEmail')->setAttribute('class', 'form-control')); ?>
                 </div>
                 <div class="form-group">
-                    <?php echo $this->formRow($form->get('loginFormPassword')->setAttribute('class', 'form-control')); ?>
+                    <?php echo $this->formRow(
+                        $form->get('loginFormPassword')->setAttribute('class', 'form-control')
+                    ); ?>
                 </div>
                 <?php echo $this->formRow($form->get('csrf')); ?>
                 <?php echo $this->formRow(
@@ -72,16 +80,22 @@ $authenticationService = $sm->get('Zend\Authentication\AuthenticationService');
                         'value', $this->translate('login')
                     )
                 ); ?>
-                <a href="<?php echo $this->url('home/register'); ?>" class="btn btn-default"><?php echo $this->translate('register'); ?></a>
+                <a href="<?php echo $this->url('home/register'); ?>"
+                   class="btn btn-default"><?php echo $this->translate('register'); ?></a>
                 <?php echo $this->form()->closeTag($form);
-            } else { ?>
+            } else {
+                ?>
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $this->translate('signed_in_as') . ' ' . $authenticationService->getIdentity()->getEmail(); ?> <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo
+                                $this->translate('signed_in_as') . ' ' . $authenticationService->getIdentity()
+                                    ->getEmail(); ?> <b class="caret"></b></a>
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="#">Manage</a></li>
                             <li class="divider"></li>
-                            <li><a href="<?php echo $this->url('home/logout'); ?>"><?php echo $this->translate('logout'); ?></a></li>
+                            <li><a href="<?php echo $this->url('home/logout'); ?>"><?php echo $this->translate(
+                                        'logout'
+                                    ); ?></a></li>
                         </ul>
                     </li>
                 </ul>

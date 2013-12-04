@@ -10,6 +10,7 @@
         <field name="alias" type="string"/>
         <field name="shortDescription" type="string" nullable="true"/>
         <field name="fullDescription" type="string" nullable="true"/>
+        <field name="isPublic" type="boolean"/>
         <field name="location" type="string" nullable="true"/>
         <field name="locationLat" type="string" nullable="true"/>
         <field name="locationLng" type="string" nullable="true"/>

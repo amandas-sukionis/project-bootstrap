@@ -1,6 +1,7 @@
 <?php
 namespace Application\Form;
 
+use Zend\Filter\StringTrim;
 use Zend\Form\Element;
 use Zend\Form\Form;
 use Zend\I18n\Validator\Alpha;
@@ -30,6 +31,9 @@ class RegisterForm extends Form
         $lastNameInput = new Element\Text();
         $lastNameInput->setName('lastName');
 
+        $userNameInput = new Element\Text();
+        $userNameInput->setName('userName');
+
         $emailInput = new Element\Email();
         $emailInput->setName('email');
 
@@ -48,6 +52,7 @@ class RegisterForm extends Form
             ->add($firstNameInput)
             ->add($lastNameInput)
             ->add($emailInput)
+            ->add($userNameInput)
             ->add($passwordInput)
             ->add($confirmPasswordInput)
             ->add($submitButton)
@@ -70,7 +75,7 @@ class RegisterForm extends Form
                 ->attach(new Alpha());
 
             $lastNameInput = new Input('lastName');
-            $lastNameInput->setRequired(true);
+            $lastNameInput->setRequired(false);
             $lastNameInput->getValidatorChain()
                 ->attach(
                     new StringLength([
@@ -78,6 +83,15 @@ class RegisterForm extends Form
                                      ])
                 )
                 ->attach(new Alpha());
+
+            $userNameInput = new Input('userName');
+            $userNameInput->setRequired(true);
+            $userNameInput->getValidatorChain()
+                ->attach(
+                    new StringLength([
+                                     'min' => 3,
+                                     ])
+                );
 
             $emailInput = new Input('email');
             $emailInput->setRequired(true);
@@ -97,11 +111,13 @@ class RegisterForm extends Form
                 ->add($firstNameInput)
                 ->add($lastNameInput)
                 ->add($emailInput)
+                ->add($userNameInput)
                 ->add($passwordInput)
                 ->add($confirmPasswordInput);
 
             $this->inputFilter = $inputFilter;
         }
+
         return $this->inputFilter;
     }
 }

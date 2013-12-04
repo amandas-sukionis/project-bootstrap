@@ -34,13 +34,16 @@ class LoginController extends AbstractActionController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $postData = $request->getPost();
+            $postData['userName'] = str_replace(' ', '', $postData['userName']);
             $registerForm->setData($postData);
             if ($registerForm->isValid()) {
-                if (!$this->getUserModel()->findUserByEmail($postData['email'])) {
+                if ($this->getUserModel()->findUserByEmail($postData['email'])) {
+                    $viewParams['error'] = $this->getTranslator()->translate('email_already_in_use');
+                } else if ($this->getUserModel()->findUserByUserName($postData['userName'])) {
+                    $viewParams['error'] = $this->getTranslator()->translate('username_already_taken');
+                } else {
                     $this->getUserModel()->registerUser($postData);
                     $viewParams['success'] = $this->getTranslator()->translate('registration_successful');
-                } else {
-                    $viewParams['error'] = $this->getTranslator()->translate('email_already_in_use');
                 }
             }
         }

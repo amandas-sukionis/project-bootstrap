@@ -62,12 +62,15 @@ return [
                         ],
                     ],
                     'gallery'     => [
-                        'type'          => 'Literal',
+                        'type'          => 'Segment',
                         'options'       => [
-                            'route'    => 'gallery',
+                            'route'    => 'gallery/:userName',
                             'defaults' => [
                                 'controller' => 'Application\Controller\Gallery',
                                 'action'     => 'index',
+                            ],
+                            'constraints' => [
+                                'userName' => '[a-zA-Z0-9][a-zA-Z0-9_-]*',
                             ],
                         ],
                         'may_terminate' => true,

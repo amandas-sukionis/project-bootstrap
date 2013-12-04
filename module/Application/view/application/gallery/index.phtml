@@ -18,29 +18,37 @@
         </div>
     </div>
 </div>
-<?php if (!$this->logged) { ?>
-    <div class="alert alert-info"><?php echo $this->translate('please_log_in_to_manage_your_gallery'); ?></div>
-<?php } else { ?>
-    <a href="<?php echo $this->url('home/gallery/addAlbum'); ?>" class="btn btn-success btn-xs admin-add-album">
+<?php if ($this->owner) { ?>
+    <a href="<?php echo $this->url('home/gallery/addAlbum', ['userName' => $this->userName]); ?>"
+       class="btn btn-success btn-xs admin-add-album">
         <span class="glyphicon glyphicon-plus"><?php echo $this->translate('add_album'); ?></span>
     </a>
-    <div class="row">
-        <?php if (!$this->galleryAlbums) { ?>
-            <div class="alert alert-info"><?php echo $this->translate('no_albums_in_gallery'); ?></div>
-        <?php } ?>
+<?php } ?>
+<div class="row">
+    <?php if (!$this->galleryAlbums) { ?>
+        <div class="alert alert-info"><?php echo
+                $this->translate('no_albums_in') . ' ' . $this->userName . ' ' . $this->translate('gallery'); ?>
+        </div>
+    <?php } else { ?>
         <?php foreach ($this->galleryAlbums as $album) { ?>
             <div class="col-md-3 margin-bottom-25">
-                <a href="<?php echo $this->url('home/gallery/editAlbum', ['alias' => $album->getAlias()]); ?>"
-                   class="btn btn-info btn-xs admin-edit">
-                    <span class="glyphicon glyphicon-edit"></span>
-                </a>
-                <a data-toggle="modal" href="#myModal" class="btn btn-danger btn-xs admin-remove remove-item"
-                   data-delete-url="<?php echo $this->url(
-                       'home/gallery/deleteAlbum', array('alias' => $album->getAlias())
-                   ); ?>">
-                    <span class="glyphicon glyphicon-remove"></span>
-                </a>
-                <a href="<?php echo $this->url('home/gallery/album', ['alias' => $album->getAlias()]) ?>"
+                <?php if ($this->owner) { ?>
+                    <a href="<?php echo $this->url(
+                        'home/gallery/editAlbum', ['alias' => $album->getAlias(), 'userName' => $this->userName]
+                    ); ?>"
+                       class="btn btn-info btn-xs admin-edit">
+                        <span class="glyphicon glyphicon-edit"></span>
+                    </a>
+                    <a data-toggle="modal" href="#myModal" class="btn btn-danger btn-xs admin-remove remove-item"
+                       data-delete-url="<?php echo $this->url(
+                           'home/gallery/deleteAlbum', ['alias' => $album->getAlias(), 'userName' => $this->userName]
+                       ); ?>">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </a>
+                <?php } ?>
+                <a href="<?php echo $this->url(
+                    'home/gallery/album', ['alias' => $album->getAlias(), 'userName' => $this->userName]
+                ) ?>"
                    class="thumbnail">
                     <img alt="...">
 
@@ -51,6 +59,7 @@
                     </div>
                 </a>
             </div>
-        <?php } ?>
-    </div>
-<?php } ?>
+        <?php
+        }
+    } ?>
+</div>

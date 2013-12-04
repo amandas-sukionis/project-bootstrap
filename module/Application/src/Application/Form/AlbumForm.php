@@ -43,6 +43,16 @@ class AlbumForm extends Form
         $locationLngInput = new Element\Hidden('locationLng');
         $locationLngInput->setAttribute('id', 'locationLng');
 
+        $isPublicInput = new Element\Radio('isPublic');
+        $isPublicInput->setValueOptions(
+            [
+                '0' => 'no',
+                '1' => 'yes',
+            ]
+        );
+        $isPublicInput->setChecked('0');
+        $isPublicInput->setLabelAttributes(['class' => 'checkbox-inline']);
+
         $csrf = new Element\Csrf('csrf');
 
         $submitButton = new Element\Submit();
@@ -57,6 +67,7 @@ class AlbumForm extends Form
             ->add($fullDescriptionInput)
             ->add($locationLatInput)
             ->add($locationLngInput)
+            ->add($isPublicInput)
             ->add($csrf)
             ->add($submitButton);
     }

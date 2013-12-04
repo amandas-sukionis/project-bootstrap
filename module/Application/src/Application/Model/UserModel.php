@@ -9,6 +9,7 @@ class UserModel implements ServiceLocatorAwareInterface
 {
     protected $objectManager;
     protected $serviceLocator;
+    protected $authenticationService;
 
     public function setServiceLocator(ServiceLocatorInterface $serviceLocator)
     {
@@ -41,6 +42,25 @@ class UserModel implements ServiceLocatorAwareInterface
     public function findUserByEmail($email)
     {
         return $this->getObjectManager()->getRepository('Application\Entity\User')->findUserByEmail($email);
+    }
+
+    public function isUserOwner(User $user)
+    {
+        if ($this->getAuthenticationService()->hasIdentity()) {
+            $authenticatedUser = $this->getAuthenticationService()->getIdentity();
+            if ($user === $authenticatedUser) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public function findUserByUserName($userName)
+    {
+        return $this->getObjectManager()->getRepository('Application\Entity\User')->findUserByUserName($userName);
     }
 
     public function findUserById($id)
@@ -83,6 +103,15 @@ class UserModel implements ServiceLocatorAwareInterface
         }
 
         return $this->objectManager;
+    }
+
+    protected function getAuthenticationService()
+    {
+        if (!$this->authenticationService) {
+            $this->authenticationService = $this->getServiceLocator()->get('Zend\Authentication\AuthenticationService');
+        }
+
+        return $this->authenticationService;
     }
 
 }

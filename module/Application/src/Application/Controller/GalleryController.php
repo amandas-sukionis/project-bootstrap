@@ -20,36 +20,91 @@ class GalleryController extends AbstractActionController
 
     public function indexAction()
     {
-        $logged = false;
-        $galleryAlbums = null;
-        if ($this->getAuthenticationService()->hasIdentity()) {
-            $logged = true;
-            $user = $this->getAuthenticationService()->getIdentity();
-            $galleryAlbums = $this->getGalleryModel()->getAllUserGalleryAlbums($user);
+        $userName = $this->params()->fromRoute('userName');
+        $user = $this->getUserModel()->findUserByUserName($userName);
+
+        if ($user) {
+            $isOwner = $this->getUserModel()->isUserOwner($user);
+            if ($isOwner) {
+                $galleryAlbums = $this->getGalleryModel()->getAllUserGalleryAlbums($user);
+            } else {
+                $galleryAlbums = $this->getGalleryModel()->getAllPublicUserGalleryAlbums($user);
+            }
+        } else {
+            return $this->redirect()->toRoute('home');
         }
 
         return [
+            'userName'      => $user->getUserName(),
+            'owner'         => $isOwner,
             'galleryAlbums' => $galleryAlbums,
-            'logged'        => $logged,
+        ];
+    }
+
+    public function albumAction()
+    {
+        $viewParams = [];
+        $userName = $this->params()->fromRoute('userName');
+        $alias = $this->params()->fromRoute('alias');
+        $user = $this->getUserModel()->findUserByUserName($userName);
+
+        if ($user) {
+            $isOwner = $this->getUserModel()->isUserOwner($user);
+            if ($isOwner) {
+                $galleryAlbums = $this->getGalleryModel()->getAllUserGalleryAlbums($user);
+            } else {
+                $galleryAlbums = $this->getGalleryModel()->getAllPublicUserGalleryAlbums($user);
+            }
+        } else {
+            return $this->redirect()->toRoute('home');
+        }
+
+        if ($this->getAuthenticationService()->hasIdentity()) {
+            $user = $this->getAuthenticationService()->getIdentity();
+            $viewParams['userName'] = $user->getUserName();
+            if ($userName == $user->getUserName()) {
+                $viewParams['owner'] = true;
+                $galleryAlbums = $this->getGalleryModel()->getAllUserGalleryAlbums($user);
+            }
+        }
+
+        $album = $this->getGalleryModel()->getAlbumByAliasAndUser($alias, $user);
+
+        if ($album) {
+            $albumImages = $this->getGalleryModel()->getImagesByAlbumAliasAndUser($alias, $user);
+        } else {
+            return $this->redirect()->toRoute('home/gallery', ['userName' => $user->getUserName()]);
+        }
+
+        return [
+            'albumImages' => $albumImages,
+            'album'       => $album,
         ];
     }
 
     public function addAlbumAction()
     {
-        if (!$this->getAuthenticationService()->hasIdentity()) {
-            $this->redirect()->toRoute('home');
-        }
-
-        $albumForm = $this->getServiceLocator()->get('Application\Form\AlbumForm');
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $postData = $request->getPost();
-            $albumForm->setData($postData);
-            if ($albumForm->isValid()) {
-                $user = $this->getAuthenticationService()->getIdentity();
-                $this->getGalleryModel()->addNewAlbum($postData, $user);
-                $this->redirect()->toRoute('home/gallery');
+        $userName = $this->params()->fromRoute('userName');
+        $user = $this->getUserModel()->findUserByUserName($userName);
+        if ($user) {
+            $isOwner = $this->getUserModel()->isUserOwner($user);
+            if ($isOwner) {
+                $albumForm = $this->getServiceLocator()->get('Application\Form\AlbumForm');
+                $request = $this->getRequest();
+                if ($request->isPost()) {
+                    $postData = $request->getPost();
+                    $albumForm->setData($postData);
+                    if ($albumForm->isValid()) {
+                        $user = $this->getAuthenticationService()->getIdentity();
+                        $this->getGalleryModel()->addNewAlbum($postData, $user);
+                        $this->redirect()->toRoute('home/gallery', ['userName' => $user->getUserName()]);
+                    }
+                }
+            } else {
+                return $this->redirect()->toRoute('home');
             }
+        } else {
+            return $this->redirect()->toRoute('home');
         }
 
         return [
@@ -139,11 +194,11 @@ class GalleryController extends AbstractActionController
                 $albumForm->setData($postData);
                 if ($albumForm->isValid()) {
                     $entityManager->flush();
-                    $this->redirect()->toRoute('home/gallery');
+                    $this->redirect()->toRoute('home/gallery', ['userName' => $user->getUserName()]);
                 }
             }
         } else {
-            $this->redirect()->toRoute('home/gallery/addAlbum');
+            $this->redirect()->toRoute('home/gallery/addAlbum', ['userName' => $user->getUserName()]);
         }
 
         return [
@@ -165,35 +220,13 @@ class GalleryController extends AbstractActionController
         if ($album) {
             $this->getGalleryModel()->deleteAlbum($album, $user);
         }
-        $this->redirect()->toRoute('home/gallery');
-    }
-
-    public function albumAction()
-    {
-        if (!$this->getAuthenticationService()->hasIdentity()) {
-            $this->redirect()->toRoute('home/gallery');
-        }
-
-        $alias = $this->params()->fromRoute('alias');
-        $user = $this->getAuthenticationService()->getIdentity();
-        $album = $this->getGalleryModel()->getAlbumByAliasAndUser($alias, $user);
-
-        if ($album) {
-            $albumImages = $this->getGalleryModel()->getImagesByAlbumAliasAndUser($alias, $user);
-        } else {
-            return $this->redirect()->toRoute('home/gallery');
-        }
-
-        return [
-            'albumImages' => $albumImages,
-            'album'       => $album,
-        ];
+        $this->redirect()->toRoute('home/gallery', ['userName' => $user->getUserName()]);
     }
 
     public function albumImageAction()
     {
         if (!$this->getAuthenticationService()->hasIdentity()) {
-            return $this->redirect()->toRoute('home/gallery');
+            return $this->redirect()->toRoute('home');
         }
 
         $alias = $this->params()->fromRoute('alias');
@@ -202,19 +235,25 @@ class GalleryController extends AbstractActionController
         $album = $this->getGalleryModel()->getAlbumByAliasAndUser($alias, $user);
         $images = $this->getGalleryModel()->getImageByAlbumAndNumber($album, $imageNumber);
         if (!$images) {
-            return $this->redirect()->toRoute('home/gallery');
+            return $this->redirect()->toRoute('home/gallery', ['userName' => $user->getUserName()]);
         }
 
         if ($imageNumber == 0) {
             $previousUrl = null;
         } else {
-            $previousUrl = $this->url()->fromRoute('home/gallery/album/image', ['alias' => $alias, 'imageNumber' => $imageNumber - 1]);
+            $previousUrl = $this->url()->fromRoute(
+                'home/gallery/album/image',
+                ['alias' => $alias, 'imageNumber' => $imageNumber - 1, 'userName' => $user->getUserName()]
+            );
         }
 
         if ($imageNumber == $album->getImagesCount() - 1) {
             $nextUrl = null;
         } else {
-            $nextUrl = $this->url()->fromRoute('home/gallery/album/image', ['alias' => $alias, 'imageNumber' => $imageNumber + 1]);
+            $nextUrl = $this->url()->fromRoute(
+                'home/gallery/album/image',
+                ['alias' => $alias, 'imageNumber' => $imageNumber + 1, 'userName' => $user->getUserName()]
+            );
         }
 
         return [
@@ -242,4 +281,12 @@ class GalleryController extends AbstractActionController
         return $this->galleryModel;
     }
 
+    protected function getUserModel()
+    {
+        if (!$this->userModel) {
+            $this->userModel = $this->getServiceLocator()->get('Application\Model\UserModel');
+        }
+
+        return $this->userModel;
+    }
 }
