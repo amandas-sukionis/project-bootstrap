@@ -2,6 +2,7 @@
 namespace Application\Model;
 
 use Application\Entity\GalleryAlbum;
+use Application\Entity\GalleryImage;
 use Application\Entity\User;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -110,6 +111,16 @@ class GalleryModel implements ServiceLocatorAwareInterface
         return $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->getAllGalleryAlbums();
     }
 
+    public function getAllImagesByAlbum(GalleryAlbum $album)
+    {
+        return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->getAllImagesByAlbum($album);
+    }
+
+    public function getAllPublicImagesByAlbum(GalleryAlbum $album)
+    {
+        return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->getAllPublicImagesByAlbum($album);
+    }
+
     public function getAllPublicUserGalleryAlbums(User $user)
     {
         return $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->getAllPublicUserGalleryAlbums($user);
@@ -120,16 +131,29 @@ class GalleryModel implements ServiceLocatorAwareInterface
         return $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->getAllUserGalleryAlbums($user);
     }
 
-    public function getImagesByAlbumAliasAndUser($alias, User $user)
+    public function getAllImagesByAlbumAliasAndUser($alias, User $user)
     {
         $album = $this->getAlbumByAliasAndUser($alias, $user);
-
-        return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->getImagesByAlbum($album);
+        if ($album) {
+            return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->getAllImagesByAlbum($album);
+        } else {
+            return null;
+        }
     }
 
-    public function getImageByAlbumAndNumber(GalleryAlbum $album, $number)
+    public function getAllPublicImagesByAlbumAliasAndUser($alias, User $user)
     {
-        return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->getImagesByAlbumAndNumber($album, $number);
+        $album = $this->getAlbumByAliasAndUser($alias, $user);
+        if ($album) {
+            return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->getAllPublicImagesByAlbum($album);
+        } else {
+            return null;
+        }
+    }
+
+    public function getImageByAlbumAndAlias(GalleryAlbum $album, $imageAlias)
+    {
+        return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->getImageByAlbumAndALias($album, $imageAlias);
     }
 
     public function getAlbumByAliasAndUser($alias, User $user)
@@ -150,6 +174,41 @@ class GalleryModel implements ServiceLocatorAwareInterface
     public function deleteAlbum(GalleryAlbum $album, User $user)
     {
         $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->deleteAlbum($album, $user);
+    }
+
+    public function deleteImage(GalleryImage $image, GalleryAlbum $album)
+    {
+        if ($album->getMainImage() == $image) {
+            $album->setMainImage(null);
+        }
+        $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->deleteImage($image, $album);
+    }
+
+    public function getImageVoteLogByUserAndImage(User $user, GalleryImage $image)
+    {
+        return $voteLog = $this->getObjectManager()->getRepository('Application\Entity\GalleryImageVoteLog')->getImageVoteLogByUserAndImage($user, $image);
+    }
+
+    public function upVoteImage(User $user, GalleryImage $image, $galleryImageVoteLog)
+    {
+        if ($galleryImageVoteLog) {
+            $image->setVotesCount($image->getVotesCount() + 2);
+        } else {
+            $image->setVotesCount($image->getVotesCount() + 1);
+        }
+
+        $this->getObjectManager()->getRepository('Application\Entity\GalleryImageVoteLog')->logVote($user, $image, $galleryImageVoteLog, 'upvote');
+    }
+
+    public function downVoteImage(User $user, GalleryImage $image, $galleryImageVoteLog)
+    {
+        if ($galleryImageVoteLog) {
+            $image->setVotesCount($image->getVotesCount() - 2);
+        } else {
+            $image->setVotesCount($image->getVotesCount() - 1);
+        }
+
+        $this->getObjectManager()->getRepository('Application\Entity\GalleryImageVoteLog')->logVote($user, $image, $galleryImageVoteLog, 'downvote');
     }
 
     protected function getObjectManager()

@@ -1,5 +1,5 @@
 <?php
-$form = $this->saveImageForm;
+$form = $this->imageForm;
 $form->prepare();
 ?>
 <div class="row">
@@ -13,7 +13,7 @@ $form->prepare();
             <label for="shortDescription"><?php echo $this->translate('short_description') ?></label>
             <?php echo $this->formRow($form->get('shortDescription')->setAttribute('class', 'form-control')); ?>
         </div>
-        <input type="submit" name="saveImageFormSubmit" class="btn btn-success" value="<?php echo $this->translate('save') ?>">
+        <input type="submit" name="imageFormSubmit" class="btn btn-success" value="<?php echo $this->translate('save') ?>">
         <?php echo $this->form()->closeTag($form); ?>
     </div>
 </div>

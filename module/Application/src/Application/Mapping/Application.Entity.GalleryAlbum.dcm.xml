@@ -16,7 +16,12 @@
         <field name="locationLng" type="string" nullable="true"/>
         <field name="createDate" type="datetime"/>
         <field name="imagesCount" type="integer" nullable="false"/>
-        <field name="mainImageUrl" type="string" nullable="true"/>
+        <one-to-one field="mainImage" target-entity="GalleryImage">
+            <cascade>
+                <cascade-remove/>
+            </cascade>
+            <join-column name="mainImageId" referenced-column-name="id" />
+        </one-to-one>
         <one-to-many field="images" target-entity="GalleryImage" mapped-by="album">
             <cascade>
                 <cascade-remove/>

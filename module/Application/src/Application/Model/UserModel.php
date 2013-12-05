@@ -44,6 +44,24 @@ class UserModel implements ServiceLocatorAwareInterface
         return $this->getObjectManager()->getRepository('Application\Entity\User')->findUserByEmail($email);
     }
 
+    public function getUser()
+    {
+        if ($this->getAuthenticationService()->hasIdentity()) {
+            return $this->getAuthenticationService()->getIdentity();
+        } else {
+            return false;
+        }
+    }
+
+    public function isLoggedIn()
+    {
+        if ($this->getAuthenticationService()->hasIdentity()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function isUserOwner(User $user)
     {
         if ($this->getAuthenticationService()->hasIdentity()) {

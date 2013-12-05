@@ -76,6 +76,33 @@
             name: 'shortDescription'
         });
 
+        var $radioLabel0 = $('<label/>', {
+            class: 'radio-inline'
+        });
+
+        var $radioLabel1 = $('<label/>', {
+            class: 'radio-inline'
+        });
+
+
+        var $radioInput0 = $('<input/>', {
+            type: 'radio',
+            name: 'isAlbumImage',
+            value: '0',
+            checked: 'checked'
+        });
+
+        var $radioInput1 = $('<input/>', {
+            type: 'radio',
+            name: 'isAlbumImage',
+            value: '1'
+        });
+
+        $radioLabel0.append($radioInput0);
+        $radioLabel0.append('Ne');
+        $radioLabel1.append($radioInput1);
+        $radioLabel1.append('Taip');
+
         var $form = $('<form/>', {
             action: finishUploadUrl + '/' + alias,
             class: 'saveImageInfo',
@@ -98,6 +125,8 @@
         $form.append($nameInput);
         $form.append($shortDescriptionInput);
         $form.append($checkButton);
+        $form.append($radioLabel0);
+        $form.append($radioLabel1);
 
         $checkButton.click(function () {
             $col.hide('slow');

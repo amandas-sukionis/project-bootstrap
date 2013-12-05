@@ -46,12 +46,12 @@ class AlbumForm extends Form
         $isPublicInput = new Element\Radio('isPublic');
         $isPublicInput->setValueOptions(
             [
-                '0' => 'no',
-                '1' => 'yes',
+                '0' => 'Ne',
+                '1' => 'Taip',
             ]
         );
         $isPublicInput->setChecked('0');
-        $isPublicInput->setLabelAttributes(['class' => 'checkbox-inline']);
+        $isPublicInput->setLabelAttributes(['class' => 'radio-inline']);
 
         $csrf = new Element\Csrf('csrf');
 
@@ -82,6 +82,9 @@ class AlbumForm extends Form
 
             $aliasInput = new Input('alias');
             $aliasInput->setRequired(false);
+
+            $isPublicInput = new Input('isPublic');
+            $isPublicInput->setRequired(true);
 
             $locationInput = new Input('location');
             $locationInput->setRequired(false);

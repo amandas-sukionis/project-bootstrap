@@ -36,49 +36,38 @@ class GalleryController extends AbstractActionController
 
         return [
             'userName'      => $user->getUserName(),
-            'owner'         => $isOwner,
+            'isOwner'       => $isOwner,
             'galleryAlbums' => $galleryAlbums,
         ];
     }
 
     public function albumAction()
     {
-        $viewParams = [];
         $userName = $this->params()->fromRoute('userName');
-        $alias = $this->params()->fromRoute('alias');
         $user = $this->getUserModel()->findUserByUserName($userName);
 
         if ($user) {
+            $alias = $this->params()->fromRoute('alias');
+            $album = $this->getGalleryModel()->getAlbumByAliasAndUser($alias, $user);
             $isOwner = $this->getUserModel()->isUserOwner($user);
             if ($isOwner) {
-                $galleryAlbums = $this->getGalleryModel()->getAllUserGalleryAlbums($user);
+                $albumImages = $this->getGalleryModel()->getAllImagesByAlbum($album);
             } else {
-                $galleryAlbums = $this->getGalleryModel()->getAllPublicUserGalleryAlbums($user);
+                if ($album->getIsPublic()) {
+                    $albumImages = $this->getGalleryModel()->getAllPublicImagesByAlbum($album);
+                } else {
+                    return $this->redirect()->toRoute('home');
+                }
             }
         } else {
             return $this->redirect()->toRoute('home');
         }
 
-        if ($this->getAuthenticationService()->hasIdentity()) {
-            $user = $this->getAuthenticationService()->getIdentity();
-            $viewParams['userName'] = $user->getUserName();
-            if ($userName == $user->getUserName()) {
-                $viewParams['owner'] = true;
-                $galleryAlbums = $this->getGalleryModel()->getAllUserGalleryAlbums($user);
-            }
-        }
-
-        $album = $this->getGalleryModel()->getAlbumByAliasAndUser($alias, $user);
-
-        if ($album) {
-            $albumImages = $this->getGalleryModel()->getImagesByAlbumAliasAndUser($alias, $user);
-        } else {
-            return $this->redirect()->toRoute('home/gallery', ['userName' => $user->getUserName()]);
-        }
-
         return [
             'albumImages' => $albumImages,
             'album'       => $album,
+            'userName'    => $user->getUserName(),
+            'isOwner'     => $isOwner,
         ];
     }
 
@@ -113,56 +102,33 @@ class GalleryController extends AbstractActionController
         ];
     }
 
-    public function uploadImagesAction()
+    public function upVoteImageAction()
     {
-        if (!$this->getAuthenticationService()->hasIdentity()) {
-            $this->redirect()->toRoute('home');
-        }
-
-        $uploadImageForm = $this->getServiceLocator()->get('Application\Form\UploadImageForm');
-        $alias = $this->params()->fromRoute('alias');
-
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $postData = array_merge_recursive(
-                $request->getPost()->toArray(),
-                $request->getFiles()->toArray()
-            );
-            $uploadImageForm->setData($postData);
-
-            if ($uploadImageForm->isValid()) {
-                $uploadImageForm->getData();
-                $user = $this->getAuthenticationService()->getIdentity();
-                $images = $this->getGalleryModel()->moveImageFiles($postData, $alias, $user);
-
-                return new JsonModel(['images' => $images]);
-            }
-        }
-
-        return [
-            'uploadImageForm' => $uploadImageForm,
-        ];
-    }
-
-    public function finishImageUploadAction()
-    {
-        if (!$this->getAuthenticationService()->hasIdentity()) {
-            $this->redirect()->toRoute('home');
-        }
-
-        $saveImageForm = $this->getServiceLocator()->get('Application\Form\SaveImageForm');
-        $alias = $this->params()->fromRoute('alias');
-
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $postData = $request->getPost();
-            $saveImageForm->setData($postData);
-            if ($saveImageForm->isValid()) {
-                $image = $this->getGalleryModel()->getImageByAlias($alias);
-                if ($image) {
-                    if ($image->getAlbum()->getUser() === $this->getAuthenticationService()->getIdentity()) {
-                        if ($this->getGalleryModel()->saveImageInfo($postData, $alias)) {
-                            return new JsonModel(['status' => 'saved']);
+        $userName = $this->params()->fromRoute('userName');
+        $user = $this->getUserModel()->findUserByUserName($userName);
+        $authenticatedUser = $this->getUserModel()->getUser();
+        if ($authenticatedUser && $user) {
+            if ($user) {
+                $alias = $this->params()->fromRoute('alias');
+                $album = $this->getGalleryModel()->getAlbumByAliasAndUser($alias, $user);
+                if ($album && $album->getIsPublic()) {
+                    $imageAlias = $this->params()->fromRoute('imageAlias');
+                    $image = $this->getGalleryModel()->getImageByAlbumAndAlias($album, $imageAlias);
+                    if ($image) {
+                        $image = $image[0];
+                        if ($image->getIsPublic()) {
+                            $galleryImageVoteLog = $this->getGalleryModel()->getImageVoteLogByUserAndImage($authenticatedUser, $image);
+                            if (!$galleryImageVoteLog) {
+                                $this->getGalleryModel()->upVoteImage($authenticatedUser, $image, null);
+                                return new JsonModel(['status' => 'ok']);
+                            } else {
+                                if ($galleryImageVoteLog->getType() == 'downvote') {
+                                    $this->getGalleryModel()->upVoteImage($authenticatedUser, $image, $galleryImageVoteLog);
+                                    return new JsonModel(['status' => 'ok']);
+                                } else {
+                                    return new JsonModel(['status' => 'voted']);
+                                }
+                            }
                         }
                     }
                 }
@@ -172,33 +138,148 @@ class GalleryController extends AbstractActionController
         return new JsonModel(['status' => 'fail']);
     }
 
-    public function editAlbumAction()
+    public function downVoteImageAction()
     {
-        if (!$this->getAuthenticationService()->hasIdentity()) {
-            $this->redirect()->toRoute('home');
-        }
-
-        $albumForm = $this->getServiceLocator()->get('Application\Form\AlbumForm');
-        $user = $this->getAuthenticationService()->getIdentity();
-        $alias = $this->params()->fromRoute('alias');
-        $album = $this->getGalleryModel()->getAlbumByAliasAndUser($alias, $user);
-
-        if ($album) {
-            $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-            $albumForm->setHydrator(new DoctrineObject($entityManager));
-            $albumForm->bind($album);
-
-            $request = $this->getRequest();
-            if ($request->isPost()) {
-                $postData = $request->getPost();
-                $albumForm->setData($postData);
-                if ($albumForm->isValid()) {
-                    $entityManager->flush();
-                    $this->redirect()->toRoute('home/gallery', ['userName' => $user->getUserName()]);
+        $userName = $this->params()->fromRoute('userName');
+        $user = $this->getUserModel()->findUserByUserName($userName);
+        $authenticatedUser = $this->getUserModel()->getUser();
+        if ($authenticatedUser && $user) {
+            if ($user) {
+                $alias = $this->params()->fromRoute('alias');
+                $album = $this->getGalleryModel()->getAlbumByAliasAndUser($alias, $user);
+                if ($album && $album->getIsPublic()) {
+                    $imageAlias = $this->params()->fromRoute('imageAlias');
+                    $image = $this->getGalleryModel()->getImageByAlbumAndAlias($album, $imageAlias);
+                    if ($image) {
+                        $image = $image[0];
+                        if ($image->getIsPublic()) {
+                            $galleryImageVoteLog = $this->getGalleryModel()->getImageVoteLogByUserAndImage($authenticatedUser, $image);
+                            if (!$galleryImageVoteLog) {
+                                $this->getGalleryModel()->downVoteImage($authenticatedUser, $image, null);
+                                return new JsonModel(['status' => 'ok']);
+                            } else {
+                                if ($galleryImageVoteLog->getType() == 'upvote') {
+                                    $this->getGalleryModel()->downVoteImage($authenticatedUser, $image, $galleryImageVoteLog);
+                                    return new JsonModel(['status' => 'ok']);
+                                } else {
+                                    return new JsonModel(['status' => 'voted']);
+                                }
+                            }
+                        }
+                    }
                 }
             }
+        }
+
+        return new JsonModel(['status' => 'fail']);
+    }
+
+    public function uploadImagesAction()
+    {
+        $userName = $this->params()->fromRoute('userName');
+        $user = $this->getUserModel()->findUserByUserName($userName);
+        if ($user) {
+            $isOwner = $this->getUserModel()->isUserOwner($user);
+            if ($isOwner) {
+                $uploadImageForm = $this->getServiceLocator()->get('Application\Form\UploadImageForm');
+                $alias = $this->params()->fromRoute('alias');
+
+                $request = $this->getRequest();
+                if ($request->isPost()) {
+                    $postData = array_merge_recursive(
+                        $request->getPost()->toArray(),
+                        $request->getFiles()->toArray()
+                    );
+                    $uploadImageForm->setData($postData);
+
+                    if ($uploadImageForm->isValid()) {
+                        $uploadImageForm->getData();
+                        $images = $this->getGalleryModel()->moveImageFiles($postData, $alias, $user);
+
+                        return new JsonModel(['images' => $images]);
+                    }
+                }
+            } else {
+                return $this->redirect()->toRoute('home');
+            }
         } else {
-            $this->redirect()->toRoute('home/gallery/addAlbum', ['userName' => $user->getUserName()]);
+            return $this->redirect()->toRoute('home');
+        }
+
+        return [
+            'uploadImageForm' => $uploadImageForm,
+            'userName'        => $user->getUserName(),
+        ];
+    }
+
+    public function finishImageUploadAction()
+    {
+        $userName = $this->params()->fromRoute('userName');
+        $user = $this->getUserModel()->findUserByUserName($userName);
+        if ($user) {
+            $isOwner = $this->getUserModel()->isUserOwner($user);
+            if ($isOwner) {
+                $imageForm = $this->getServiceLocator()->get('Application\Form\ImageForm');
+                $alias = $this->params()->fromRoute('alias');
+
+                $request = $this->getRequest();
+                if ($request->isPost()) {
+                    $postData = $request->getPost();
+                    $imageForm->setData($postData);
+                    if ($imageForm->isValid()) {
+                        $image = $this->getGalleryModel()->getImageByAlias($alias);
+                        if ($image) {
+                            if ($image->getAlbum()->getUser() === $user) {
+                                if ($this->getGalleryModel()->saveImageInfo($postData, $alias)) {
+                                    return new JsonModel(['status' => 'saved']);
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                return $this->redirect()->toRoute('home');
+            }
+        } else {
+            return $this->redirect()->toRoute('home');
+        }
+
+        return new JsonModel(['status' => 'fail']);
+    }
+
+    public function editAlbumAction()
+    {
+        $userName = $this->params()->fromRoute('userName');
+        $alias = $this->params()->fromRoute('alias');
+        $user = $this->getUserModel()->findUserByUserName($userName);
+        if ($user) {
+            $isOwner = $this->getUserModel()->isUserOwner($user);
+            if ($isOwner) {
+                $album = $this->getGalleryModel()->getAlbumByAliasAndUser($alias, $user);
+                $albumForm = $this->getServiceLocator()->get('Application\Form\AlbumForm');
+                if ($album) {
+                    $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
+                    $albumForm->setHydrator(new DoctrineObject($entityManager));
+                    $albumForm->bind($album);
+
+                    $request = $this->getRequest();
+                    if ($request->isPost()) {
+                        $postData = $request->getPost();
+                        $albumForm->setData($postData);
+                        if ($albumForm->isValid()) {
+                            $entityManager->flush();
+
+                            return $this->redirect()->toRoute('home/gallery', ['userName' => $user->getUserName()]);
+                        }
+                    }
+                } else {
+                    return $this->redirect()->toRoute('home/gallery/addAlbum', ['userName' => $user->getUserName()]);
+                }
+            } else {
+                return $this->redirect()->toRoute('home');
+            }
+        } else {
+            return $this->redirect()->toRoute('home');
         }
 
         return [
@@ -207,59 +288,154 @@ class GalleryController extends AbstractActionController
         ];
     }
 
+    public function editImageAction()
+    {
+        $userName = $this->params()->fromRoute('userName');
+        $albumAlias = $this->params()->fromRoute('alias');
+        $imageAlias = $this->params()->fromRoute('imageAlias');
+        $user = $this->getUserModel()->findUserByUserName($userName);
+        if ($user) {
+            $isOwner = $this->getUserModel()->isUserOwner($user);
+            if ($isOwner) {
+                $album = $this->getGalleryModel()->getAlbumByAliasAndUser($albumAlias, $user);
+                if ($album) {
+                    $image = $this->getGalleryModel()->getImageByAlbumAndAlias($album, $imageAlias);
+                    if ($image) {
+                        $image = $image[0];
+                        $imageForm = $this->getServiceLocator()->get('Application\Form\ImageForm');
+                        $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
+                        $imageForm->setHydrator(new DoctrineObject($entityManager));
+                        $imageForm->bind($image);
+
+                        $request = $this->getRequest();
+                        if ($request->isPost()) {
+                            $postData = $request->getPost();
+                            $imageForm->setData($postData);
+                            if ($imageForm->isValid()) {
+                                if ($postData['isAlbumImage']) {
+                                    $oldAlbumMainImage = $album->getMainImage();
+                                    if ($oldAlbumMainImage) {
+                                        $oldAlbumMainImage->setIsAlbumImage(false);
+                                    }
+                                    $album->setMainImage($image);
+                                } else {
+                                    $oldAlbumMainImage = $album->getMainImage();
+                                    if ($image == $oldAlbumMainImage) {
+                                        $album->setMainImage(null);
+                                    }
+                                }
+                                $entityManager->flush();
+
+                                return $this->redirect()->toRoute(
+                                    'home/gallery', ['userName' => $user->getUserName(), 'alias' => $albumAlias]
+                                );
+                            }
+                        }
+                    } else {
+                        return $this->redirect()->toRoute('home');
+                    }
+                } else {
+                    return $this->redirect()->toRoute('home/gallery/addAlbum', ['userName' => $user->getUserName()]);
+                }
+            } else {
+                return $this->redirect()->toRoute('home');
+            }
+        } else {
+            return $this->redirect()->toRoute('home');
+        }
+
+        return [
+            'imageForm' => $imageForm,
+            'image'     => $image,
+        ];
+    }
+
     public function deleteAlbumAction()
     {
-        if (!$this->getAuthenticationService()->hasIdentity()) {
-            $this->redirect()->toRoute('home');
+        $userName = $this->params()->fromRoute('userName');
+        $user = $this->getUserModel()->findUserByUserName($userName);
+        if ($user) {
+            $isOwner = $this->getUserModel()->isUserOwner($user);
+            if ($isOwner) {
+                $alias = $this->params()->fromRoute('alias');
+                $album = $this->getGalleryModel()->getAlbumByAliasAndUser($alias, $user);
+                if ($album) {
+                    $this->getGalleryModel()->deleteAlbum($album, $user);
+                }
+            } else {
+                return $this->redirect()->toRoute('home');
+            }
+        } else {
+            return $this->redirect()->toRoute('home');
         }
 
-        $alias = $this->params()->fromRoute('alias');
-        $user = $this->getAuthenticationService()->getIdentity();
-        $album = $this->getGalleryModel()->getAlbumByAliasAndUser($alias, $user);
+        return $this->redirect()->toRoute('home/gallery', ['userName' => $user->getUserName()]);
+    }
 
-        if ($album) {
-            $this->getGalleryModel()->deleteAlbum($album, $user);
+    public function deleteImageAction()
+    {
+        $userName = $this->params()->fromRoute('userName');
+        $user = $this->getUserModel()->findUserByUserName($userName);
+        if ($user) {
+            $isOwner = $this->getUserModel()->isUserOwner($user);
+            if ($isOwner) {
+                $alias = $this->params()->fromRoute('alias');
+                $album = $this->getGalleryModel()->getAlbumByAliasAndUser($alias, $user);
+                if ($album) {
+                    $imageAlias = $this->params()->fromRoute('imageAlias');
+                    $image = $this->getGalleryModel()->getImageByAlbumAndAlias($album, $imageAlias);
+                    if ($image) {
+                        $image = $image[0];
+                        $this->getGalleryModel()->deleteImage($image, $album);
+                    } else {
+                        return $this->redirect()->toRoute(
+                            'home/gallery/album', ['userName' => $user->getUserName(), 'alias' => $album->getAlias()]
+                        );
+                    }
+                } else {
+                    return $this->redirect()->toRoute('home');
+                }
+            } else {
+                return $this->redirect()->toRoute('home');
+            }
+        } else {
+            return $this->redirect()->toRoute('home');
         }
-        $this->redirect()->toRoute('home/gallery', ['userName' => $user->getUserName()]);
+
+        return $this->redirect()->toRoute(
+            'home/gallery/album', ['userName' => $user->getUserName(), 'alias' => $album->getAlias()]
+        );
     }
 
     public function albumImageAction()
     {
-        if (!$this->getAuthenticationService()->hasIdentity()) {
+        $userName = $this->params()->fromRoute('userName');
+        $user = $this->getUserModel()->findUserByUserName($userName);
+        $alias = $this->params()->fromRoute('alias');
+        $imageAlias = $this->params()->fromRoute('imageAlias');
+        if ($user) {
+            $album = $this->getGalleryModel()->getAlbumByAliasAndUser($alias, $user);
+            if ($album) {
+                $image = $this->getGalleryModel()->getImageByAlbumAndAlias($album, $imageAlias);
+                if ($image) {
+                    $isOwner = $this->getUserModel()->isUserOwner($user);
+                    $isLoggedIn = $this->getUserModel()->isLoggedIn();
+                    if (!$isOwner && !$album->getIsPublic() && !$image->getIsPublic()) {
+                        return $this->redirect()->toRoute('home');
+                    }
+                } else {
+                    return $this->redirect()->toRoute('home');
+                }
+            } else {
+                return $this->redirect()->toRoute('home');
+            }
+        } else {
             return $this->redirect()->toRoute('home');
         }
 
-        $alias = $this->params()->fromRoute('alias');
-        $imageNumber = $this->params()->fromRoute('imageNumber');
-        $user = $this->getAuthenticationService()->getIdentity();
-        $album = $this->getGalleryModel()->getAlbumByAliasAndUser($alias, $user);
-        $images = $this->getGalleryModel()->getImageByAlbumAndNumber($album, $imageNumber);
-        if (!$images) {
-            return $this->redirect()->toRoute('home/gallery', ['userName' => $user->getUserName()]);
-        }
-
-        if ($imageNumber == 0) {
-            $previousUrl = null;
-        } else {
-            $previousUrl = $this->url()->fromRoute(
-                'home/gallery/album/image',
-                ['alias' => $alias, 'imageNumber' => $imageNumber - 1, 'userName' => $user->getUserName()]
-            );
-        }
-
-        if ($imageNumber == $album->getImagesCount() - 1) {
-            $nextUrl = null;
-        } else {
-            $nextUrl = $this->url()->fromRoute(
-                'home/gallery/album/image',
-                ['alias' => $alias, 'imageNumber' => $imageNumber + 1, 'userName' => $user->getUserName()]
-            );
-        }
-
         return [
-            'image'       => $images[0],
-            'nextUrl'     => $nextUrl,
-            'previousUrl' => $previousUrl,
+            'image'      => $image[0],
+            'isLoggedIn' => $isLoggedIn,
         ];
     }
 

@@ -1,4 +1,26 @@
-<a href="<?php echo $this->url('home/gallery/uploadImages', ['alias' => $this->album->getAlias(), 'userName' => 'asd']); ?>" class="btn btn-success btn-xs admin-add-album">
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><?php echo $this->translate('modal_title'); ?></h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <a href="<?php echo $this->url('admin/adminGallery', array('alias' => '')); ?>"
+                   class="btn btn-danger"><?php echo $this->translate('yes') ?></a>
+                <a href="javascript:$('#myModal').modal('hide')" class="btn btn-default"><?php echo $this->translate(
+                        'no'
+                    ) ?></a>
+            </div>
+        </div>
+    </div>
+</div>
+<a href="<?php echo $this->url(
+    'home/gallery/uploadImages', ['alias' => $this->album->getAlias(), 'userName' => $this->userName]
+); ?>" class="btn btn-success btn-xs admin-add-album">
     <span class="glyphicon glyphicon-plus"><?php echo $this->translate('upload_images'); ?></span>
 </a>
 <div class="row album">
@@ -10,9 +32,43 @@
         </a>
     <?php } ?>
     <p class="text-muted"><?php echo $this->album->getFullDescription(); ?></p>
-    <?php foreach ($this->albumImages as $key=>$image) { ?>
+    <?php foreach ($this->albumImages as $key => $image) { ?>
         <div class="col-md-2 margin-bottom-25 text-center">
-            <a href="<?php echo $this->url('home/gallery/album/image', ['alias' => $this->album->getAlias(), 'imageNumber' => $key, 'userName' => 'asd']); ?>">
+            <?php if ($this->isOwner) { ?>
+                <a href="<?php echo $this->url(
+                    'home/gallery/album/editImage',
+                    ['alias' => $album->getAlias(), 'userName' => $this->userName, 'imageAlias' => $image->getAlias()]
+                ); ?>"
+                   class="btn btn-info btn-xs admin-edit">
+                    <span class="glyphicon glyphicon-edit"></span>
+                </a>
+                <a data-toggle="modal" href="#myModal" class="btn btn-danger btn-xs admin-remove remove-item"
+                   data-delete-url="<?php echo $this->url(
+                       'home/gallery/album/deleteImage', ['alias'     => $album->getAlias(),
+                                                         'userName'   => $this->userName,
+                                                         'imageAlias' => $image->getAlias()]
+                   ); ?>">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </a>
+            <?php } ?>
+            <a href="<?php echo $this->url(
+                'home/gallery/album/image',
+                ['alias' => $this->album->getAlias(), 'imageAlias' => $image->getAlias(), 'userName' => $this->userName]
+            ); ?>">
+                <div class="fb-comments-count" data-href="<?php echo $this->url(
+                    'home/gallery/album/image',
+                    ['alias'   => $this->album->getAlias(), 'imageAlias' => $image->getAlias(),
+                    'userName' => $this->userName], ['force_canonical' => true]
+                ); ?>">0
+                </div>
+            </a>
+            <span class="score"><?php echo $image->getVotesCount(); ?></span>
+            <div class="up-vote" data-upvote-url="up">+</div>
+            <div class="down-vote" data-downvote-url="down">-</div>
+            <a href="<?php echo $this->url(
+                'home/gallery/album/image',
+                ['alias' => $this->album->getAlias(), 'imageAlias' => $image->getAlias(), 'userName' => $this->userName]
+            ); ?>">
                 <img src="<?php echo $image->getThumbUrl(); ?>" class="img-thumbnail">
             </a>
         </div>

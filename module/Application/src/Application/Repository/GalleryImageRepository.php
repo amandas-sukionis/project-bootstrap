@@ -14,7 +14,10 @@ class GalleryImageRepository extends EntityRepository
         $image->setUrl($url);
         $image->setThumbUrl($thumbUrl);
         $image->setAlias($alias);
+        $image->setIsPublic(0);
+        $image->setVotesCount(0);
         $image->setIsAlbumImage(false);
+        $image->setImageUploadDate(new \DateTime('NOW'));
 
         $album->setImagesCount($album->getImagesCount() + 1);
 
@@ -29,35 +32,47 @@ class GalleryImageRepository extends EntityRepository
         return $this->findOneBy(['alias' => $alias]);
     }
 
-    public function getImagesByAlbum(GalleryAlbum $album)
+    public function getAllImagesByAlbum(GalleryAlbum $album)
     {
         return $this->findBy(['album' => $album], ['id' => 'DESC']);
     }
 
-    public function getImagesByAlbumAndNumber(GalleryAlbum $album, $number)
+    public function getAllPublicImagesByAlbum(GalleryAlbum $album)
     {
-        $resultQuery = $this->getEntityManager()->createQuery(
-            'SELECT u FROM Application\Entity\GalleryImage u WHERE :album = u.album ORDER BY u.id DESC'
-        );
+        return $this->findBy(['album' => $album, 'isPublic' => 1], ['id' => 'DESC']);
+    }
 
-        $resultQuery->setParameters(
-            array(
-                 'album' => $album,
-            )
-        );
-
-        $resultQuery
-            ->setFirstResult($number)
-            ->setMaxResults(1);
-
-        return $resultQuery->getResult();
+    public function getImageByAlbumAndAlias(GalleryAlbum $album, $imageAlias)
+    {
+        return $this->findBy(['album' => $album, 'alias' => $imageAlias]);
     }
 
     public function saveImageInfo($postData, GalleryImage $image)
     {
         $image->setName($postData['name']);
         $image->setShortDescription($postData['shortDescription']);
+        if ($postData['isAlbumImage']) {
+            $oldAlbumMainImage = $image->getAlbum()->getMainImage();
+            if ($oldAlbumMainImage) {
+                $oldAlbumMainImage->setIsAlbumImage(false);
+            }
+            $image->getAlbum()->setMainImage($image);
+            $image->setIsAlbumImage(true);
+        } else {
+            $oldAlbumMainImage = $image->getAlbum()->getMainImage();
+            if ($image == $oldAlbumMainImage) {
+                $image->getAlbum()->setMainImage(null);
+            }
+        }
 
+        $this->getEntityManager()->flush();
+    }
+
+    public function deleteImage(GalleryImage $image, GalleryAlbum $album)
+    {
+        $album->setImagesCount($album->getImagesCount() - 1);
+
+        $this->getEntityManager()->remove($image);
         $this->getEntityManager()->flush();
     }
 }

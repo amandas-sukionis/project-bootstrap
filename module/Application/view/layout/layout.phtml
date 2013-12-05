@@ -26,7 +26,6 @@ $authenticationService = $sm->get('Zend\Authentication\AuthenticationService');
         ->prependStylesheet($this->basePath() . '/css/lightbox.css')
         ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css')
         ->prependStylesheet($this->basePath() . '/css/responsive.css')?>
-
 </head>
 <body>
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -116,10 +115,18 @@ $authenticationService = $sm->get('Zend\Authentication\AuthenticationService');
     </footer>
 </div>
 <!-- Scripts -->
+<script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/lt_LT/all.js#xfbml=1";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
 <?php echo $this->headScript()
     ->prependFile($this->basePath() . '/js/bootstrap.min.js')
     ->prependFile($this->basePath() . '/js/getAlbumLocation.js')
     ->prependFile($this->basePath() . '/js/deleteUrl.js')
+    ->prependFile($this->basePath() . '/js/upvote-downvote.js')
     ->prependFile($this->basePath() . '/js/uploadImages.js')
     ->prependFile($this->basePath() . '/js/uploadProgressBar.js')
     ->prependFile($this->basePath() . '/js/lightbox-2.6.min.js')

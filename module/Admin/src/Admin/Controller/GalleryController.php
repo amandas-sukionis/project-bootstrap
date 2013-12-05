@@ -83,37 +83,37 @@ class GalleryController extends AbstractActionController
         $imageAlias = $this->params()->fromRoute('imageAlias');
         $albumAlias = $this->params()->fromRoute('albumAlias');
         $image = $this->getGalleryModel()->getImageByAlias($imageAlias);
-        $saveImageForm = $this->getServiceLocator()->get('Application\Form\SaveImageForm');
+        $ImageForm = $this->getServiceLocator()->get('Application\Form\ImageForm');
 
         $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-        $saveImageForm->setHydrator(new DoctrineObject($entityManager));
-        $saveImageForm->bind($image);
+        $ImageForm->setHydrator(new DoctrineObject($entityManager));
+        $ImageForm->bind($image);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
             $postData = $request->getPost();
-            $saveImageForm->setData($postData);
-            if ($saveImageForm->isValid()) {
+            $ImageForm->setData($postData);
+            if ($ImageForm->isValid()) {
                 $entityManager->flush();
                 $this->redirect()->toRoute('admin/adminGallery/manageAlbumImages', ['alias' => $albumAlias]);
             }
         }
 
         return [
-            'saveImageForm' => $saveImageForm,
+            'imageForm' => $ImageForm,
         ];
     }
 
     public function finishImageUploadAction()
     {
-        $saveImageForm = $this->getServiceLocator()->get('Application\Form\SaveImageForm');
+        $imageForm = $this->getServiceLocator()->get('Application\Form\ImageForm');
         $alias = $this->params()->fromRoute('alias');
 
         $request = $this->getRequest();
         if ($request->isPost()) {
             $postData = $request->getPost();
-            $saveImageForm->setData($postData);
-            if ($saveImageForm->isValid()) {
+            $imageForm->setData($postData);
+            if ($imageForm->isValid()) {
                 if ($this->getGalleryModel()->saveImageInfo($postData, $alias)) {
                     return new JsonModel(['status' => 'saved']);
                 }

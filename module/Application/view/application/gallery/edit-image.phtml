@@ -1,0 +1,38 @@
+<a href="<?php echo $this->image->getUrl(); ?>" data-lightbox="<?php echo $this->image->getAlias(); ?>"
+   title="<?php echo $this->image->getName(); ?>">
+    <img class="img-thumbnail" src="<?php echo $this->image->getThumbUrl(); ?>">
+</a>
+<?php
+$form = $this->imageForm;
+$form->prepare();
+?>
+<div class="row">
+    <div class="col-md-12">
+        <h1><?php echo $this->translate('edit_mage'); ?></h1>
+        <?php echo $this->form()->openTag($form); ?>
+        <div class='form-group'>
+            <label for="name"><?php echo $this->translate('image_name') ?></label>
+            <?php echo $this->formRow($form->get('name')->setAttribute('class', 'form-control')); ?>
+        </div>
+        <div class="form-group">
+            <label for="shortDescription"><?php echo $this->translate('image_short_description') ?></label>
+            <?php echo $this->formRow(
+                $form->get('shortDescription')->setAttribute('class', 'form-control')
+            ); ?>
+        </div>
+        <div class="form-group">
+            <label for="isPublic"><?php echo $this->translate('is_image_public') ?></label>
+            <?php echo $this->formRow($form->get('isPublic')); ?>
+        </div>
+        <div class="form-group">
+            <label for="isAlbumImage"><?php echo $this->translate('is_image_album_main') ?></label>
+            <?php echo $this->formRow($form->get('isAlbumImage')); ?>
+        </div>
+        <?php echo $this->formRow(
+            $form->get('addImageFormSubmit')->setAttribute('class', 'btn btn-success')->setAttribute(
+                'value', $this->translate('save')
+            )
+        ); ?>
+        <?php echo $this->form()->closeTag($form); ?>
+    </div>
+</div>

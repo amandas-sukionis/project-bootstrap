@@ -64,8 +64,8 @@ return [
                     'gallery'     => [
                         'type'          => 'Segment',
                         'options'       => [
-                            'route'    => 'gallery/:userName',
-                            'defaults' => [
+                            'route'       => 'gallery/:userName',
+                            'defaults'    => [
                                 'controller' => 'Application\Controller\Gallery',
                                 'action'     => 'index',
                             ],
@@ -75,9 +75,9 @@ return [
                         ],
                         'may_terminate' => true,
                         'child_routes'  => [
-                            'album' => [
-                                'type'    => 'Segment',
-                                'options' => [
+                            'album'             => [
+                                'type'          => 'Segment',
+                                'options'       => [
                                     'route'       => '/:alias',
                                     'defaults'    => [
                                         'controller' => 'Application\Controller\Gallery',
@@ -89,32 +89,84 @@ return [
                                 ],
                                 'may_terminate' => true,
                                 'child_routes'  => [
-                                    'image' => [
+                                    'image'     => [
                                         'type'    => 'Segment',
                                         'options' => [
-                                            'route'       => '/:imageNumber',
+                                            'route'       => '/:imageAlias',
                                             'defaults'    => [
                                                 'controller' => 'Application\Controller\Gallery',
                                                 'action'     => 'albumImage',
                                             ],
                                             'constraints' => [
-                                                'imageNumber' => '[0-9]+',
+                                                'imageAlias' => '[a-zA-Z0-9]+',
+                                            ],
+                                        ],
+                                    ],
+                                    'editImage' => [
+                                        'type'    => 'Segment',
+                                        'options' => [
+                                            'route'       => '/edit-image/:imageAlias',
+                                            'defaults'    => [
+                                                'controller' => 'Application\Controller\Gallery',
+                                                'action'     => 'editImage',
+                                            ],
+                                            'constraints' => [
+                                                'imageAlias' => '[a-zA-Z0-9]+',
+                                            ],
+                                        ],
+                                    ],
+                                    'deleteImage' => [
+                                        'type'    => 'Segment',
+                                        'options' => [
+                                            'route'       => '/delete-image/:imageAlias',
+                                            'defaults'    => [
+                                                'controller' => 'Application\Controller\Gallery',
+                                                'action'     => 'deleteImage',
+                                            ],
+                                            'constraints' => [
+                                                'imageAlias' => '[a-zA-Z0-9]+',
+                                            ],
+                                        ],
+                                    ],
+                                    'upVote' => [
+                                        'type'    => 'Segment',
+                                        'options' => [
+                                            'route'       => '/up-vote/:imageAlias',
+                                            'defaults'    => [
+                                                'controller' => 'Application\Controller\Gallery',
+                                                'action'     => 'upVoteImage',
+                                            ],
+                                            'constraints' => [
+                                                'imageAlias' => '[a-zA-Z0-9]+',
+                                            ],
+                                        ],
+                                    ],
+                                    'downVote' => [
+                                        'type'    => 'Segment',
+                                        'options' => [
+                                            'route'       => '/down-vote/:imageAlias',
+                                            'defaults'    => [
+                                                'controller' => 'Application\Controller\Gallery',
+                                                'action'     => 'downVoteImage',
+                                            ],
+                                            'constraints' => [
+                                                'imageAlias' => '[a-zA-Z0-9]+',
                                             ],
                                         ],
                                     ],
                                 ],
                             ],
-                            'addAlbum' => [
+                            'addAlbum'          => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'       => '/add-album',
-                                    'defaults'    => [
+                                    'route'    => '/add-album',
+                                    'defaults' => [
                                         'controller' => 'Application\Controller\Gallery',
                                         'action'     => 'addAlbum',
                                     ],
                                 ],
                             ],
-                            'editAlbum' => [
+                            'editAlbum'         => [
                                 'type'    => 'Segment',
                                 'options' => [
                                     'route'       => '/edit-album/:alias',
@@ -127,7 +179,7 @@ return [
                                     ],
                                 ],
                             ],
-                            'uploadImages' => [
+                            'uploadImages'      => [
                                 'type'    => 'Segment',
                                 'options' => [
                                     'route'       => '/upload-images/:alias',
@@ -153,7 +205,7 @@ return [
                                     ],
                                 ],
                             ],
-                            'deleteAlbum' => [
+                            'deleteAlbum'       => [
                                 'type'    => 'Segment',
                                 'options' => [
                                     'route'       => '/delete-album/:alias',
@@ -179,7 +231,7 @@ return [
         ],
         'invokables'         => [
             'Application\Form\UploadImageForm' => 'Application\Form\UploadImageForm',
-            'Application\Form\SaveImageForm'   => 'Application\Form\SaveImageForm',
+            'Application\Form\ImageForm'       => 'Application\Form\ImageForm',
             'Application\Form\LoginForm'       => 'Application\Form\LoginForm',
             'Application\Form\RegisterForm'    => 'Application\Form\RegisterForm',
             'Application\Form\AlbumForm'       => 'Application\Form\AlbumForm',

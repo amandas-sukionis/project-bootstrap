@@ -15,5 +15,6 @@
         <field name="albumsCount" type="integer"/>
         <field name="accessLevel" type="integer"/>
         <one-to-many field="albums" target-entity="Application\Entity\GalleryAlbum" mapped-by="user" />
+        <one-to-many field="imagesLiked" target-entity="Application\Entity\GalleryImageVoteLog" mapped-by="user" />
     </entity>
 </doctrine-mapping>
