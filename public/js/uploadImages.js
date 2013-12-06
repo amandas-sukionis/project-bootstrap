@@ -157,10 +157,14 @@
 
         $(this).ajaxSubmit({
             success: function (response, statusText, xhr, $form) {
-                //console.log(response);
-                $.each(response.images, function (index, value) {
-                    loadImageDiv(value.thumbUrl, value.alias);
-                });
+                console.log(response);
+                if (response.status != 'fail') {
+                    $.each(response.images, function (index, value) {
+                        loadImageDiv(value.thumbUrl, value.alias);
+                    });
+                } else {
+                    alert('Wrong file types or images too big');
+                }
                 showFormElements();
             },
             error: function (a, b, c) {

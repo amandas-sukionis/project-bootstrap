@@ -106,14 +106,86 @@ class GalleryModel implements ServiceLocatorAwareInterface
             move_uploaded_file($tmpFile, $newFileName);
             $finalWidthOfImage = 150;
             $thumbUrl = $this->createThumbnail($newFileName, $alias, $imageAlias, $user, $finalWidthOfImage);
-            $finalWidthOfImage = 500;
+            $finalWidthOfImage = 250;
+            $cropHeight = 200;
             $this->createThumbnail($newFileName, $alias, $imageAlias . '_big', $user, $finalWidthOfImage);
+            $this->createSameSizeThumbnail($newFileName, $finalWidthOfImage, $cropHeight, $user, $alias, $imageAlias);
             $album = $this->getAlbumByAliasAndUser($alias, $user);
             $imageAlias = $this->addNewImage($imageAlias, $url, $thumbUrl, $album);
             $images[] = ['alias' => $imageAlias, 'url' => $url, 'thumbUrl' => $thumbUrl];
         }
 
         return $images;
+    }
+
+    public function createSameSizeThumbnail($oldname, $thumbw, $thumbh, User $user, $alias, $imageAlias)
+    {
+        if(exif_imagetype($oldname) == IMAGETYPE_JPEG) {
+            $resimage = imagecreatefromjpeg($oldname);
+        } else if (exif_imagetype($oldname) == IMAGETYPE_GIF) {
+            $resimage = imagecreatefromgif($oldname);
+        } else if (exif_imagetype($oldname) == IMAGETYPE_PNG) {
+            $resimage = imagecreatefrompng($oldname);
+        } else {
+            return null;
+        }
+
+        // Dimension of intermediate thumbnail
+
+        $nh = $thumbh;
+        $nw = $thumbw;
+
+        $size = getImageSize($oldname);
+        $w = $size[0];
+        $h = $size[1];
+
+        // Applying calculations to dimensions of the image
+
+        $ratio = $h / $w;
+        $nratio = $nh / $nw;
+
+        if($ratio > $nratio)
+        {
+            $x = intval($w * $nh / $h);
+            if ($x < $nw)
+            {
+                $nh = intval($h * $nw / $w);
+            }
+            else
+            {
+                $nw = $x;
+            }
+        }
+        else
+        {
+            $x = intval($h * $nw / $w);
+            if ($x < $nh)
+            {
+                $nw = intval($w * $nh / $h);
+            }
+            else
+            {
+                $nh = $x;
+            }
+        }
+
+        // Building the intermediate resized thumbnail
+        $newimage = imagecreatetruecolor($nw, $nh);  // use alternate function if not installed
+        imageCopyResampled($newimage, $resimage,0,0,0,0,$nw, $nh, $w, $h);
+
+        // Making the final cropped thumbnail
+
+        $viewimage = imagecreatetruecolor($thumbw, $thumbh);
+        imagecopy($viewimage, $newimage, 0, 0, 0, 0, $nw, $nh);
+
+        $pathToThumbsDirectory = 'public/img/gallery/' . $user->getEmail() . '/' . $alias . '/thumbs';
+        if(!file_exists($pathToThumbsDirectory)) {
+            if(!mkdir($pathToThumbsDirectory)) {
+                die("There was a problem. Please try again!");
+            }
+        }
+        // saving
+        imagejpeg($viewimage, $pathToThumbsDirectory . '/' . $imageAlias . '_cropped');
     }
 
     public function createThumbnail($filename, $alias, $imageAlias, User $user, $finalWidthOfImage) {
@@ -144,7 +216,9 @@ class GalleryModel implements ServiceLocatorAwareInterface
                 die("There was a problem. Please try again!");
             }
         }
+
         imagejpeg($nm, $pathToThumbsDirectory . '/' . $imageAlias);
+
         return $thumbUrl . '/' . $imageAlias;
     }
 

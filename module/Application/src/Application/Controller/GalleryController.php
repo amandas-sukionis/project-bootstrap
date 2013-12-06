@@ -117,18 +117,32 @@ class GalleryController extends AbstractActionController
                     if ($image) {
                         $image = $image[0];
                         if ($image->getIsPublic()) {
-                            $galleryImageVoteLog = $this->getGalleryModel()->getImageVoteLogByUserAndImage($authenticatedUser, $image);
+                            $galleryImageVoteLog = $this->getGalleryModel()->getImageVoteLogByUserAndImage(
+                                $authenticatedUser, $image
+                            );
                             if (!$galleryImageVoteLog) {
                                 $this->getGalleryModel()->upVoteImage($authenticatedUser, $image, null, null);
+
                                 return new JsonModel(['status' => 'ok', 'voteCount' => $image->getVotesCount()]);
                             } else {
                                 if ($galleryImageVoteLog->getType() == 'upvote') {
-                                    $this->getGalleryModel()->upVoteImage($authenticatedUser, $image, $galleryImageVoteLog, 'wasUp');
-                                } else if ($galleryImageVoteLog->getType() == 'downvote') {
-                                    $this->getGalleryModel()->upVoteImage($authenticatedUser, $image, $galleryImageVoteLog, 'wasDown');
-                                } else if ($galleryImageVoteLog->getType() == 'neutral') {
-                                    $this->getGalleryModel()->upVoteImage($authenticatedUser, $image, $galleryImageVoteLog, 'wasNeutral');
+                                    $this->getGalleryModel()->upVoteImage(
+                                        $authenticatedUser, $image, $galleryImageVoteLog, 'wasUp'
+                                    );
+                                } else {
+                                    if ($galleryImageVoteLog->getType() == 'downvote') {
+                                        $this->getGalleryModel()->upVoteImage(
+                                            $authenticatedUser, $image, $galleryImageVoteLog, 'wasDown'
+                                        );
+                                    } else {
+                                        if ($galleryImageVoteLog->getType() == 'neutral') {
+                                            $this->getGalleryModel()->upVoteImage(
+                                                $authenticatedUser, $image, $galleryImageVoteLog, 'wasNeutral'
+                                            );
+                                        }
+                                    }
                                 }
+
                                 return new JsonModel(['status' => 'ok', 'voteCount' => $image->getVotesCount()]);
                             }
                         }
@@ -157,18 +171,32 @@ class GalleryController extends AbstractActionController
                     if ($image) {
                         $image = $image[0];
                         if ($image->getIsPublic()) {
-                            $galleryImageVoteLog = $this->getGalleryModel()->getImageVoteLogByUserAndImage($authenticatedUser, $image);
+                            $galleryImageVoteLog = $this->getGalleryModel()->getImageVoteLogByUserAndImage(
+                                $authenticatedUser, $image
+                            );
                             if (!$galleryImageVoteLog) {
                                 $this->getGalleryModel()->downVoteImage($authenticatedUser, $image, null, null);
+
                                 return new JsonModel(['status' => 'ok', 'voteCount' => $image->getVotesCount()]);
                             } else {
                                 if ($galleryImageVoteLog->getType() == 'upvote') {
-                                    $this->getGalleryModel()->downVoteImage($authenticatedUser, $image, $galleryImageVoteLog, 'wasUp');
-                                } else if ($galleryImageVoteLog->getType() == 'downvote') {
-                                    $this->getGalleryModel()->downVoteImage($authenticatedUser, $image, $galleryImageVoteLog, 'wasDown');
-                                } else if ($galleryImageVoteLog->getType() == 'neutral') {
-                                    $this->getGalleryModel()->downVoteImage($authenticatedUser, $image, $galleryImageVoteLog, 'wasNeutral');
+                                    $this->getGalleryModel()->downVoteImage(
+                                        $authenticatedUser, $image, $galleryImageVoteLog, 'wasUp'
+                                    );
+                                } else {
+                                    if ($galleryImageVoteLog->getType() == 'downvote') {
+                                        $this->getGalleryModel()->downVoteImage(
+                                            $authenticatedUser, $image, $galleryImageVoteLog, 'wasDown'
+                                        );
+                                    } else {
+                                        if ($galleryImageVoteLog->getType() == 'neutral') {
+                                            $this->getGalleryModel()->downVoteImage(
+                                                $authenticatedUser, $image, $galleryImageVoteLog, 'wasNeutral'
+                                            );
+                                        }
+                                    }
                                 }
+
                                 return new JsonModel(['status' => 'ok', 'voteCount' => $image->getVotesCount()]);
                             }
                         }
@@ -204,7 +232,9 @@ class GalleryController extends AbstractActionController
                         $uploadImageForm->getData();
                         $images = $this->getGalleryModel()->moveImageFiles($postData, $alias, $user);
 
-                        return new JsonModel(['images' => $images]);
+                        return new JsonModel(['status' => 'ok', 'images' => $images]);
+                    } else {
+                        return new JsonModel(['status' => 'fail']);
                     }
                 }
             } else {
@@ -325,7 +355,7 @@ class GalleryController extends AbstractActionController
                                 $entityManager->flush();
 
                                 return $this->redirect()->toRoute(
-                                    'home/gallery', ['userName' => $user->getUserName(), 'alias' => $albumAlias]
+                                    'home/gallery/album', ['userName' => $user->getUserName(), 'alias' => $albumAlias]
                                 );
                             }
                         }
@@ -434,6 +464,7 @@ class GalleryController extends AbstractActionController
         return [
             'image'      => $image[0],
             'isLoggedIn' => $isLoggedIn,
+            'userName'   => $user->getUserName(),
         ];
     }
 

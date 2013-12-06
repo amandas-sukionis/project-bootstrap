@@ -3,46 +3,58 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title"><?php echo $this->translate('modal_title'); ?></h4>
+                <h4 class="modal-title"><?php echo $this->translate('Delete album'); ?></h4>
             </div>
             <div class="modal-body">
-                ...
+                <?= $this->translate('Are you sure you want to delete this album?') ?>
             </div>
             <div class="modal-footer">
                 <a href="<?php echo $this->url('admin/adminGallery', array('alias' => '')); ?>"
-                   class="btn btn-danger"><?php echo $this->translate('yes') ?></a>
+                   class="btn btn-danger"><?php echo $this->translate('Yes') ?></a>
                 <a href="javascript:$('#myModal').modal('hide')" class="btn btn-default"><?php echo $this->translate(
-                        'no'
+                        'No'
                     ) ?></a>
             </div>
         </div>
     </div>
 </div>
-<?php if ($this->isOwner) { ?>
-    <a href="<?php echo $this->url('home/gallery/addAlbum', ['userName' => $this->userName]); ?>"
-       class="btn btn-success btn-xs admin-add-album">
-        <span class="glyphicon glyphicon-plus"><?php echo $this->translate('add_album'); ?></span>
-    </a>
-<?php } ?>
-<div class="row">
+<div class="row gallery-page">
     <?php if (!$this->galleryAlbums) { ?>
         <div class="alert alert-info"><?php echo
                 $this->translate('no_albums_in') . ' ' . $this->userName . ' ' . $this->translate('gallery'); ?>
         </div>
     <?php } else { ?>
+        <h1><?=$this->translate('Albums by') . ' ' . $this->userName?></h1>
+        <?php if ($this->isOwner) { ?>
+            <div class="add-album-button-container">
+                <a href="<?php echo $this->url('home/gallery/addAlbum', ['userName' => $this->userName]); ?>"
+                   class="btn btn-success btn-sm admin-add-album">
+                    <span class="glyphicon glyphicon-plus"></span><?php echo $this->translate('Add album'); ?>
+                </a>
+            </div>
+        <?php } ?>
         <?php foreach ($this->galleryAlbums as $album) { ?>
             <div class="col-md-3 margin-bottom-25">
                 <?php if ($this->isOwner) { ?>
                     <a href="<?php echo $this->url(
+                        'home/gallery/uploadImages', ['alias' => $album->getAlias(), 'userName' => $this->userName]
+                    ); ?>"
+                       class="btn btn-success btn-xs admin-upload">
+                        <span class="text"><?= $this->translate('Upload images') ?></span>
+                        <span class="glyphicon glyphicon-upload"></span>
+                    </a>
+                    <a href="<?php echo $this->url(
                         'home/gallery/editAlbum', ['alias' => $album->getAlias(), 'userName' => $this->userName]
                     ); ?>"
                        class="btn btn-info btn-xs admin-edit">
+                        <span class="text"><?= $this->translate('Edit') ?></span>
                         <span class="glyphicon glyphicon-edit"></span>
                     </a>
                     <a data-toggle="modal" href="#myModal" class="btn btn-danger btn-xs admin-remove remove-item"
                        data-delete-url="<?php echo $this->url(
                            'home/gallery/deleteAlbum', ['alias' => $album->getAlias(), 'userName' => $this->userName]
                        ); ?>">
+                        <span class="text"><?= $this->translate('Remove') ?></span>
                         <span class="glyphicon glyphicon-remove"></span>
                     </a>
                 <?php } ?>
@@ -51,14 +63,15 @@
                 ) ?>"
                    class="thumbnail">
                     <?php if ($album->getMainImage()) { ?>
-                        <img src="<?php echo $album->getMainImage()->getThumbUrl(); ?>" alt="...">
-                    <?php } else {
-                        echo 'no_main_image';
-                    } ?>
-                    <div class="caption">
+                        <img src="<?php echo $album->getMainImage()->getThumbUrl() . '_cropped'; ?>"
+                             alt="<?= $album->getMainImage()->getName() ?>">
+                    <?php } else { ?>
+                        <img src="/img/no-main-album-image.png">
+                    <?php } ?>
+                    <div class="album-info">
                         <h3><?php echo $album->getName(); ?></h3>
-
                         <p><?php echo $album->getShortDescription(); ?></p>
+                        <span class="images-count"><?=$album->getImagesCount() . ' ' .$this->translate('image(s)')?></span>
                     </div>
                 </a>
             </div>

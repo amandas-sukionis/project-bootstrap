@@ -3,43 +3,59 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title"><?php echo $this->translate('modal_title'); ?></h4>
+                <h4 class="modal-title"><?php echo $this->translate('Delete image'); ?></h4>
             </div>
             <div class="modal-body">
-                ...
+                <?= $this->translate('Are you sure you want to delete this image?') ?>
             </div>
             <div class="modal-footer">
                 <a href="<?php echo $this->url('admin/adminGallery', array('alias' => '')); ?>"
-                   class="btn btn-danger"><?php echo $this->translate('yes') ?></a>
+                   class="btn btn-danger"><?php echo $this->translate('Yes') ?></a>
                 <a href="javascript:$('#myModal').modal('hide')" class="btn btn-default"><?php echo $this->translate(
-                        'no'
-                    ) ?></a>
+                        'No'
+                    ) ?>
+                </a>
             </div>
         </div>
     </div>
 </div>
-<a href="<?php echo $this->url(
-    'home/gallery/uploadImages', ['alias' => $this->album->getAlias(), 'userName' => $this->userName]
-); ?>" class="btn btn-success btn-xs admin-add-album">
-    <span class="glyphicon glyphicon-plus"><?php echo $this->translate('upload_images'); ?></span>
-</a>
-<div class="row album">
-    <h3><?php echo $this->album->getName(); ?></h3>
+<div class="row album-page">
+    <h1><?php echo $this->album->getName(); ?></h1>
     <small><?php echo $this->album->getLocation(); ?></small>
-    <?php if ($this->album->getLocationLat() && $this->album->getLocationLng()) { ?>
-        <a href="#" class="btn btn-info btn-xs">
+    <?php if ($this->album->getLocationLat() && $this->album->getLocationLng() && $this->album->getLocation()) { ?>
+        <a href="http://maps.google.com/maps?q=<?=
+        $this->album->getLocationLat() . ',' . $this->album->getLocationLng() . '+(' . $this->album->getLocation()
+        . ')&z=12' ?>" target="_blank" class="btn btn-info btn-xs">
             <span class="glyphicon glyphicon-map-marker"></span>
         </a>
     <?php } ?>
     <p class="text-muted"><?php echo $this->album->getFullDescription(); ?></p>
+    <?php if ($this->isOwner) { ?>
+        <div class="upload-images-button-container">
+            <a href="<?php echo $this->url(
+                'home/gallery/uploadImages', ['alias' => $this->album->getAlias(), 'userName' => $this->userName]
+            ); ?>" class="btn btn-success btn-sm admin-add-album">
+                <span class="glyphicon glyphicon-plus"></span>
+                <?php echo $this->translate('Upload images'); ?>
+            </a>
+            <?php if (count($this->albumImages) > 1) { ?>
+                <a href="<?=$this->albumImages[0]->getUrl() ?>" data-lightbox="album-set"
+                   class="btn btn-info btn-sm admin-add-album">
+                    <span class="glyphicon glyphicon-new-window"></span>
+                    <?php echo $this->translate('View all'); ?>
+                </a>
+            <?php } ?>
+        </div>
+    <?php } ?>
     <?php foreach ($this->albumImages as $key => $image) { ?>
-        <div class="col-md-2 margin-bottom-25 text-center">
+        <div class="col-md-3 margin-bottom-25">
             <?php if ($this->isOwner) { ?>
                 <a href="<?php echo $this->url(
                     'home/gallery/album/editImage',
                     ['alias' => $album->getAlias(), 'userName' => $this->userName, 'imageAlias' => $image->getAlias()]
                 ); ?>"
                    class="btn btn-info btn-xs admin-edit">
+                    <span class="text"><?= $this->translate('Edit image'); ?></span>
                     <span class="glyphicon glyphicon-edit"></span>
                 </a>
                 <a data-toggle="modal" href="#myModal" class="btn btn-danger btn-xs admin-remove remove-item"
@@ -48,40 +64,56 @@
                                                          'userName'   => $this->userName,
                                                          'imageAlias' => $image->getAlias()]
                    ); ?>">
+                    <span class="text"><?= $this->translate('Remove image'); ?></span>
                     <span class="glyphicon glyphicon-remove"></span>
                 </a>
             <?php } ?>
             <a href="<?php echo $this->url(
                 'home/gallery/album/image',
                 ['alias' => $this->album->getAlias(), 'imageAlias' => $image->getAlias(), 'userName' => $this->userName]
-            ); ?>">
-                <div class="fb-comments-count" data-href="<?php echo $this->url(
+            ); ?>" class="btn btn-success btn-xs fb-comments-count">
+                <div class="text" data-href="<?php echo $this->url(
                     'home/gallery/album/image',
                     ['alias'   => $this->album->getAlias(), 'imageAlias' => $image->getAlias(),
                     'userName' => $this->userName], ['force_canonical' => true]
                 ); ?>">0
                 </div>
+                <span class="glyphicon glyphicon-comment"></span>
             </a>
-            <span class="score"><?php echo $image->getVotesCount(); ?></span>
 
-            <div class="up-vote" data-upvote-url="<?php echo $this->url(
+            <div class="btn btn-primary btn-xs up-vote" data-upvote-url="<?php echo $this->url(
                 'home/gallery/album/upVote', ['userName'  => $this->userName, 'alias' => $this->album->getAlias(),
                                              'imageAlias' => $image->getAlias()], ['force_canonical' => true]
             ); ?>">
-                <button class="btn btn-primary btn-sm">+</button>
+                <span class="text score"><?php echo $image->getVotesCount(); ?></span>
+                <span class="glyphicon glyphicon-plus"></span>
             </div>
-            <div class="down-vote" data-downvote-url="<?php echo $this->url(
+            <div class="btn btn-primary btn-xs down-vote" data-downvote-url="<?php echo $this->url(
                 'home/gallery/album/downVote', ['userName'  => $this->userName, 'alias' => $this->album->getAlias(),
                                                'imageAlias' => $image->getAlias()], ['force_canonical' => true]
             ); ?>">
-                <button class="btn btn-primary btn-sm">-</button>
+                <span class="text score"><?php echo $image->getVotesCount(); ?></span>
+                <span class="glyphicon glyphicon-minus"></span>
             </div>
             <a href="<?php echo $this->url(
                 'home/gallery/album/image',
                 ['alias' => $this->album->getAlias(), 'imageAlias' => $image->getAlias(), 'userName' => $this->userName]
-            ); ?>">
-                <img src="<?php echo $image->getThumbUrl(); ?>" class="img-thumbnail">
+            ); ?>" class="thumbnail">
+                <div class="image-info">
+                    <h3><?php echo $image->getName(); ?></h3>
+
+                    <p><?php echo $image->getShortDescription(); ?></p>
+                </div>
+                <img src="<?php echo $image->getThumbUrl() . '_cropped'; ?>" alt="<?= $image->getName() ?>">
             </a>
         </div>
     <?php } ?>
+</div>
+<div class="hidden-links">
+    <?php foreach ($this->albumImages as $key => $image) {
+        if ($key != 0) {
+            ?>
+            <a href="<?= $image->getUrl() ?>" data-lightbox="album-set" title="<?= $image->getName() ?>"></a>
+        <?php }
+    } ?>
 </div>
