@@ -34,6 +34,53 @@ class GalleryModel implements ServiceLocatorAwareInterface
         return false;
     }
 
+    public function checkAlbumImage($postData, $album, $image) {
+        if ($postData['isAlbumImage']) {
+            $oldAlbumMainImage = $album->getMainImage();
+            if ($oldAlbumMainImage) {
+                $oldAlbumMainImage->setIsAlbumImage(false);
+            }
+            $album->setMainImage($image);
+        } else {
+            $oldAlbumMainImage = $album->getMainImage();
+            if ($image == $oldAlbumMainImage) {
+                $album->setMainImage(null);
+            }
+        }
+    }
+
+    public function checkImageTags($postData, $album, $image) {
+        $tags = $image->getTags();
+        foreach ($tags as $tag) {
+            $image->removeTag($tag);
+            $tag->removeImage($image);
+        }
+
+        $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
+        $entityManager->flush();
+        $hiddenTags = $postData['hiddenTags'];
+
+        if ($hiddenTags) {
+            $pattern = '/[^a-z,]+/';
+            $replacement = '';
+            $hiddenTags = preg_replace($pattern, $replacement, $hiddenTags);
+            $tags = explode(',', $hiddenTags);
+
+            foreach ($tags as $tagString) {
+                if (strlen($tagString) > 2 && strlen($tagString) < 13) {
+                    $galleryTag = $this->getObjectManager()->getRepository('Application\Entity\GalleryImageTag')->getImageTagByTagString($tagString);
+                    if (!$galleryTag) {
+                        $this->getObjectManager()->getRepository('Application\Entity\GalleryImageTag')->addNewImageTag($tagString, $image);
+                    } else {
+                        if (!$image->getTags()->contains($galleryTag)) {
+                            $this->getObjectManager()->getRepository('Application\Entity\GalleryImageTag')->addImageToTag($galleryTag, $image);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public function moveImageFiles($postData, $alias, User $user)
     {
         if (!file_exists('public/img/gallery')) {
@@ -189,26 +236,38 @@ class GalleryModel implements ServiceLocatorAwareInterface
         return $voteLog = $this->getObjectManager()->getRepository('Application\Entity\GalleryImageVoteLog')->getImageVoteLogByUserAndImage($user, $image);
     }
 
-    public function upVoteImage(User $user, GalleryImage $image, $galleryImageVoteLog)
+    public function upVoteImage(User $user, GalleryImage $image, $galleryImageVoteLog, $status)
     {
-        if ($galleryImageVoteLog) {
+        $type = 'upvote';
+        if (!$galleryImageVoteLog) {
+            $image->setVotesCount($image->getVotesCount() + 1);
+        } else if ($status == 'wasUp') {
+            $type = 'neutral';
+            $image->setVotesCount($image->getVotesCount() - 1);
+        } else if ($status == 'wasDown') {
             $image->setVotesCount($image->getVotesCount() + 2);
-        } else {
+        } else if ($status == 'wasNeutral') {
             $image->setVotesCount($image->getVotesCount() + 1);
         }
 
-        $this->getObjectManager()->getRepository('Application\Entity\GalleryImageVoteLog')->logVote($user, $image, $galleryImageVoteLog, 'upvote');
+        $this->getObjectManager()->getRepository('Application\Entity\GalleryImageVoteLog')->logVote($user, $image, $galleryImageVoteLog, $type);
     }
 
-    public function downVoteImage(User $user, GalleryImage $image, $galleryImageVoteLog)
+    public function downVoteImage(User $user, GalleryImage $image, $galleryImageVoteLog, $status)
     {
-        if ($galleryImageVoteLog) {
+        $type = 'downvote';
+        if (!$galleryImageVoteLog) {
+            $image->setVotesCount($image->getVotesCount() - 1);
+        } else if ($status == 'wasUp') {
             $image->setVotesCount($image->getVotesCount() - 2);
-        } else {
+        } else if ($status == 'wasDown') {
+            $image->setVotesCount($image->getVotesCount() + 1);
+            $type = 'neutral';
+        } else if ($status == 'wasNeutral') {
             $image->setVotesCount($image->getVotesCount() - 1);
         }
 
-        $this->getObjectManager()->getRepository('Application\Entity\GalleryImageVoteLog')->logVote($user, $image, $galleryImageVoteLog, 'downvote');
+        $this->getObjectManager()->getRepository('Application\Entity\GalleryImageVoteLog')->logVote($user, $image, $galleryImageVoteLog, $type);
     }
 
     protected function getObjectManager()

@@ -63,8 +63,19 @@
                 </div>
             </a>
             <span class="score"><?php echo $image->getVotesCount(); ?></span>
-            <div class="up-vote" data-upvote-url="up">+</div>
-            <div class="down-vote" data-downvote-url="down">-</div>
+
+            <div class="up-vote" data-upvote-url="<?php echo $this->url(
+                'home/gallery/album/upVote', ['userName'  => $this->userName, 'alias' => $this->album->getAlias(),
+                                             'imageAlias' => $image->getAlias()], ['force_canonical' => true]
+            ); ?>">
+                <button class="btn btn-primary btn-sm">+</button>
+            </div>
+            <div class="down-vote" data-downvote-url="<?php echo $this->url(
+                'home/gallery/album/downVote', ['userName'  => $this->userName, 'alias' => $this->album->getAlias(),
+                                               'imageAlias' => $image->getAlias()], ['force_canonical' => true]
+            ); ?>">
+                <button class="btn btn-primary btn-sm">-</button>
+            </div>
             <a href="<?php echo $this->url(
                 'home/gallery/album/image',
                 ['alias' => $this->album->getAlias(), 'imageAlias' => $image->getAlias(), 'userName' => $this->userName]

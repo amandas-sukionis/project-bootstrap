@@ -24,6 +24,9 @@ class ImageForm extends Form
     {
         $name = new Element\Text('name');
 
+        $tagsInput = new Element\Hidden('hiddenTags');
+        $tagsInput->setAttribute('class', 'tags');
+
         $shortDescription = new Element\Text('shortDescription');
 
         $isAlbumImageInput = new Element\Radio('isAlbumImage');
@@ -54,6 +57,7 @@ class ImageForm extends Form
             ->add($name)
             ->add($isAlbumImageInput)
             ->add($isPublicInput)
+            ->add($tagsInput)
             ->add($isAlbumImageInput)
             ->add($submitButton)
             ->add($shortDescription);

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Application\Entity\GalleryImageTag" repository-class="Application\Repository\GalleryImageTagRepository">
+        <id name="id" type="integer">
+            <generator strategy="IDENTITY"/>
+        </id>
+        <field name="tagString" type="string"/>
+        <many-to-many field="images" inversed-by="tags" target-entity="Application\Entity\GalleryImage">
+        <join-table name="imagesTags">
+            <join-columns>
+                <join-column name="tagId" referenced-column-name="id" />
+            </join-columns>
+            <inverse-join-columns>
+                <join-column name="imageId" referenced-column-name="id" />
+            </inverse-join-columns>
+        </join-table>
+    </many-to-many>
+    </entity>
+</doctrine-mapping>

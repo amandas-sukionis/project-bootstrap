@@ -107,7 +107,7 @@ class GalleryController extends AbstractActionController
         $userName = $this->params()->fromRoute('userName');
         $user = $this->getUserModel()->findUserByUserName($userName);
         $authenticatedUser = $this->getUserModel()->getUser();
-        if ($authenticatedUser && $user) {
+        if ($authenticatedUser) {
             if ($user) {
                 $alias = $this->params()->fromRoute('alias');
                 $album = $this->getGalleryModel()->getAlbumByAliasAndUser($alias, $user);
@@ -119,20 +119,24 @@ class GalleryController extends AbstractActionController
                         if ($image->getIsPublic()) {
                             $galleryImageVoteLog = $this->getGalleryModel()->getImageVoteLogByUserAndImage($authenticatedUser, $image);
                             if (!$galleryImageVoteLog) {
-                                $this->getGalleryModel()->upVoteImage($authenticatedUser, $image, null);
-                                return new JsonModel(['status' => 'ok']);
+                                $this->getGalleryModel()->upVoteImage($authenticatedUser, $image, null, null);
+                                return new JsonModel(['status' => 'ok', 'voteCount' => $image->getVotesCount()]);
                             } else {
-                                if ($galleryImageVoteLog->getType() == 'downvote') {
-                                    $this->getGalleryModel()->upVoteImage($authenticatedUser, $image, $galleryImageVoteLog);
-                                    return new JsonModel(['status' => 'ok']);
-                                } else {
-                                    return new JsonModel(['status' => 'voted']);
+                                if ($galleryImageVoteLog->getType() == 'upvote') {
+                                    $this->getGalleryModel()->upVoteImage($authenticatedUser, $image, $galleryImageVoteLog, 'wasUp');
+                                } else if ($galleryImageVoteLog->getType() == 'downvote') {
+                                    $this->getGalleryModel()->upVoteImage($authenticatedUser, $image, $galleryImageVoteLog, 'wasDown');
+                                } else if ($galleryImageVoteLog->getType() == 'neutral') {
+                                    $this->getGalleryModel()->upVoteImage($authenticatedUser, $image, $galleryImageVoteLog, 'wasNeutral');
                                 }
+                                return new JsonModel(['status' => 'ok', 'voteCount' => $image->getVotesCount()]);
                             }
                         }
                     }
                 }
             }
+        } else {
+            return new JsonModel(['status' => 'login']);
         }
 
         return new JsonModel(['status' => 'fail']);
@@ -143,7 +147,7 @@ class GalleryController extends AbstractActionController
         $userName = $this->params()->fromRoute('userName');
         $user = $this->getUserModel()->findUserByUserName($userName);
         $authenticatedUser = $this->getUserModel()->getUser();
-        if ($authenticatedUser && $user) {
+        if ($authenticatedUser) {
             if ($user) {
                 $alias = $this->params()->fromRoute('alias');
                 $album = $this->getGalleryModel()->getAlbumByAliasAndUser($alias, $user);
@@ -155,20 +159,24 @@ class GalleryController extends AbstractActionController
                         if ($image->getIsPublic()) {
                             $galleryImageVoteLog = $this->getGalleryModel()->getImageVoteLogByUserAndImage($authenticatedUser, $image);
                             if (!$galleryImageVoteLog) {
-                                $this->getGalleryModel()->downVoteImage($authenticatedUser, $image, null);
-                                return new JsonModel(['status' => 'ok']);
+                                $this->getGalleryModel()->downVoteImage($authenticatedUser, $image, null, null);
+                                return new JsonModel(['status' => 'ok', 'voteCount' => $image->getVotesCount()]);
                             } else {
                                 if ($galleryImageVoteLog->getType() == 'upvote') {
-                                    $this->getGalleryModel()->downVoteImage($authenticatedUser, $image, $galleryImageVoteLog);
-                                    return new JsonModel(['status' => 'ok']);
-                                } else {
-                                    return new JsonModel(['status' => 'voted']);
+                                    $this->getGalleryModel()->downVoteImage($authenticatedUser, $image, $galleryImageVoteLog, 'wasUp');
+                                } else if ($galleryImageVoteLog->getType() == 'downvote') {
+                                    $this->getGalleryModel()->downVoteImage($authenticatedUser, $image, $galleryImageVoteLog, 'wasDown');
+                                } else if ($galleryImageVoteLog->getType() == 'neutral') {
+                                    $this->getGalleryModel()->downVoteImage($authenticatedUser, $image, $galleryImageVoteLog, 'wasNeutral');
                                 }
+                                return new JsonModel(['status' => 'ok', 'voteCount' => $image->getVotesCount()]);
                             }
                         }
                     }
                 }
             }
+        } else {
+            return new JsonModel(['status' => 'login']);
         }
 
         return new JsonModel(['status' => 'fail']);
@@ -312,18 +320,8 @@ class GalleryController extends AbstractActionController
                             $postData = $request->getPost();
                             $imageForm->setData($postData);
                             if ($imageForm->isValid()) {
-                                if ($postData['isAlbumImage']) {
-                                    $oldAlbumMainImage = $album->getMainImage();
-                                    if ($oldAlbumMainImage) {
-                                        $oldAlbumMainImage->setIsAlbumImage(false);
-                                    }
-                                    $album->setMainImage($image);
-                                } else {
-                                    $oldAlbumMainImage = $album->getMainImage();
-                                    if ($image == $oldAlbumMainImage) {
-                                        $album->setMainImage(null);
-                                    }
-                                }
+                                $this->getGalleryModel()->checkAlbumImage($postData, $album, $image);
+                                $this->getGalleryModel()->checkImageTags($postData, $album, $image);
                                 $entityManager->flush();
 
                                 return $this->redirect()->toRoute(

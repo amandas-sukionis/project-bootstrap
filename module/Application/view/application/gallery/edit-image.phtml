@@ -21,6 +21,18 @@ $form->prepare();
             ); ?>
         </div>
         <div class="form-group">
+            <label><?php echo $this->translate('Tags') ?></label>
+            <br>
+            <input class="tag" type="text" class="form-control">
+            <button type="button" class="btn btn-primary add-tag"><?=$this->translate('Add')?></button>
+            <span class="glyphicon glyphicon-remove unacceptable"></span>
+            <span class="glyphicon glyphicon-ok acceptable"></span>
+            <?php foreach($this->image->getTags() as $tag) { ?>
+                <span class="glyphicon glyphicon-remove-circle added-tag"><?=$tag->getTagString() ?></span>
+            <?php } ?>
+            <?php echo $this->formRow($form->get('hiddenTags')); ?>
+        </div>
+        <div class="form-group">
             <label for="isPublic"><?php echo $this->translate('is_image_public') ?></label>
             <?php echo $this->formRow($form->get('isPublic')); ?>
         </div>

@@ -19,5 +19,6 @@
         <many-to-one field="album" target-entity="GalleryAlbum" inversed-by="images">
             <join-column name="album_id" referenced-column-name="id"/>
         </many-to-one>
+        <many-to-many field="tags" mapped-by="images" target-entity="Application\Entity\GalleryImageTag"/>
     </entity>
 </doctrine-mapping>
