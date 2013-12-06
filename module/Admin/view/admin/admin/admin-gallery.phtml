@@ -2,10 +2,7 @@
     <div class="col-md-12">
         <div class="widget wred">
             <div class="widget-head">
-                <div class="pull-left"> <?php echo $this->translate('gallery_users') ?></div>
-                <div class="widget-icons pull-right">
-                    <a href="#" class="wminimize"><i class="icon-chevron-up"></i></a>
-                </div>
+                <span class="pull-left"> <?php echo $this->translate('Gallery users') ?></span>
                 <div class="clearfix"></div>
             </div>
 
@@ -15,9 +12,9 @@
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th><?php echo $this->translate('user_email') ?></th>
-                            <th><?php echo $this->translate('user_name') ?></th>
-                            <th><?php echo $this->translate('user_albums_count') ?></th>
+                            <th><?php echo $this->translate('User email address') ?></th>
+                            <th><?php echo $this->translate('Username') ?></th>
+                            <th><?php echo $this->translate('User albums count') ?></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -25,13 +22,16 @@
                             <tr>
                                 <td><?php echo $key + 1; ?></td>
                                 <td><?php echo $user->getEmail(); ?></td>
-                                <td><?php echo $user->getFirstName() . ' ' . $user->getLastName(); ?></td>
-                                <td><a href="<?php echo $this->url(
+                                <td><?php echo $user->getUserName(); ?></td>
+                                <td>
+                                    <a href="<?php echo $this->url(
                                         'admin/adminGallery/userAlbums',
                                         array('userId' => $user->getId())
-                                    ); ?>"><?php echo
-                                            $this->translate('manage_user_albums') . ' (' . $user->getAlbumsCount()
+                                    ); ?>">
+                                        <?php echo
+                                            $this->translate('Manage user albums') . ' (' . $user->getAlbumsCount()
                                             . ')'; ?>
+                                    </a>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -39,20 +39,9 @@
                     <?php
                     } else {
                         ?>
-                        <div class="empty-content"><?php echo $this->translate('no_users_found'); ?></div>
+                        <div class="empty-content"><?php echo $this->translate('No users found'); ?></div>
                     <?php } ?>
                 </table>
-            </div>
-            <div class="widget-foot">
-                <ul class="pagination pull-right">
-                    <li><a href="#">Prev</a></li>
-                    <li><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">Next</a></li>
-                </ul>
-                <div class="clearfix"></div>
             </div>
         </div>
     </div>

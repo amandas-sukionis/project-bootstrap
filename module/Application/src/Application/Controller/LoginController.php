@@ -14,6 +14,10 @@ class LoginController extends AbstractActionController
     protected $authenticationService;
     protected $translationService;
 
+    /**
+     * @return ViewModel
+     * creates user from config by visiting url
+     */
     public function createAdminUserFromConfigAction()
     {
         $config = $this->getConfig();
@@ -24,6 +28,10 @@ class LoginController extends AbstractActionController
         return new ViewModel();
     }
 
+    /**
+     * @return mixed
+     * user registration action
+     */
     public function registerAction() {
         if ($this->getAuthenticationService()->hasIdentity()) {
             $this->redirect()->toRoute('home');
@@ -51,6 +59,10 @@ class LoginController extends AbstractActionController
         return $viewParams;
     }
 
+    /**
+     * @return mixed
+     * user login action
+     */
     public function loginAction() {
         if ($this->getAuthenticationService()->hasIdentity()) {
             $this->redirect()->toRoute('home');
@@ -79,6 +91,10 @@ class LoginController extends AbstractActionController
         return $viewParams;
     }
 
+    /**
+     * @return \Zend\Http\Response
+     * user log out action
+     */
     public function logoutAction()
     {
         if ($this->getAuthenticationService()->hasIdentity()) {
@@ -88,6 +104,10 @@ class LoginController extends AbstractActionController
         return $this->redirect()->toRoute('home');
     }
 
+    /**
+     * @return array|object
+     * gets config
+     */
     protected function getConfig()
     {
         if (!$this->config) {

@@ -8,6 +8,16 @@ use Doctrine\ORM\EntityRepository;
 class GalleryImageTagRepository extends EntityRepository
 {
 
+    /**
+     * @param $tagString
+     *
+     * @return null|object
+     * SELECT t0.tagString AS tagString1, t0.id AS id2
+     * FROM GalleryImageTag t0
+     * INNER JOIN imagesTags
+     * ON t0.id = imagesTags.tagId
+     * WHERE imagesTags.imageId = ?
+     */
     public function getImageTagByTagString($tagString)
     {
         return $this->findOneBy(['tagString' => $tagString]);

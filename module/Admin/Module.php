@@ -34,6 +34,10 @@ class Module
         $em->attach(MvcEvent::EVENT_DISPATCH, array($this, 'selectLayoutBasedOnRoute'));
     }
 
+    /**
+     * @param MvcEvent $e
+     * select between admin and simple layout
+     */
     public function selectLayoutBasedOnRoute(MvcEvent $e)
     {
         $match = $e->getRouteMatch();

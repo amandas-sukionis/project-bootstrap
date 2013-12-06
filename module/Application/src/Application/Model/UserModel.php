@@ -21,6 +21,10 @@ class UserModel implements ServiceLocatorAwareInterface
         return $this->serviceLocator;
     }
 
+    /**
+     * @param $config
+     * creates default admin from config
+     */
     public function createDefaultAdmin($config)
     {
         $salt = self::getRandomSalt();
@@ -28,10 +32,18 @@ class UserModel implements ServiceLocatorAwareInterface
         $this->getObjectManager()->getRepository('Application\Entity\User')->createDefaultAdmin($config, $salt, $password);
     }
 
+    /**
+     * @return mixed
+     * gets all users
+     */
     public function getAllUsers() {
         return $this->getObjectManager()->getRepository('Application\Entity\User')->getAllUsers();
     }
 
+    /**
+     * @param $postData
+     * registers a user from postdata
+     */
     public function registerUser($postData)
     {
         $salt = self::getRandomSalt();
@@ -39,11 +51,21 @@ class UserModel implements ServiceLocatorAwareInterface
         $this->getObjectManager()->getRepository('Application\Entity\User')->registerUser($postData, $salt, $password);
     }
 
+    /**
+     * @param $email
+     *
+     * @return mixed
+     * finds a user by email
+     */
     public function findUserByEmail($email)
     {
         return $this->getObjectManager()->getRepository('Application\Entity\User')->findUserByEmail($email);
     }
 
+    /**
+     * @return bool
+     * get user if he is logged in
+     */
     public function getUser()
     {
         if ($this->getAuthenticationService()->hasIdentity()) {
@@ -53,6 +75,10 @@ class UserModel implements ServiceLocatorAwareInterface
         }
     }
 
+    /**
+     * @return bool
+     * check if user is logged in
+     */
     public function isLoggedIn()
     {
         if ($this->getAuthenticationService()->hasIdentity()) {
@@ -62,6 +88,12 @@ class UserModel implements ServiceLocatorAwareInterface
         }
     }
 
+    /**
+     * @param User $user
+     *
+     * @return bool
+     * check if logged in user is owner of album or image
+     */
     public function isUserOwner(User $user)
     {
         if ($this->getAuthenticationService()->hasIdentity()) {
@@ -76,16 +108,35 @@ class UserModel implements ServiceLocatorAwareInterface
         }
     }
 
+    /**
+     * @param $userName
+     *
+     * @return mixed
+     * find a user by username
+     */
     public function findUserByUserName($userName)
     {
         return $this->getObjectManager()->getRepository('Application\Entity\User')->findUserByUserName($userName);
     }
 
+    /**
+     * @param $id
+     *
+     * @return mixed
+     * find a user by user id
+     */
     public function findUserById($id)
     {
         return $this->getObjectManager()->getRepository('Application\Entity\User')->findUserById($id);
     }
 
+    /**
+     * @param $password
+     * @param $salt
+     *
+     * @return string
+     * creates password hash
+     */
     public static function getPasswordHash($password, $salt)
     {
         $hashedSalt = hash('sha512', $salt);
@@ -96,6 +147,10 @@ class UserModel implements ServiceLocatorAwareInterface
         return $passwordHash;
     }
 
+    /**
+     * @return string
+     * creates salt string
+     */
     protected static function getSaltString()
     {
         $saltVariables = [
@@ -107,6 +162,10 @@ class UserModel implements ServiceLocatorAwareInterface
         return implode('_', $saltVariables);
     }
 
+    /**
+     * @return string
+     * creates random salt
+     */
     protected static function getRandomSalt()
     {
         $saltString = self::getSaltString();

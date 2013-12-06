@@ -19,18 +19,26 @@ class GalleryController extends AbstractActionController
     protected $userModel;
     protected $authenticationService;
 
+    /**
+     * @return JsonModel
+     * returns upload progress
+     */
     public function uploadProgressAction()
     {
         $id = $this->params()->fromQuery('id', null);
         $progress = new ProgressBar\Upload\UploadProgress();
-        $view = new JsonModel(array(
-                                   'id'     => $id,
-                                   'status' => $progress->getProgress($id),
-                              ));
+        $view = new JsonModel([
+                              'id'     => $id,
+                              'status' => $progress->getProgress($id),
+                              ]);
 
         return $view;
     }
 
+    /**
+     * @return array
+     * return all user albums
+     */
     public function userAlbumsAction()
     {
         $userId = $this->params()->fromRoute('userId');
@@ -42,6 +50,10 @@ class GalleryController extends AbstractActionController
         ];
     }
 
+    /**
+     * @return array
+     * adds album for user
+     */
     public function addAlbumAction()
     {
         $userId = $this->params()->fromRoute('userId');
@@ -59,17 +71,21 @@ class GalleryController extends AbstractActionController
 
         return [
             'albumForm' => $albumForm,
-            'action'    => 'add_gallery_album',
+            'action'    => 'Add gallery album',
         ];
     }
 
+    /**
+     * @return array
+     * returns all user album images
+     */
     public function manageAlbumImagesAction()
     {
         $alias = $this->params()->fromRoute('alias');
         $userId = $this->params()->fromRoute('userId');
         $user = $this->getUserModel()->findUserById($userId);
 
-        $albumImages = $this->getGalleryModel()->getImagesByAlbumAliasAndUser($alias, $user);
+        $albumImages = $this->getGalleryModel()->getAllImagesByAlbumAliasAndUser($alias, $user);
 
         return [
             'albumImages' => $albumImages,
@@ -78,6 +94,10 @@ class GalleryController extends AbstractActionController
         ];
     }
 
+    /**
+     * @return array
+     * edit user album image
+     */
     public function manageAlbumImageAction()
     {
         $imageAlias = $this->params()->fromRoute('imageAlias');
@@ -95,7 +115,9 @@ class GalleryController extends AbstractActionController
             $ImageForm->setData($postData);
             if ($ImageForm->isValid()) {
                 $entityManager->flush();
-                $this->redirect()->toRoute('admin/adminGallery/manageAlbumImages', ['alias' => $albumAlias]);
+                $this->redirect()->toRoute(
+                    'admin/adminGallery/manageAlbumImages', ['alias' => $albumAlias, 'userId' => '1']
+                );
             }
         }
 
@@ -104,6 +126,35 @@ class GalleryController extends AbstractActionController
         ];
     }
 
+    /**
+     * delete album image
+     */
+    public function deleteAlbumImageAction()
+    {
+        $imageAlias = $this->params()->fromRoute('imageAlias');
+        $albumAlias = $this->params()->fromRoute('albumAlias');
+        $userId = $this->params()->fromRoute('userId');
+        $user = $this->getUserModel()->findUserById($userId);
+
+        $album = $this->getGalleryModel()->getAlbumByAliasAndUser($albumAlias, $user);
+
+        if ($album) {
+            $image = $this->getGalleryModel()->getImageByAlbumAndAlias($album, $imageAlias);
+            if ($image) {
+                $image = $image[0];
+                $this->getGalleryModel()->deleteImage($image, $album);
+            }
+        }
+
+        $this->redirect()->toRoute(
+            'admin/adminGallery/manageAlbumImages', ['userId' => $userId, 'alias' => $albumAlias]
+        );
+    }
+
+    /**
+     * @return JsonModel
+     * after image is uploaded, additional data is saved
+     */
     public function finishImageUploadAction()
     {
         $imageForm = $this->getServiceLocator()->get('Application\Form\ImageForm');
@@ -123,6 +174,10 @@ class GalleryController extends AbstractActionController
         return new JsonModel(['status' => 'fail']);
     }
 
+    /**
+     * @return array|JsonModel
+     * uploads images
+     */
     public function uploadAlbumImagesAction()
     {
         $uploadImageForm = $this->getServiceLocator()->get('Application\Form\UploadImageForm');
@@ -148,9 +203,15 @@ class GalleryController extends AbstractActionController
 
         return [
             'uploadImageForm' => $uploadImageForm,
+            'alias'           => $alias,
+            'userId'          => $userId,
         ];
     }
 
+    /**
+     * @return array
+     * edit album action
+     */
     public function editAlbumAction()
     {
         $userId = $this->params()->fromRoute('userId');
@@ -183,6 +244,9 @@ class GalleryController extends AbstractActionController
         ];
     }
 
+    /**
+     * delete album action
+     */
     public function deleteAlbumAction()
     {
         $alias = $this->params()->fromRoute('alias');
@@ -197,6 +261,10 @@ class GalleryController extends AbstractActionController
         $this->redirect()->toRoute('admin/adminGallery/userAlbums', ['userId' => $userId]);
     }
 
+    /**
+     * @return array|object|\Zend\Authentication\AuthenticationService
+     * gets authentication service and stores it in variable
+     */
     protected function getAuthenticationService()
     {
         if (!$this->authenticationService) {
@@ -206,6 +274,10 @@ class GalleryController extends AbstractActionController
         return $this->authenticationService;
     }
 
+    /**
+     * @return \Application\Model\GalleryModel|array|object
+     * gets gallery model and stores it in variable
+     */
     protected function getGalleryModel()
     {
         if (!$this->galleryModel) {
@@ -215,6 +287,10 @@ class GalleryController extends AbstractActionController
         return $this->galleryModel;
     }
 
+    /**
+     * @return \Application\Model\UserModel|array|object
+     * gets user model ant stores it in variable
+     */
     protected function getUserModel()
     {
         if (!$this->userModel) {

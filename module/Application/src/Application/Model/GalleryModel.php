@@ -25,6 +25,14 @@ class GalleryModel implements ServiceLocatorAwareInterface
         return $this->serviceLocator;
     }
 
+    /**
+     * @param $postData
+     * @param $alias
+     *
+     * @return bool
+     *
+     * Save entered image info
+     */
     public function saveImageInfo($postData, $alias) {
         $image = $this->getImageByAlias($alias);
         if ($image) {
@@ -34,6 +42,13 @@ class GalleryModel implements ServiceLocatorAwareInterface
         return false;
     }
 
+    /**
+     * @param $postData
+     * @param $album
+     * @param $image
+     *
+     * check if images belongs to album
+     */
     public function checkAlbumImage($postData, $album, $image) {
         if ($postData['isAlbumImage']) {
             $oldAlbumMainImage = $album->getMainImage();
@@ -49,6 +64,13 @@ class GalleryModel implements ServiceLocatorAwareInterface
         }
     }
 
+    /**
+     * @param $postData
+     * @param $album
+     * @param $image
+     *
+     * saves new image tags
+     */
     public function checkImageTags($postData, $album, $image) {
         $tags = $image->getTags();
         foreach ($tags as $tag) {
@@ -81,6 +103,15 @@ class GalleryModel implements ServiceLocatorAwareInterface
         }
     }
 
+    /**
+     * @param      $postData
+     * @param      $alias
+     * @param User $user
+     *
+     * @return array
+     *
+     * move image files from temp dir
+     */
     public function moveImageFiles($postData, $alias, User $user)
     {
         if (!file_exists('public/img/gallery')) {
@@ -118,6 +149,18 @@ class GalleryModel implements ServiceLocatorAwareInterface
         return $images;
     }
 
+    /**
+     * @param      $oldname
+     * @param      $thumbw
+     * @param      $thumbh
+     * @param User $user
+     * @param      $alias
+     * @param      $imageAlias
+     *
+     * @return null
+     *
+     * create same size images thumbnails
+     */
     public function createSameSizeThumbnail($oldname, $thumbw, $thumbh, User $user, $alias, $imageAlias)
     {
         if(exif_imagetype($oldname) == IMAGETYPE_JPEG) {
@@ -188,6 +231,17 @@ class GalleryModel implements ServiceLocatorAwareInterface
         imagejpeg($viewimage, $pathToThumbsDirectory . '/' . $imageAlias . '_cropped');
     }
 
+    /**
+     * @param      $filename
+     * @param      $alias
+     * @param      $imageAlias
+     * @param User $user
+     * @param      $finalWidthOfImage
+     *
+     * @return null|string
+     *
+     * create thumbnail by resizing
+     */
     public function createThumbnail($filename, $alias, $imageAlias, User $user, $finalWidthOfImage) {
         if(exif_imagetype($filename) == IMAGETYPE_JPEG) {
             $im = imagecreatefromjpeg($filename);
@@ -222,36 +276,81 @@ class GalleryModel implements ServiceLocatorAwareInterface
         return $thumbUrl . '/' . $imageAlias;
     }
 
+    /**
+     * @param              $imageAlias
+     * @param              $url
+     * @param              $thumbUrl
+     * @param GalleryAlbum $album
+     *
+     * @return mixed
+     *
+     * adds new image
+     */
     public function addNewImage($imageAlias, $url, $thumbUrl, GalleryAlbum $album)
     {
         return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->addNewImage($imageAlias, $url, $thumbUrl, $album);
     }
 
+    /**
+     * @return mixed
+     * gets all gallery albums
+     */
     public function getAllGalleryAlbums()
     {
         return $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->getAllGalleryAlbums();
     }
 
+    /**
+     * @param GalleryAlbum $album
+     *
+     * @return mixed
+     * gets all images by album
+     */
     public function getAllImagesByAlbum(GalleryAlbum $album)
     {
         return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->getAllImagesByAlbum($album);
     }
 
+    /**
+     * @param GalleryAlbum $album
+     *
+     * @return mixed
+     * gets all public images by album
+     */
     public function getAllPublicImagesByAlbum(GalleryAlbum $album)
     {
         return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->getAllPublicImagesByAlbum($album);
     }
 
+    /**
+     * @param User $user
+     *
+     * @return mixed
+     * gets all public user albums
+     */
     public function getAllPublicUserGalleryAlbums(User $user)
     {
         return $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->getAllPublicUserGalleryAlbums($user);
     }
 
+    /**
+     * @param User $user
+     *
+     * @return mixed
+     * gets all user albums
+     */
     public function getAllUserGalleryAlbums(User $user)
     {
         return $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->getAllUserGalleryAlbums($user);
     }
 
+    /**
+     * @param      $alias
+     * @param User $user
+     *
+     * @return null
+     * all images by album alias and user
+     */
     public function getAllImagesByAlbumAliasAndUser($alias, User $user)
     {
         $album = $this->getAlbumByAliasAndUser($alias, $user);
@@ -262,6 +361,13 @@ class GalleryModel implements ServiceLocatorAwareInterface
         }
     }
 
+    /**
+     * @param      $alias
+     * @param User $user
+     *
+     * @return null
+     * gets all public images by album alias and user
+     */
     public function getAllPublicImagesByAlbumAliasAndUser($alias, User $user)
     {
         $album = $this->getAlbumByAliasAndUser($alias, $user);
@@ -272,31 +378,66 @@ class GalleryModel implements ServiceLocatorAwareInterface
         }
     }
 
+    /**
+     * @param GalleryAlbum $album
+     * @param              $imageAlias
+     *
+     * @return mixed
+     * gets image by album and image alias
+     */
     public function getImageByAlbumAndAlias(GalleryAlbum $album, $imageAlias)
     {
         return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->getImageByAlbumAndALias($album, $imageAlias);
     }
 
+    /**
+     * @param      $alias
+     * @param User $user
+     *
+     * @return mixed
+     * gets album by album alias and user
+     */
     public function getAlbumByAliasAndUser($alias, User $user)
     {
         return $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->getAlbumByAliasAndUser($alias, $user);
     }
 
+    /**
+     * @param $alias
+     *
+     * @return mixed
+     * gets image by image alias
+     */
     public function getImageByAlias($alias)
     {
         return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->getImageByAlias($alias);
     }
 
+    /**
+     * @param      $postData
+     * @param User $user
+     * adds new albums
+     */
     public function addNewAlbum($postData, User $user)
     {
         $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->addNewAlbum($postData, $user);
     }
 
+    /**
+     * @param GalleryAlbum $album
+     * @param User         $user
+     * delete album, decrease albums count for user
+     */
     public function deleteAlbum(GalleryAlbum $album, User $user)
     {
         $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->deleteAlbum($album, $user);
     }
 
+    /**
+     * @param GalleryImage $image
+     * @param GalleryAlbum $album
+     * delete image, decrease images count for album
+     */
     public function deleteImage(GalleryImage $image, GalleryAlbum $album)
     {
         if ($album->getMainImage() == $image) {
@@ -305,11 +446,25 @@ class GalleryModel implements ServiceLocatorAwareInterface
         $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->deleteImage($image, $album);
     }
 
+    /**
+     * @param User         $user
+     * @param GalleryImage $image
+     *
+     * @return mixed
+     * gets image vote log by user and image
+     */
     public function getImageVoteLogByUserAndImage(User $user, GalleryImage $image)
     {
         return $voteLog = $this->getObjectManager()->getRepository('Application\Entity\GalleryImageVoteLog')->getImageVoteLogByUserAndImage($user, $image);
     }
 
+    /**
+     * @param User         $user
+     * @param GalleryImage $image
+     * @param              $galleryImageVoteLog
+     * @param              $status
+     * upvotes image, only registred user
+     */
     public function upVoteImage(User $user, GalleryImage $image, $galleryImageVoteLog, $status)
     {
         $type = 'upvote';
@@ -327,6 +482,13 @@ class GalleryModel implements ServiceLocatorAwareInterface
         $this->getObjectManager()->getRepository('Application\Entity\GalleryImageVoteLog')->logVote($user, $image, $galleryImageVoteLog, $type);
     }
 
+    /**
+     * @param User         $user
+     * @param GalleryImage $image
+     * @param              $galleryImageVoteLog
+     * @param              $status
+     * downvotes image
+     */
     public function downVoteImage(User $user, GalleryImage $image, $galleryImageVoteLog, $status)
     {
         $type = 'downvote';

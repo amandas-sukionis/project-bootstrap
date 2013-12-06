@@ -181,6 +181,7 @@ body {
     background-color: lightgrey;
     padding: 3px;
     border-radius: 5px;
+    color: rgb(134, 56, 56);
 }
 
 #imageForm .tag {

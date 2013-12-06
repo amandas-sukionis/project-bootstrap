@@ -15,15 +15,13 @@
         ->appendStylesheet($this->basePath() . '/admin-assets/css/style.css')
         ->appendStylesheet($this->basePath() . '/admin-assets/css/responsive-480.css')
         ->headLink(array('rel' => 'shortcut icon', 'href' => 'data:image/x-icon;,', 'type' => 'image/x-icon')) ?>
-
-    <!-- HTML5 Support for IE -->
-    <!--[if lt IE 9]>
-    <script src="/admin-assets/js/html5shim.js"></script>
-    <![endif]-->
-
 </head>
 <body>
 <?php echo $this->content ?>
+<!-- HTML5 Support for IE -->
+<!--[if lt IE 9]>
+<script src="/admin-assets/js/html5shim.js"></script>
+<![endif]-->
 <?php echo $this->headScript()->appendFile($this->basePath() . '/admin-assets/js/jquery.js')
     ->appendFile($this->basePath() . '/admin-assets/js/bootstrap.js')
     ->appendFile($this->basePath() . '/admin-assets/js/jquery-ui-1.10.2.custom.min.js')

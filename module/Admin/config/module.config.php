@@ -114,13 +114,28 @@ return [
                             'manageAlbumImage' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'       => '/manage-album-image/:albumAlias/:imageAlias',
+                                    'route'       => '/:userId/manage-album-image/:albumAlias/:imageAlias',
                                     'defaults'    => [
                                         'controller' => 'Admin\Controller\GalleryController',
                                         'action'     => 'manageAlbumImage',
                                     ],
                                     'constraints' => [
                                         'alias' => '[a-zA-Z0-9][a-zA-Z0-9_-]*',
+                                        'userId' => '[0-9]+',
+                                    ],
+                                ],
+                            ],
+                            'deleteAlbumImage' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/:userId/delete-album-image/:albumAlias/:imageAlias',
+                                    'defaults'    => [
+                                        'controller' => 'Admin\Controller\GalleryController',
+                                        'action'     => 'deleteAlbumImage',
+                                    ],
+                                    'constraints' => [
+                                        'alias' => '[a-zA-Z0-9][a-zA-Z0-9_-]*',
+                                        'userId' => '[0-9]+',
                                     ],
                                 ],
                             ],

@@ -6,14 +6,14 @@ $form->prepare();
     <div class="col-md-12">
         <?php echo $this->form()->openTag($form); ?>
         <div class='form-group'>
-            <label for="name"><?php echo $this->translate('image_name') ?></label>
+            <label for="name"><?php echo $this->translate('Image name') ?></label>
             <?php echo $this->formRow($form->get('name')->setAttribute('class', 'form-control')); ?>
         </div>
         <div class="form-group">
-            <label for="shortDescription"><?php echo $this->translate('short_description') ?></label>
+            <label for="shortDescription"><?php echo $this->translate('Short description') ?></label>
             <?php echo $this->formRow($form->get('shortDescription')->setAttribute('class', 'form-control')); ?>
         </div>
-        <input type="submit" name="imageFormSubmit" class="btn btn-success" value="<?php echo $this->translate('save') ?>">
+        <input type="submit" name="imageFormSubmit" class="btn btn-success" value="<?php echo $this->translate('Save') ?>">
         <?php echo $this->form()->closeTag($form); ?>
     </div>
 </div>

@@ -84,6 +84,10 @@
             class: 'radio-inline'
         });
 
+        var $textLabel = $('<label/>', {
+            class: 'radio-inline'
+        });
+
 
         var $radioInput0 = $('<input/>', {
             type: 'radio',
@@ -98,10 +102,11 @@
             value: '1'
         });
 
+        $textLabel.append('Is album main image?');
         $radioLabel0.append($radioInput0);
-        $radioLabel0.append('Ne');
+        $radioLabel0.append('No');
         $radioLabel1.append($radioInput1);
-        $radioLabel1.append('Taip');
+        $radioLabel1.append('Yes');
 
         var $form = $('<form/>', {
             action: finishUploadUrl + '/' + alias,
@@ -125,6 +130,7 @@
         $form.append($nameInput);
         $form.append($shortDescriptionInput);
         $form.append($checkButton);
+        $form.append($textLabel);
         $form.append($radioLabel0);
         $form.append($radioLabel1);
 

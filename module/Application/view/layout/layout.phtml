@@ -53,7 +53,7 @@ $authenticationService = $sm->get('Zend\Authentication\AuthenticationService');
                     } ?>"><a href="<?php echo $this->url(
                             'home/gallery', ['userName' => $authenticationService->getIdentity()->getUserName()]
                         ) ?>"><?php echo $this->translate(
-                                'my_gallery'
+                                'My gallery'
                             ) ?></a>
                     </li>
                 <?php } ?>
@@ -87,14 +87,16 @@ $authenticationService = $sm->get('Zend\Authentication\AuthenticationService');
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo
-                                $this->translate('signed_in_as') . ' ' . $authenticationService->getIdentity()
+                                $this->translate('Signed in as') . ' ' . $authenticationService->getIdentity()
                                     ->getEmail(); ?> <b class="caret"></b></a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">Manage</a></li>
                             <li class="divider"></li>
-                            <li><a href="<?php echo $this->url('home/logout'); ?>"><?php echo $this->translate(
+                            <li>
+                                <a href="<?php echo $this->url('home/logout'); ?>"><?php echo $this->translate(
                                         'logout'
-                                    ); ?></a></li>
+                                    ); ?>
+                                </a>
+                            </li>
                         </ul>
                     </li>
                 </ul>

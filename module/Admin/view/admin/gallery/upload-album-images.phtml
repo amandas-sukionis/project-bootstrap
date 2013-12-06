@@ -2,9 +2,14 @@
     <div class="col-md-12">
         <div class="widget wred">
             <div class="widget-head">
-                <div class="pull-left"><?php echo $this->translate('upload_images'); ?></div>
-                <div class="widget-icons pull-right">
-                    <a href="#" class="wminimize"><i class="icon-chevron-up"></i></a>
+                <div class="pull-left"><?php echo $this->translate('Upload images'); ?></div>
+                <div class="pull-right">
+                    <a href="<?= $this->url(
+                        'admin/adminGallery/manageAlbumImages', ['alias' => $this->alias, 'userId' => $this->userId]
+                    ) ?>" type="button" class="btn btn-default btn-xs">
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+                        <?php echo $this->translate('Back to album'); ?>
+                    </a>
                 </div>
                 <div class="clearfix"></div>
             </div>
@@ -25,7 +30,7 @@
                     <div id="file-errors" class="help-block"></div> <?php
                     echo $this->formSubmit(
                         $form->get('uploadImageFormSubmit')->setAttribute('class', 'btn btn-primary')
-                            ->setAttribute('value', $this->translate('submit'))
+                            ->setAttribute('value', $this->translate('Submit'))
                     );
                     echo $this->form()->closeTag($form);
                     ?>

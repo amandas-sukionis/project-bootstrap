@@ -18,6 +18,10 @@ class GalleryController extends AbstractActionController
         return new ViewModel();
     }
 
+    /**
+     * @return array|\Zend\Http\Response
+     * gets public albums, if user is owner gets all albums
+     */
     public function indexAction()
     {
         $userName = $this->params()->fromRoute('userName');
@@ -41,6 +45,10 @@ class GalleryController extends AbstractActionController
         ];
     }
 
+    /**
+     * @return array|\Zend\Http\Response
+     * gets all public album images, if user is owner gets all images
+     */
     public function albumAction()
     {
         $userName = $this->params()->fromRoute('userName');
@@ -71,6 +79,10 @@ class GalleryController extends AbstractActionController
         ];
     }
 
+    /**
+     * @return array|\Zend\Http\Response
+     * add gallery album action
+     */
     public function addAlbumAction()
     {
         $userName = $this->params()->fromRoute('userName');
@@ -98,10 +110,14 @@ class GalleryController extends AbstractActionController
 
         return [
             'albumForm' => $albumForm,
-            'action'    => 'add_gallery_album',
+            'action'    => 'Add gallery album',
         ];
     }
 
+    /**
+     * @return JsonModel
+     * ajax upvote image action
+     */
     public function upVoteImageAction()
     {
         $userName = $this->params()->fromRoute('userName');
@@ -156,6 +172,10 @@ class GalleryController extends AbstractActionController
         return new JsonModel(['status' => 'fail']);
     }
 
+    /**
+     * @return JsonModel
+     * ajax downvote image action
+     */
     public function downVoteImageAction()
     {
         $userName = $this->params()->fromRoute('userName');
@@ -210,6 +230,10 @@ class GalleryController extends AbstractActionController
         return new JsonModel(['status' => 'fail']);
     }
 
+    /**
+     * @return array|\Zend\Http\Response|JsonModel
+     * ajax uploads images
+     */
     public function uploadImagesAction()
     {
         $userName = $this->params()->fromRoute('userName');
@@ -250,6 +274,10 @@ class GalleryController extends AbstractActionController
         ];
     }
 
+    /**
+     * @return \Zend\Http\Response|JsonModel
+     * saves additional images data after upload
+     */
     public function finishImageUploadAction()
     {
         $userName = $this->params()->fromRoute('userName');
@@ -285,6 +313,10 @@ class GalleryController extends AbstractActionController
         return new JsonModel(['status' => 'fail']);
     }
 
+    /**
+     * @return array|\Zend\Http\Response
+     * edit album action
+     */
     public function editAlbumAction()
     {
         $userName = $this->params()->fromRoute('userName');
@@ -326,6 +358,10 @@ class GalleryController extends AbstractActionController
         ];
     }
 
+    /**
+     * @return array|\Zend\Http\Response
+     * edit image action
+     */
     public function editImageAction()
     {
         $userName = $this->params()->fromRoute('userName');
@@ -378,6 +414,10 @@ class GalleryController extends AbstractActionController
         ];
     }
 
+    /**
+     * @return \Zend\Http\Response
+     * delete album action
+     */
     public function deleteAlbumAction()
     {
         $userName = $this->params()->fromRoute('userName');
@@ -400,6 +440,10 @@ class GalleryController extends AbstractActionController
         return $this->redirect()->toRoute('home/gallery', ['userName' => $user->getUserName()]);
     }
 
+    /**
+     * @return \Zend\Http\Response
+     * delete image action
+     */
     public function deleteImageAction()
     {
         $userName = $this->params()->fromRoute('userName');
@@ -435,6 +479,10 @@ class GalleryController extends AbstractActionController
         );
     }
 
+    /**
+     * @return array|\Zend\Http\Response
+     * view album image, check all accesses
+     */
     public function albumImageAction()
     {
         $userName = $this->params()->fromRoute('userName');

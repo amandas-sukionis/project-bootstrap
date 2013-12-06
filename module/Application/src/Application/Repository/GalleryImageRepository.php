@@ -32,11 +32,32 @@ class GalleryImageRepository extends EntityRepository
         return $this->findOneBy(['alias' => $alias]);
     }
 
+    /**
+     * @param GalleryAlbum $album
+     *
+     * @return array
+     *
+     * SELECT t0.name AS name1, t0.url AS url2, t0.thumbUrl AS thumbUrl3, t0.votesCount AS votesCount4, t0.alias AS alias5, t0.shortDescription AS shortDescription6, t0.isAlbumImage AS isAlbumImage7, t0.isPublic AS isPublic8, t0.imageUploadDate AS imageUploadDate9, t0.id AS id10, t0.album_id AS album_id11
+     * FROM GalleryImage t0
+     * WHERE t0.album_id = ?
+     * ORDER BY t0.id DESC
+     */
     public function getAllImagesByAlbum(GalleryAlbum $album)
     {
         return $this->findBy(['album' => $album], ['id' => 'DESC']);
     }
 
+    /**
+     * @param GalleryAlbum $album
+     *
+     * @return array
+     *
+     * SELECT t0.name AS name1, t0.url AS url2, t0.thumbUrl AS thumbUrl3, t0.votesCount AS votesCount4, t0.alias AS alias5, t0.shortDescription AS shortDescription6, t0.isAlbumImage AS isAlbumImage7, t0.isPublic AS isPublic8, t0.imageUploadDate AS imageUploadDate9, t0.id AS id10, t0.album_id AS album_id11
+     * FROM GalleryImage t0
+     * WHERE t0.album_id = ?
+     * AND t0.isPublic = ?
+     * ORDER BY t0.id DESC
+     */
     public function getAllPublicImagesByAlbum(GalleryAlbum $album)
     {
         return $this->findBy(['album' => $album, 'isPublic' => 1], ['id' => 'DESC']);

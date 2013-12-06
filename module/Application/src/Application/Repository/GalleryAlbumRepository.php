@@ -8,6 +8,18 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 
 class GalleryAlbumRepository extends EntityRepository
 {
+    /**
+     * @param      $alias
+     * @param User $user
+     *
+     * @return null|object
+     *
+     * SELECT t0.name AS name1, t0.alias AS alias2, t0.shortDescription AS shortDescription3, t0.fullDescription AS fullDescription4, t0.isPublic AS isPublic5, t0.location AS location6, t0.locationLat AS locationLat7, t0.locationLng AS locationLng8, t0.createDate AS createDate9, t0.imagesCount AS imagesCount10, t0.id AS id11, t0.mainImageId AS mainImageId12, t0.user_id AS user_id13
+     * FROM GalleryAlbum t0
+     * WHERE t0.alias = ?
+     * AND t0.user_id = ?
+     * LIMIT 1
+     */
     public function getAlbumByAliasAndUser($alias, User $user)
     {
         return $this->findOneBy(['alias' => $alias, 'user' => $user]);
@@ -26,6 +38,14 @@ class GalleryAlbumRepository extends EntityRepository
         $this->getEntityManager()->flush();
     }
 
+    /**
+     * @param User $user
+     *
+     * @return array
+     * SELECT g0_.name AS name0, g0_.alias AS alias1, g0_.shortDescription AS shortDescription2, g0_.fullDescription AS fullDescription3, g0_.isPublic AS isPublic4, g0_.location AS location5, g0_.locationLat AS locationLat6, g0_.locationLng AS locationLng7, g0_.createDate AS createDate8, g0_.imagesCount AS imagesCount9, g0_.id AS id10, g0_.mainImageId AS mainImageId11, g0_.user_id AS user_id12
+     * FROM GalleryAlbum g0_
+     * WHERE ? = g0_.user_id
+     */
     public function getAllUserGalleryAlbums(User $user)
     {
         $resultQuery = $this->getEntityManager()->createQuery(
@@ -42,6 +62,15 @@ class GalleryAlbumRepository extends EntityRepository
         return $albums;
     }
 
+    /**
+     * @param User $user
+     *
+     * @return array
+     * SELECT g0_.name AS name0, g0_.alias AS alias1, g0_.shortDescription AS shortDescription2, g0_.fullDescription AS fullDescription3, g0_.isPublic AS isPublic4, g0_.location AS location5, g0_.locationLat AS locationLat6, g0_.locationLng AS locationLng7, g0_.createDate AS createDate8, g0_.imagesCount AS imagesCount9, g0_.id AS id10, g0_.mainImageId AS mainImageId11, g0_.user_id AS user_id12
+     * FROM GalleryAlbum g0_
+     * WHERE ? = g0_.user_id
+     * AND ? = g0_.isPublic
+     */
     public function getAllPublicUserGalleryAlbums(User $user)
     {
         $resultQuery = $this->getEntityManager()->createQuery(

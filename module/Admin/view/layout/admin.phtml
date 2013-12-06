@@ -17,28 +17,24 @@ $routeMatch = $router->match($request);
         ->appendStylesheet($this->basePath() . '/admin-assets/css/jquery-ui.css')
         ->appendStylesheet($this->basePath() . '/admin-assets/css/style.css')
         ->headLink(array('rel' => 'shortcut icon', 'href' => 'data:image/x-icon;,', 'type' => 'image/x-icon')) ?>
-    <!-- HTML5 Support for IE -->
-    <!--[if lt IE 9]>
-    <script src="/admin-assets/js/html5shim.js"></script>
-    <![endif]-->
-
 </head>
 <body>
 <div class="navbar navbar-fixed-top navbar-inverse">
     <div class="navbar-header">
         <a href="<?php echo $this->url('home') ?>"
-           class="navbar-brand"><?php echo $this->translate('admin_page_header_title') ?></span></a>
+           class="navbar-brand"><?php echo $this->translate('Admin page') ?></span></a>
     </div>
     <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
                 <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                    N/A <b class="caret"></b>
+                    <?= $this->translate('admin') ?> <b class="caret"></b>
                 </a>
-                <!-- Dropdown menu -->
                 <ul class="dropdown-menu" role="menu">
                     <li><a href="<?php echo $this->url('home/logout') ?>"><i
-                                class="icon-off"></i> <?php echo $this->translate('logout'); ?></a></li>
+                                class="icon-off"></i> <?php echo $this->translate('logout'); ?>
+                        </a>
+                    </li>
                 </ul>
             </li>
         </ul>
@@ -50,28 +46,31 @@ $routeMatch = $router->match($request);
         <div class="sidebar-dropdown"><a href="#"><?php echo $this->translate('navigation'); ?></a></div>
         <div class="sidebar-inner">
             <ul class="navi">
-                <li class="nred<?php if (isset($routeMatch) && $routeMatch->getMatchedRouteName() == 'admin/dashboard') {
-                    echo ' current';
-                } ?>"><a href="<?php echo $this->url('admin/dashboard') ?>"><i
-                            class="icon-desktop"></i> <?php echo $this->translate('dashboard') ?></a></li>
-                <li class="nred<?php if (isset($routeMatch) && $routeMatch->getMatchedRouteName() == 'admin/adminGallery'
-                    || $routeMatch->getMatchedRouteName() == 'admin/adminGallery/addAlbum'
+                <li class="nred<?php if (isset($routeMatch)
+                    && $routeMatch->getMatchedRouteName() == 'admin/dashboard'
                 ) {
                     echo ' current';
-                } ?>"><a href="<?php echo $this->url('admin/adminGallery') ?>"><i
-                            class="icon-desktop"></i> <?php echo $this->translate('gallery') ?></a></li>
+                } ?>">
+                    <a href="<?php echo $this->url('admin/dashboard') ?>">
+                        <i class="icon-desktop"></i> <?php echo $this->translate('Dashboard') ?>
+                    </a>
+                </li>
+                <li class="nred<?php if (isset($routeMatch)
+                    && strpos(
+                        $routeMatch->getMatchedRouteName(), 'admin/adminGallery'
+                    ) !== false
+                ) {
+                    echo ' current';
+                } ?>">
+                    <a href="<?php echo $this->url('admin/adminGallery') ?>">
+                        <i class="icon-desktop"></i> <?php echo $this->translate('Gallery') ?>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
 
     <div class="mainbar">
-        <div class="page-head">
-            <h2 class="pull-left">heading
-                <span class="page-meta">subheading</span>
-            </h2>
-
-            <div class="clearfix"></div>
-        </div>
         <div class="matter">
             <div class="container">
                 <?php echo $this->content ?>
@@ -81,13 +80,19 @@ $routeMatch = $router->match($request);
     <div class="clearfix"></div>
 </div>
 <span class="totop"><a href="#"><i class="icon-chevron-up"></i></a></span>
+<!-- HTML5 Support for IE -->
+<!--[if lt IE 9]>
+<script src="/admin-assets/js/html5shim.js"></script>
+<![endif]-->
 <?php echo $this->headScript()->appendFile($this->basePath() . '/admin-assets/js/jquery.js')
     ->appendFile($this->basePath() . '/admin-assets/js/bootstrap.js')
     ->appendFile($this->basePath() . '/admin-assets/js/jquery-ui-1.10.2.custom.min.js')
     ->appendFile($this->basePath() . '/admin-assets/js/jquery.form.js')
     ->appendFile($this->basePath() . '/js/uploadProgressBar.js')
     ->appendFile($this->basePath() . '/js/uploadImages.js')
+    ->appendFile($this->basePath() . '/js/deleteUrl.js')
     ->appendFile("https://maps.googleapis.com/maps/api/js?key=AIzaSyCYVqiIopFC0zpXH6pOYcdPq0bjOJY6wV8&sensor=false")
+    ->appendFile($this->basePath() . '/js/getAlbumLocation.js')
 ?>
 </body>
 </html>

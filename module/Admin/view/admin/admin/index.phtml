@@ -5,15 +5,13 @@ $form->prepare();
 <?php echo $this->form()->openTag($form); ?>
     <div class="admin-form">
         <div class="widget wred">
-            <!-- Widget head -->
             <div class="widget-head">
                 <i class="icon-lock"></i> <?php echo $this->translate('login') ?>
             </div>
-
             <div class="widget-content">
                 <div class="padd">
                     <?php if (!empty($this->error)): ?>
-                        <div class="alert alert-error"><?php echo $error ?></div>
+                        <div class="alert alert-error"><?php echo $this->error ?></div>
                     <?php endif; ?>
                     <div class="form-group">
                         <label for="usernameInput"><?php echo $this->translate('username') ?></label>
@@ -30,11 +28,10 @@ $form->prepare();
                     <?php echo $this->formRow($form->get('csrf')); ?>
                     <?php echo $this->formSubmit(
                         $form->get('loginFormSubmit')->setAttribute('class', 'btn btn-success')
-                            ->setAttribute('value', $this->translate('login'))
+                            ->setAttribute('value', $this->translate('Login'))
                     ); ?>
                 </div>
             </div>
         </div>
-
     </div>
 <?php echo $this->form()->closeTag($form); ?>

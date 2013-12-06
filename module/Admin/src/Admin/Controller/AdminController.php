@@ -15,6 +15,10 @@ class AdminController extends AbstractActionController
     protected $galleryModel;
     protected $userModel;
 
+    /**
+     * @return array
+     * login action
+     */
     public function indexAction()
     {
         if ($this->getAuthenticationService()->hasIdentity()
@@ -37,7 +41,7 @@ class AdminController extends AbstractActionController
                 if ($loginResult->getCode() == Result::SUCCESS) {
                     $this->redirect()->toRoute('admin/dashboard');
                 } else {
-                    $viewParams['error'] = $this->getTranslator()->translate('wrong_username_or_pass');
+                    $viewParams['error'] = $this->getTranslator()->translate('Wrong username or password');
                 }
             }
         }
@@ -46,20 +50,31 @@ class AdminController extends AbstractActionController
         return $viewParams;
     }
 
+    /**
+     * No logic or parameters to return
+     */
     protected function dashboardAction()
     {
 
     }
 
+    /**
+     * @return array
+     * returns all users
+     */
     protected function adminGalleryAction()
     {
         $users = $this->getUserModel()->getAllUsers();
 
         return [
-            'users'         => $users,
+            'users' => $users,
         ];
     }
 
+    /**
+     * @return array|object|\Zend\Authentication\AuthenticationService
+     * gets authentication service and stores in variable
+     */
     protected function getAuthenticationService()
     {
         if (!$this->authenticationService) {
@@ -69,6 +84,10 @@ class AdminController extends AbstractActionController
         return $this->authenticationService;
     }
 
+    /**
+     * @return array|object
+     * gets translator and stores in variable
+     */
     protected function getTranslator()
     {
         if (!$this->translationService) {
@@ -78,15 +97,10 @@ class AdminController extends AbstractActionController
         return $this->translationService;
     }
 
-    protected function getGalleryModel()
-    {
-        if (!$this->galleryModel) {
-            $this->galleryModel = $this->getServiceLocator()->get('Application\Model\GalleryModel');
-        }
-
-        return $this->galleryModel;
-    }
-
+    /**
+     * @return array|object
+     * gets user model and stores it in variable
+     */
     protected function getUserModel()
     {
         if (!$this->userModel) {
