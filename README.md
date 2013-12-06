@@ -16,3 +16,7 @@ Galima upvotinti arba downvotinti paveikslėlius registruotiem vartotojam.
 Testavimui naudotas begat su mink extension.
 
 Greitaveikos paveiksliukai analize folderyje. Pagrinde taškai buvo numažinti už nekešavimą.
+
+Naudotas doctrine2 ORM
+
+Kai kurių SQL užklausų negalėjau ištraukti, tai pagrinde tik select užklausos komentaruose
