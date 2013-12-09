@@ -51,6 +51,16 @@ return [
                             ],
                         ],
                     ],
+                    'search'       => [
+                        'type'    => 'Literal',
+                        'options' => [
+                            'route'    => 'search',
+                            'defaults' => [
+                                'controller' => 'Application\Controller\Index',
+                                'action'     => 'search',
+                            ],
+                        ],
+                    ],
                     'register'    => [
                         'type'    => 'Literal',
                         'options' => [
@@ -89,7 +99,7 @@ return [
                                 ],
                                 'may_terminate' => true,
                                 'child_routes'  => [
-                                    'image'     => [
+                                    'image'       => [
                                         'type'    => 'Segment',
                                         'options' => [
                                             'route'       => '/:imageAlias',
@@ -102,7 +112,7 @@ return [
                                             ],
                                         ],
                                     ],
-                                    'editImage' => [
+                                    'editImage'   => [
                                         'type'    => 'Segment',
                                         'options' => [
                                             'route'       => '/edit-image/:imageAlias',
@@ -128,7 +138,7 @@ return [
                                             ],
                                         ],
                                     ],
-                                    'upVote' => [
+                                    'upVote'      => [
                                         'type'    => 'Segment',
                                         'options' => [
                                             'route'       => '/up-vote/:imageAlias',
@@ -141,7 +151,7 @@ return [
                                             ],
                                         ],
                                     ],
-                                    'downVote' => [
+                                    'downVote'    => [
                                         'type'    => 'Segment',
                                         'options' => [
                                             'route'       => '/down-vote/:imageAlias',
@@ -233,6 +243,7 @@ return [
             'Application\Form\UploadImageForm' => 'Application\Form\UploadImageForm',
             'Application\Form\ImageForm'       => 'Application\Form\ImageForm',
             'Application\Form\LoginForm'       => 'Application\Form\LoginForm',
+            'Application\Form\SearchForm'      => 'Application\Form\SearchForm',
             'Application\Form\RegisterForm'    => 'Application\Form\RegisterForm',
             'Application\Form\AlbumForm'       => 'Application\Form\AlbumForm',
             'Application\Model\GalleryModel'   => 'Application\Model\GalleryModel',

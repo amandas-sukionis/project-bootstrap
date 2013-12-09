@@ -37,17 +37,32 @@
     text-align: center;
 }
 
-#myModal {
+#myModal,
+#myModalShare {
     color: black;
+}
+
+.gallery-page,
+.album-page,
+.image-page,
+.main-page,
+.search-page {
+    padding: 15px 0 0 0;
+}
+
+.main-page .thumbnail {
+    float: left;
 }
 
 .gallery-page .thumbnail,
 .album-page .thumbnail,
-.image-page .thumbnail {
-    padding: 0;
+.image-page .thumbnail,
+.main-page .thumbnail,
+.search-page .thumbnail {
     border: 4px solid #5e5e5e;
     background-color: #444343;
     position: relative;
+    padding: 0;
 }
 
 .album-page .hidden-link {
@@ -55,7 +70,9 @@
 }
 
 .gallery-page .thumbnail .album-info,
-.album-page .thumbnail .image-info {
+.album-page .thumbnail .image-info,
+.main-page .thumbnail .image-info,
+.search-page .thumbnail .image-info {
     position: absolute;
     top: 0;
     width: 100%;
@@ -74,19 +91,22 @@
 }
 
 .gallery-page .thumbnail .album-info h3,
-.album-page .thumbnail .image-info h3 {
+.album-page .thumbnail .image-info h3
+.search-page .thumbnail .image-info h3 {
     height: 24px;
     overflow: hidden;
 }
 
 .gallery-page .thumbnail .album-info p,
-.album-page .thumbnail .image-info p {
+.album-page .thumbnail .image-info p,
+.search-page .thumbnail .image-info p {
     height: 66px;
     overflow: hidden;
 }
 
 .gallery-page .thumbnail:hover .album-info,
-.album-page .thumbnail:hover .image-info {
+.album-page .thumbnail:hover .image-info,
+.search-page .thumbnail:hover .image-info {
     display: block;
 }
 
@@ -127,6 +147,13 @@
     z-index: 999;
 }
 
+.album-page .share-item {
+    position: absolute;
+    top: 80px;
+    right: 6px;
+    z-index: 999;
+}
+
 .gallery-page .admin-upload {
     position: absolute;
     top: 5px;
@@ -141,7 +168,8 @@
 .album-page .admin-edit .text,
 .album-page .admin-remove .text,
 .album-page .down-vote .text,
-.album-page .up-vote .text {
+.album-page .up-vote .text,
+.album-page .share-item .text {
     display: none;
 }
 
@@ -152,7 +180,8 @@
 .album-page .admin-edit:hover .text,
 .album-page .admin-remove:hover .text,
 .album-page .down-vote:hover .text,
-.album-page .up-vote:hover .text {
+.album-page .up-vote:hover .text,
+.album-page .share-item:hover .text {
     display: inline-block;
 }
 

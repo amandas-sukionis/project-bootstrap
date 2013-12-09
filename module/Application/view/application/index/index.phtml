@@ -1,4 +1,24 @@
-<div class="row">
+<div class="row main-page">
     <h3>Hello !</h3>
+
     <p>Welcome to the gallery</p>
+
+    <?php if ($image) { ?>
+        <p>Most liked image</p>
+        <a href="<?=
+        $this->url(
+            'home/gallery/album/image',
+            ['alias'   => $this->image->getAlbum()->getAlias(), 'imageAlias' => $image->getAlias(),
+            'userName' => $this->image->getAlbum()->getUser()->getUserName()]
+        ); ?>" class="thumbnail">
+            <div class="image-info">
+                <h3><?php echo $image->getName(); ?></h3>
+
+                <p><?php echo $image->getShortDescription(); ?></p>
+            </div>
+            <img src="<?php echo $image->getThumbUrl() . '_cropped'; ?>" alt="<?= $image->getName() ?>">
+        </a>
+    <?php
+    }
+    ?>
 </div>

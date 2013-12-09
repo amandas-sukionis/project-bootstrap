@@ -36,8 +36,8 @@
 
     function startProgress() {
         var bar = $('#progress').uploadProgressBar();
-        bar.uploadProgressBar("option", "value", 0);
-        bar.uploadProgressBar("startProgress");
+        bar.uploadProgressBar("option", "value", 5);
+        //bar.uploadProgressBar("startProgress");
     }
 
     function loadImageDiv(thumbUrl, alias) {
@@ -163,6 +163,9 @@
 
         $(this).ajaxSubmit({
             success: function (response, statusText, xhr, $form) {
+                var bar = $('#progress').uploadProgressBar();
+                bar.uploadProgressBar("option", "value", 100);
+                $('#progress').fadeOut(3000);
                 console.log(response);
                 if (response.status != 'fail') {
                     $.each(response.images, function (index, value) {

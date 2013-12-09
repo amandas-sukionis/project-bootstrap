@@ -1,5 +1,9 @@
 <div class="row">
-    <h3><?php echo $this->translate('upload_images'); ?></h3>
+    <a href="<?php echo $this->url('home/gallery/album', ['userName' => $this->userName, 'alias' => $this->alias]); ?>"
+       class="btn btn-success btn-sm pull-right">
+        <span class="glyphicon glyphicon-arrow-left"></span><?php echo $this->translate('Back to album'); ?>
+    </a>
+    <h3><?php echo $this->translate('Upload images'); ?></h3>
     <div id="progress">
     </div>
     <?php

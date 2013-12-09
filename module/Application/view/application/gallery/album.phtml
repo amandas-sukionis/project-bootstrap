@@ -19,6 +19,24 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="myModalShare" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><?php echo $this->translate('Share image'); ?></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <a href="javascript:$('#myModalShare').modal('hide')" class="btn btn-default"><?php echo $this->translate(
+                        'OK'
+                    ) ?>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="row album-page">
     <h1><?php echo $this->album->getName(); ?></h1>
     <small><?php echo $this->album->getLocation(); ?></small>
@@ -39,7 +57,7 @@
                 <?php echo $this->translate('Upload images'); ?>
             </a>
             <?php if (count($this->albumImages) > 1) { ?>
-                <a href="<?=$this->albumImages[0]->getUrl() ?>" data-lightbox="album-set"
+                <a href="<?= $this->albumImages[0]->getUrl() ?>" data-lightbox="album-set"
                    class="btn btn-info btn-sm admin-add-album">
                     <span class="glyphicon glyphicon-new-window"></span>
                     <?php echo $this->translate('View all'); ?>
@@ -66,6 +84,15 @@
                    ); ?>">
                     <span class="text"><?= $this->translate('Remove image'); ?></span>
                     <span class="glyphicon glyphicon-remove"></span>
+                </a>
+                <a data-toggle="modal" href="#myModalShare" class="btn btn-warning btn-xs share-item"
+                   data-share-url="<?php echo $this->url(
+                       'home/gallery/album/image',
+                       ['alias'   => $this->album->getAlias(), 'imageAlias' => $image->getAlias(),
+                       'userName' => $this->userName], ['force_canonical' => true]
+                   ); ?>">
+                    <span class="text"><?= $this->translate('Share image'); ?></span>
+                    <span class="glyphicon glyphicon-share-alt"></span>
                 </a>
             <?php } ?>
             <a href="<?php echo $this->url(
@@ -101,8 +128,8 @@
             ); ?>" class="thumbnail">
                 <div class="image-info">
                     <h3><?php echo $image->getName(); ?></h3>
-
                     <p><?php echo $image->getShortDescription(); ?></p>
+                    <h6><?=$this->translate('Image by') . ' ' . $image->getAlbum()->getUser()->getUserName()?></h6>
                 </div>
                 <img src="<?php echo $image->getThumbUrl() . '_cropped'; ?>" alt="<?= $image->getName() ?>">
             </a>
@@ -114,6 +141,7 @@
         if ($key != 0) {
             ?>
             <a href="<?= $image->getUrl() ?>" data-lightbox="album-set" title="<?= $image->getName() ?>"></a>
-        <?php }
+        <?php
+        }
     } ?>
 </div>

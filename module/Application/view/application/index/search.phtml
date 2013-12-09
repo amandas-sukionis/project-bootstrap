@@ -1,0 +1,30 @@
+<div class="row search-page">
+    <?php if ($images) {
+        foreach ($images as $image) {
+            if ($image->getIsPublic() && $image->getAlbum()->getIsPublic()) {
+                ?>
+                <div class="col-md-3 margin-bottom-25">
+                    <a href="<?php echo $this->url(
+                        'home/gallery/album/image',
+                        ['alias'   => $image->getAlbum()->getAlias(), 'imageAlias' => $image->getAlias(),
+                        'userName' => $image->getAlbum()->getUser()->getUserName()]
+                    ); ?>" class="thumbnail">
+                        <div class="image-info">
+                            <h3><?php echo $image->getName(); ?></h3>
+                            <p><?php echo $image->getShortDescription(); ?></p>
+                            <h6><?=$this->translate('Image by') . ' ' . $image->getAlbum()->getUser()->getUserName()?></h6>
+                        </div>
+                        <img src="<?php echo $image->getThumbUrl() . '_cropped'; ?>" alt="<?= $image->getName() ?>">
+                    </a>
+                </div>
+            <?php
+            }
+        }
+    } else {
+        ?>
+        <div class="alert alert-info"><?=
+            $this->translate(
+                'No images were found, try to separate words with ,'
+            ) ?></div>
+    <?php } ?>
+</div>

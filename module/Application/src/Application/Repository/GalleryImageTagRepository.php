@@ -23,6 +23,24 @@ class GalleryImageTagRepository extends EntityRepository
         return $this->findOneBy(['tagString' => $tagString]);
     }
 
+    public function getImageTagsBySearchWords($searchWords)
+    {
+        $likeString = 'u.tagString LIKE :word' . 0;
+        foreach ($searchWords as $key => $word) {
+            if ($key != 0) {
+                $likeString .= ' OR u.tagString LIKE :word' . $key;
+            }
+        }
+        $query = $this->getEntityManager()->createQuery(
+            "SELECT u FROM Application\Entity\GalleryImageTag u WHERE " . $likeString
+        );
+        foreach ($searchWords as $key => $word) {
+            $query->setParameter('word' . $key, $word . '%');
+        }
+        $tags = $query->getResult();
+        return $tags;
+    }
+
     public function addNewImageTag($tagString, GalleryImage $image)
     {
         $galleryImageTag = new GalleryImageTag();

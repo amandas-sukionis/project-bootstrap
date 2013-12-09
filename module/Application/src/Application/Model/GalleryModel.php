@@ -33,12 +33,17 @@ class GalleryModel implements ServiceLocatorAwareInterface
      *
      * Save entered image info
      */
-    public function saveImageInfo($postData, $alias) {
+    public function saveImageInfo($postData, $alias)
+    {
         $image = $this->getImageByAlias($alias);
         if ($image) {
-            $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->saveImageInfo($postData, $image);
+            $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->saveImageInfo(
+                $postData, $image
+            );
+
             return true;
         }
+
         return false;
     }
 
@@ -49,7 +54,8 @@ class GalleryModel implements ServiceLocatorAwareInterface
      *
      * check if images belongs to album
      */
-    public function checkAlbumImage($postData, $album, $image) {
+    public function checkAlbumImage($postData, $album, $image)
+    {
         if ($postData['isAlbumImage']) {
             $oldAlbumMainImage = $album->getMainImage();
             if ($oldAlbumMainImage) {
@@ -64,6 +70,40 @@ class GalleryModel implements ServiceLocatorAwareInterface
         }
     }
 
+    public function getImagesBySearchWords($postData)
+    {
+        $resultImages = array();
+        $pattern = '/[^a-z,]+/';
+        $replacement = '';
+        $wordsFromPost = preg_replace($pattern, $replacement, $postData['searchFormWords']);
+        $words = explode(',', $wordsFromPost);
+        if ($words) {
+            $goodWords = array();
+            foreach ($words as $word) {
+                if (strlen($word) >= 3) {
+                    $goodWords[] = $word;
+                }
+            }
+            if ($goodWords) {
+                $tags = $this->getObjectManager()->getRepository('Application\Entity\GalleryImageTag')
+                    ->getImageTagsBySearchWords($words);
+
+                $resultImagesIds = array();
+                foreach($tags as $tag) {
+                    $images = $tag->getImages();
+
+                    foreach ($images as $image) {
+                        if (!in_array($image->getId(), $resultImagesIds)) {
+                            $resultImagesIds[] = $image->getId();
+                            $resultImages[] = $image;
+                        }
+                    }
+                }
+            }
+        }
+        return $resultImages;
+    }
+
     /**
      * @param $postData
      * @param $album
@@ -71,7 +111,8 @@ class GalleryModel implements ServiceLocatorAwareInterface
      *
      * saves new image tags
      */
-    public function checkImageTags($postData, $album, $image) {
+    public function checkImageTags($postData, $album, $image)
+    {
         $tags = $image->getTags();
         foreach ($tags as $tag) {
             $image->removeTag($tag);
@@ -90,12 +131,16 @@ class GalleryModel implements ServiceLocatorAwareInterface
 
             foreach ($tags as $tagString) {
                 if (strlen($tagString) > 2 && strlen($tagString) < 13) {
-                    $galleryTag = $this->getObjectManager()->getRepository('Application\Entity\GalleryImageTag')->getImageTagByTagString($tagString);
+                    $galleryTag = $this->getObjectManager()->getRepository('Application\Entity\GalleryImageTag')
+                        ->getImageTagByTagString($tagString);
                     if (!$galleryTag) {
-                        $this->getObjectManager()->getRepository('Application\Entity\GalleryImageTag')->addNewImageTag($tagString, $image);
+                        $this->getObjectManager()->getRepository('Application\Entity\GalleryImageTag')->addNewImageTag(
+                            $tagString, $image
+                        );
                     } else {
                         if (!$image->getTags()->contains($galleryTag)) {
-                            $this->getObjectManager()->getRepository('Application\Entity\GalleryImageTag')->addImageToTag($galleryTag, $image);
+                            $this->getObjectManager()->getRepository('Application\Entity\GalleryImageTag')
+                                ->addImageToTag($galleryTag, $image);
                         }
                     }
                 }
@@ -163,14 +208,18 @@ class GalleryModel implements ServiceLocatorAwareInterface
      */
     public function createSameSizeThumbnail($oldname, $thumbw, $thumbh, User $user, $alias, $imageAlias)
     {
-        if(exif_imagetype($oldname) == IMAGETYPE_JPEG) {
+        if (exif_imagetype($oldname) == IMAGETYPE_JPEG) {
             $resimage = imagecreatefromjpeg($oldname);
-        } else if (exif_imagetype($oldname) == IMAGETYPE_GIF) {
-            $resimage = imagecreatefromgif($oldname);
-        } else if (exif_imagetype($oldname) == IMAGETYPE_PNG) {
-            $resimage = imagecreatefrompng($oldname);
         } else {
-            return null;
+            if (exif_imagetype($oldname) == IMAGETYPE_GIF) {
+                $resimage = imagecreatefromgif($oldname);
+            } else {
+                if (exif_imagetype($oldname) == IMAGETYPE_PNG) {
+                    $resimage = imagecreatefrompng($oldname);
+                } else {
+                    return null;
+                }
+            }
         }
 
         // Dimension of intermediate thumbnail
@@ -187,34 +236,25 @@ class GalleryModel implements ServiceLocatorAwareInterface
         $ratio = $h / $w;
         $nratio = $nh / $nw;
 
-        if($ratio > $nratio)
-        {
+        if ($ratio > $nratio) {
             $x = intval($w * $nh / $h);
-            if ($x < $nw)
-            {
+            if ($x < $nw) {
                 $nh = intval($h * $nw / $w);
-            }
-            else
-            {
+            } else {
                 $nw = $x;
             }
-        }
-        else
-        {
+        } else {
             $x = intval($h * $nw / $w);
-            if ($x < $nh)
-            {
+            if ($x < $nh) {
                 $nw = intval($w * $nh / $h);
-            }
-            else
-            {
+            } else {
                 $nh = $x;
             }
         }
 
         // Building the intermediate resized thumbnail
-        $newimage = imagecreatetruecolor($nw, $nh);  // use alternate function if not installed
-        imageCopyResampled($newimage, $resimage,0,0,0,0,$nw, $nh, $w, $h);
+        $newimage = imagecreatetruecolor($nw, $nh); // use alternate function if not installed
+        imageCopyResampled($newimage, $resimage, 0, 0, 0, 0, $nw, $nh, $w, $h);
 
         // Making the final cropped thumbnail
 
@@ -222,8 +262,8 @@ class GalleryModel implements ServiceLocatorAwareInterface
         imagecopy($viewimage, $newimage, 0, 0, 0, 0, $nw, $nh);
 
         $pathToThumbsDirectory = 'public/img/gallery/' . $user->getEmail() . '/' . $alias . '/thumbs';
-        if(!file_exists($pathToThumbsDirectory)) {
-            if(!mkdir($pathToThumbsDirectory)) {
+        if (!file_exists($pathToThumbsDirectory)) {
+            if (!mkdir($pathToThumbsDirectory)) {
                 die("There was a problem. Please try again!");
             }
         }
@@ -242,15 +282,20 @@ class GalleryModel implements ServiceLocatorAwareInterface
      *
      * create thumbnail by resizing
      */
-    public function createThumbnail($filename, $alias, $imageAlias, User $user, $finalWidthOfImage) {
-        if(exif_imagetype($filename) == IMAGETYPE_JPEG) {
+    public function createThumbnail($filename, $alias, $imageAlias, User $user, $finalWidthOfImage)
+    {
+        if (exif_imagetype($filename) == IMAGETYPE_JPEG) {
             $im = imagecreatefromjpeg($filename);
-        } else if (exif_imagetype($filename) == IMAGETYPE_GIF) {
-            $im = imagecreatefromgif($filename);
-        } else if (exif_imagetype($filename) == IMAGETYPE_PNG) {
-            $im = imagecreatefrompng($filename);
         } else {
-            return null;
+            if (exif_imagetype($filename) == IMAGETYPE_GIF) {
+                $im = imagecreatefromgif($filename);
+            } else {
+                if (exif_imagetype($filename) == IMAGETYPE_PNG) {
+                    $im = imagecreatefrompng($filename);
+                } else {
+                    return null;
+                }
+            }
         }
 
         $ox = imagesx($im);
@@ -261,12 +306,12 @@ class GalleryModel implements ServiceLocatorAwareInterface
 
         $nm = imagecreatetruecolor($nx, $ny);
 
-        imagecopyresized($nm, $im, 0,0,0,0,$nx,$ny,$ox,$oy);
+        imagecopyresized($nm, $im, 0, 0, 0, 0, $nx, $ny, $ox, $oy);
 
         $pathToThumbsDirectory = 'public/img/gallery/' . $user->getEmail() . '/' . $alias . '/thumbs';
         $thumbUrl = '/img/gallery/' . $user->getEmail() . '/' . $alias . '/thumbs';
-        if(!file_exists($pathToThumbsDirectory)) {
-            if(!mkdir($pathToThumbsDirectory)) {
+        if (!file_exists($pathToThumbsDirectory)) {
+            if (!mkdir($pathToThumbsDirectory)) {
                 die("There was a problem. Please try again!");
             }
         }
@@ -288,7 +333,9 @@ class GalleryModel implements ServiceLocatorAwareInterface
      */
     public function addNewImage($imageAlias, $url, $thumbUrl, GalleryAlbum $album)
     {
-        return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->addNewImage($imageAlias, $url, $thumbUrl, $album);
+        return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->addNewImage(
+            $imageAlias, $url, $thumbUrl, $album
+        );
     }
 
     /**
@@ -319,7 +366,9 @@ class GalleryModel implements ServiceLocatorAwareInterface
      */
     public function getAllPublicImagesByAlbum(GalleryAlbum $album)
     {
-        return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->getAllPublicImagesByAlbum($album);
+        return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->getAllPublicImagesByAlbum(
+            $album
+        );
     }
 
     /**
@@ -330,7 +379,8 @@ class GalleryModel implements ServiceLocatorAwareInterface
      */
     public function getAllPublicUserGalleryAlbums(User $user)
     {
-        return $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->getAllPublicUserGalleryAlbums($user);
+        return $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')
+            ->getAllPublicUserGalleryAlbums($user);
     }
 
     /**
@@ -341,7 +391,9 @@ class GalleryModel implements ServiceLocatorAwareInterface
      */
     public function getAllUserGalleryAlbums(User $user)
     {
-        return $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->getAllUserGalleryAlbums($user);
+        return $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->getAllUserGalleryAlbums(
+            $user
+        );
     }
 
     /**
@@ -355,7 +407,9 @@ class GalleryModel implements ServiceLocatorAwareInterface
     {
         $album = $this->getAlbumByAliasAndUser($alias, $user);
         if ($album) {
-            return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->getAllImagesByAlbum($album);
+            return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->getAllImagesByAlbum(
+                $album
+            );
         } else {
             return null;
         }
@@ -372,9 +426,18 @@ class GalleryModel implements ServiceLocatorAwareInterface
     {
         $album = $this->getAlbumByAliasAndUser($alias, $user);
         if ($album) {
-            return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->getAllPublicImagesByAlbum($album);
+            return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')
+                ->getAllPublicImagesByAlbum($album);
         } else {
             return null;
+        }
+    }
+
+    public function getMostLikedImage()
+    {
+        $images = $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->getMostLikedImage();
+        if ($images) {
+            return $images[0];
         }
     }
 
@@ -387,7 +450,9 @@ class GalleryModel implements ServiceLocatorAwareInterface
      */
     public function getImageByAlbumAndAlias(GalleryAlbum $album, $imageAlias)
     {
-        return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->getImageByAlbumAndALias($album, $imageAlias);
+        return $this->getObjectManager()->getRepository('Application\Entity\GalleryImage')->getImageByAlbumAndALias(
+            $album, $imageAlias
+        );
     }
 
     /**
@@ -399,7 +464,9 @@ class GalleryModel implements ServiceLocatorAwareInterface
      */
     public function getAlbumByAliasAndUser($alias, User $user)
     {
-        return $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->getAlbumByAliasAndUser($alias, $user);
+        return $this->getObjectManager()->getRepository('Application\Entity\GalleryAlbum')->getAlbumByAliasAndUser(
+            $alias, $user
+        );
     }
 
     /**
@@ -455,7 +522,8 @@ class GalleryModel implements ServiceLocatorAwareInterface
      */
     public function getImageVoteLogByUserAndImage(User $user, GalleryImage $image)
     {
-        return $voteLog = $this->getObjectManager()->getRepository('Application\Entity\GalleryImageVoteLog')->getImageVoteLogByUserAndImage($user, $image);
+        return $voteLog = $this->getObjectManager()->getRepository('Application\Entity\GalleryImageVoteLog')
+            ->getImageVoteLogByUserAndImage($user, $image);
     }
 
     /**
@@ -470,16 +538,24 @@ class GalleryModel implements ServiceLocatorAwareInterface
         $type = 'upvote';
         if (!$galleryImageVoteLog) {
             $image->setVotesCount($image->getVotesCount() + 1);
-        } else if ($status == 'wasUp') {
-            $type = 'neutral';
-            $image->setVotesCount($image->getVotesCount() - 1);
-        } else if ($status == 'wasDown') {
-            $image->setVotesCount($image->getVotesCount() + 2);
-        } else if ($status == 'wasNeutral') {
-            $image->setVotesCount($image->getVotesCount() + 1);
+        } else {
+            if ($status == 'wasUp') {
+                $type = 'neutral';
+                $image->setVotesCount($image->getVotesCount() - 1);
+            } else {
+                if ($status == 'wasDown') {
+                    $image->setVotesCount($image->getVotesCount() + 2);
+                } else {
+                    if ($status == 'wasNeutral') {
+                        $image->setVotesCount($image->getVotesCount() + 1);
+                    }
+                }
+            }
         }
 
-        $this->getObjectManager()->getRepository('Application\Entity\GalleryImageVoteLog')->logVote($user, $image, $galleryImageVoteLog, $type);
+        $this->getObjectManager()->getRepository('Application\Entity\GalleryImageVoteLog')->logVote(
+            $user, $image, $galleryImageVoteLog, $type
+        );
     }
 
     /**
@@ -494,16 +570,24 @@ class GalleryModel implements ServiceLocatorAwareInterface
         $type = 'downvote';
         if (!$galleryImageVoteLog) {
             $image->setVotesCount($image->getVotesCount() - 1);
-        } else if ($status == 'wasUp') {
-            $image->setVotesCount($image->getVotesCount() - 2);
-        } else if ($status == 'wasDown') {
-            $image->setVotesCount($image->getVotesCount() + 1);
-            $type = 'neutral';
-        } else if ($status == 'wasNeutral') {
-            $image->setVotesCount($image->getVotesCount() - 1);
+        } else {
+            if ($status == 'wasUp') {
+                $image->setVotesCount($image->getVotesCount() - 2);
+            } else {
+                if ($status == 'wasDown') {
+                    $image->setVotesCount($image->getVotesCount() + 1);
+                    $type = 'neutral';
+                } else {
+                    if ($status == 'wasNeutral') {
+                        $image->setVotesCount($image->getVotesCount() - 1);
+                    }
+                }
+            }
         }
 
-        $this->getObjectManager()->getRepository('Application\Entity\GalleryImageVoteLog')->logVote($user, $image, $galleryImageVoteLog, $type);
+        $this->getObjectManager()->getRepository('Application\Entity\GalleryImageVoteLog')->logVote(
+            $user, $image, $galleryImageVoteLog, $type
+        );
     }
 
     protected function getObjectManager()

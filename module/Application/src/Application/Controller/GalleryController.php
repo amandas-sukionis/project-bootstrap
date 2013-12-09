@@ -161,6 +161,8 @@ class GalleryController extends AbstractActionController
 
                                 return new JsonModel(['status' => 'ok', 'voteCount' => $image->getVotesCount()]);
                             }
+                        } else {
+                            return new JsonModel(['status' => 'public']);
                         }
                     }
                 }
@@ -271,6 +273,7 @@ class GalleryController extends AbstractActionController
         return [
             'uploadImageForm' => $uploadImageForm,
             'userName'        => $user->getUserName(),
+            'alias'           => $alias,
         ];
     }
 

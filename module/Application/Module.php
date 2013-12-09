@@ -27,10 +27,12 @@ class Module
     public function setLoginFormToView($event)
     {
         $loginForm = $event->getApplication()->getServiceManager()->get('Application\Form\LoginForm');
+        $searchForm = $event->getApplication()->getServiceManager()->get('Application\Form\SearchForm');
         $viewModel = $event->getViewModel();
         $viewModel->setVariables(
             array(
-                 'loginForm' => $loginForm,
+                 'loginForm'  => $loginForm,
+                 'searchForm' => $searchForm,
             )
         );
     }

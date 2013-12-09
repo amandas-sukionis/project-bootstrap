@@ -27,6 +27,23 @@ class GalleryImageRepository extends EntityRepository
         return $image->getAlias();
     }
 
+    public function getMostLikedImage()
+    {
+        $resultQuery = $this->getEntityManager()->createQuery(
+            'SELECT u FROM Application\Entity\GalleryImage u WHERE u.isPublic = :public ORDER BY u.votesCount DESC'
+        );
+
+        $resultQuery->setParameters(
+            array(
+                 'public' => 1,
+            )
+        );
+
+        $images = $resultQuery->getResult();
+
+        return $images;
+    }
+
     public function getImageByAlias($alias)
     {
         return $this->findOneBy(['alias' => $alias]);

@@ -18,7 +18,7 @@ $authenticationService = $sm->get('Zend\Authentication\AuthenticationService');
 
     <!-- Le styles -->
     <?php echo $this->headLink(
-        array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon',
+        array('rel'  => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon',
               'href' => $this->basePath() . '/img/favicon.ico')
     )
         ->prependStylesheet($this->basePath() . '/css/style.css')
@@ -45,7 +45,7 @@ $authenticationService = $sm->get('Zend\Authentication\AuthenticationService');
                 <li class="<?php if (isset($routeMatch) && $routeMatch->getMatchedRouteName() == 'home') {
                     echo 'active';
                 } ?>">
-                    <a href="<?php echo $this->url('home') ?>"><?php echo $this->translate('home') ?></a>
+                    <a href="<?php echo $this->url('home') ?>"><?php echo $this->translate('Home') ?></a>
                 </li>
                 <?php if ($authenticationService->hasIdentity()) { ?>
                     <li class="<?php if (isset($routeMatch) && $routeMatch->getMatchedRouteName() == 'home/gallery') {
@@ -100,7 +100,26 @@ $authenticationService = $sm->get('Zend\Authentication\AuthenticationService');
                         </ul>
                     </li>
                 </ul>
-            <?php
+                <?php
+
+                $formSearch = $this->searchForm;
+                $formSearch->setAttribute('class', 'navbar-form navbar-right')
+                    ->setAttribute('action', $this->url('home/search'));
+                $formSearch->prepare();
+                echo $this->form()->openTag($formSearch); ?>
+                <div class='form-group'>
+                    <?php echo $this->formRow(
+                        $formSearch->get('searchFormWords')->setAttribute('class', 'form-control')
+                    ); ?>
+                </div>
+                <?php echo $this->formRow($formSearch->get('csrf')); ?>
+                <div class="form-group">
+                    <?php echo $this->formRow(
+                        $formSearch->get('searchFormSubmit')->setAttribute('class', 'btn btn-default btn-sm')
+                            ->setAttribute('value', 'search')
+                    ); ?>
+                </div>
+                <?php echo $this->form()->closeTag($formSearch);
             }
             ?>
         </div>
@@ -117,10 +136,11 @@ $authenticationService = $sm->get('Zend\Authentication\AuthenticationService');
     </footer>
 </div>
 <!-- Scripts -->
-<script>(function(d, s, id) {
+<script>(function (d, s, id) {
         var js, fjs = d.getElementsByTagName(s)[0];
         if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
+        js = d.createElement(s);
+        js.id = id;
         js.src = "//connect.facebook.net/lt_LT/all.js#xfbml=1";
         fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));</script>
@@ -131,6 +151,7 @@ $authenticationService = $sm->get('Zend\Authentication\AuthenticationService');
     ->prependFile($this->basePath() . '/js/addTags.js')
     ->prependFile($this->basePath() . '/js/upvote-downvote.js')
     ->prependFile($this->basePath() . '/js/uploadImages.js')
+    ->prependFile($this->basePath() . '/js/share.js')
     ->prependFile($this->basePath() . '/js/uploadProgressBar.js')
     ->prependFile($this->basePath() . '/js/lightbox-2.6.min.js')
     ->prependFile($this->basePath() . '/js/jquery.form.js')

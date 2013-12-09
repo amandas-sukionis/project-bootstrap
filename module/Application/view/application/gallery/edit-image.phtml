@@ -11,11 +11,11 @@ $form->prepare();
         <h1><?php echo $this->translate('edit_mage'); ?></h1>
         <?php echo $this->form()->openTag($form); ?>
         <div class='form-group'>
-            <label for="name"><?php echo $this->translate('image_name') ?></label>
+            <label for="name"><?php echo $this->translate('Image name') ?></label>
             <?php echo $this->formRow($form->get('name')->setAttribute('class', 'form-control')); ?>
         </div>
         <div class="form-group">
-            <label for="shortDescription"><?php echo $this->translate('image_short_description') ?></label>
+            <label for="shortDescription"><?php echo $this->translate('Short image description') ?></label>
             <?php echo $this->formRow(
                 $form->get('shortDescription')->setAttribute('class', 'form-control')
             ); ?>
@@ -33,11 +33,11 @@ $form->prepare();
             <?php echo $this->formRow($form->get('hiddenTags')); ?>
         </div>
         <div class="form-group">
-            <label for="isPublic"><?php echo $this->translate('is_image_public') ?></label>
+            <label for="isPublic"><?php echo $this->translate('Is image public?') ?></label>
             <?php echo $this->formRow($form->get('isPublic')); ?>
         </div>
         <div class="form-group">
-            <label for="isAlbumImage"><?php echo $this->translate('is_image_album_main') ?></label>
+            <label for="isAlbumImage"><?php echo $this->translate('Is album main image?') ?></label>
             <?php echo $this->formRow($form->get('isAlbumImage')); ?>
         </div>
         <?php echo $this->formRow(

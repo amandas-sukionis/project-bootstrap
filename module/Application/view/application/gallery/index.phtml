@@ -19,9 +19,17 @@
     </div>
 </div>
 <div class="row gallery-page">
-    <?php if (!$this->galleryAlbums) { ?>
+    <?php if (!$this->galleryAlbums) {
+        if ($this->isOwner) { ?>
+            <div class="add-album-button-container">
+                <a href="<?php echo $this->url('home/gallery/addAlbum', ['userName' => $this->userName]); ?>"
+                   class="btn btn-success btn-sm admin-add-album">
+                    <span class="glyphicon glyphicon-plus"></span><?php echo $this->translate('Add album'); ?>
+                </a>
+            </div>
+        <?php } ?>
         <div class="alert alert-info"><?php echo
-                $this->translate('no_albums_in') . ' ' . $this->userName . ' ' . $this->translate('gallery'); ?>
+                $this->translate('No albums in') . ' ' . $this->userName . ' ' . $this->translate('gallery'); ?>
         </div>
     <?php } else { ?>
         <h1><?=$this->translate('Albums by') . ' ' . $this->userName?></h1>

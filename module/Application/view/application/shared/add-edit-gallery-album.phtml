@@ -7,37 +7,37 @@ $form->prepare();
         <h1><?php echo $this->translate($this->action); ?></h1>
         <?php echo $this->form()->openTag($form); ?>
         <div class='form-group'>
-            <label for="name"><?php echo $this->translate('album_name') ?></label>
+            <label for="name"><?php echo $this->translate('Album name') ?></label>
             <?php echo $this->formRow($form->get('name')->setAttribute('class', 'form-control')); ?>
         </div>
         <div class="row">
             <div class="form-group col-lg-10 padding-left-0 padding-right-0">
-                <label for="location"><?php echo $this->translate('album_location') ?></label>
+                <label for="location"><?php echo $this->translate('Album location') ?></label>
                 <?php echo $this->formRow($form->get('location')->setAttribute('class', 'form-control')); ?>
             </div>
             <div class="form-group col-lg-2 padding-right-0">
                 <label>&nbsp</label>
 
                 <div id="get-location" class="btn btn-warning form-control"><?php echo $this->translate(
-                        'set_location_on_map'
+                        'Set location on map'
                     ); ?></div>
             </div>
         </div>
         <div id="map-canvas"></div>
         <div class="form-group">
-            <label for="shortDescription"><?php echo $this->translate('album_short_description') ?></label>
+            <label for="shortDescription"><?php echo $this->translate('Short album description') ?></label>
             <?php echo $this->formRow(
                 $form->get('shortDescription')->setAttribute('class', 'form-control')
             ); ?>
         </div>
         <div class="form-group">
-            <label for="fullDescription"><?php echo $this->translate('album_full_description') ?></label>
+            <label for="fullDescription"><?php echo $this->translate('Full album description') ?></label>
             <?php echo $this->formRow(
                 $form->get('fullDescription')->setAttribute('class', 'form-control')
             ); ?>
         </div>
         <div class="form-group">
-            <label for="isPublic"><?php echo $this->translate('is_album_public') ?></label>
+            <label for="isPublic"><?php echo $this->translate('Is album public') ?></label>
             <?php echo $this->formRow($form->get('isPublic')); ?>
         </div>
         <?php echo $this->formRow($form->get('locationLat')); ?>
@@ -45,7 +45,7 @@ $form->prepare();
         <?php echo $this->formRow($form->get('csrf')); ?>
         <?php echo $this->formRow(
             $form->get('addAlbumFormSubmit')->setAttribute('class', 'btn btn-success')->setAttribute(
-                'value', $this->translate('save')
+                'value', $this->translate('Save')
             )
         ); ?>
         <?php echo $this->form()->closeTag($form); ?>

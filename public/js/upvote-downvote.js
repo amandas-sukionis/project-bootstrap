@@ -11,6 +11,8 @@
                     _this.parent().find('.score').text(data.voteCount);
                 } else if (data.status == "ok") {
                     _this.parent().find('.score').text(data.voteCount);
+                } else if (data.status == "public") {
+                    alert('Not public');
                 } else {
                     console.log(data);
                 }
@@ -28,6 +30,8 @@
                     _this.parent().find('.score').text(data.voteCount);
                 } else if (data.status == "ok") {
                     _this.parent().find('.score').text(data.voteCount);
+                } else if (data.status == "public") {
+                    alert('Not public');
                 } else {
                     console.log(data);
                 }

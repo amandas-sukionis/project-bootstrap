@@ -15,7 +15,8 @@
             }).appendTo(this.element);
             $('<div/>', {
                 class: 'progress-bar',
-                role: 'progressbar'
+                role: 'progressbar',
+                text: 'Uploading...'
             }).appendTo($container);
 
             this.element.hide();
